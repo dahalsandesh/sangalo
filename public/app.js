@@ -259,7 +259,9 @@ const i18n = {
     docVaultSub: "नागरिकता, ब्लुबुक, लाइसेन्स र स्वास्थ्य बीमा फोटो",
     addDocBtn: "कागजात थप्नुहोस्",
     addDocTitle: "कागजात वा फोटो थप्नुहोस्",
-    saveDocBtn: "सुरक्षित भण्डारमा सेभ गर्नुहोस्"
+    saveDocBtn: "सुरक्षित भण्डारमा सेभ गर्नुहोस्",
+    alarmToggleTitle: "औषधि तथा सम्झना अलार्म (Medicine & Reminder Alarms)",
+    alarmToggleDesc: "औषधिको समय र पात्रोका सम्झनाहरूमा घण्टी (Chime) तथा सूचना बज्नेछ।"
   },
   en: {
     appTitle: "Sangalo",
@@ -426,7 +428,9 @@ const i18n = {
     docVaultSub: "Citizenship, Bluebook, License & Insurance Photos",
     addDocBtn: "Add Document",
     addDocTitle: "Add Document or Photo",
-    saveDocBtn: "Save to Secure Vault"
+    saveDocBtn: "Save to Secure Vault",
+    alarmToggleTitle: "Medicine & Reminder Alarms",
+    alarmToggleDesc: "Play audio chime and notification for medication schedules and calendar reminders."
   }
 };
 
@@ -2946,13 +2950,13 @@ function renderShopping() {
     html += `<div class="space-y-2">`;
     pending.forEach(item => {
       html += `
-        <div class="p-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl flex items-center justify-between gap-2 shadow-2xs transition">
+        <div class="p-3 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl flex items-center justify-between gap-2 shadow-2xs transition">
           <div class="flex items-center space-x-3 min-w-0">
-            <button onclick="toggleShoppingItem(${item.id})" class="w-6 h-6 flex-shrink-0 rounded-lg border-2 border-slate-300 dark:border-zinc-700 hover:border-emerald-500 flex items-center justify-center transition">
+            <button onclick="toggleShoppingItem(${item.id})" class="w-6 h-6 flex-shrink-0 rounded-lg border-2 border-slate-300 dark:border-[#334158] hover:border-emerald-500 flex items-center justify-center transition">
             </button>
             <div class="min-w-0">
-              <span class="text-xs font-bold text-slate-900 dark:text-zinc-100 truncate block">${escapeHtml(item.name)}</span>
-              <span class="text-[10px] text-slate-400 font-medium">${escapeHtml(item.category)} ${item.qty ? '• ' + escapeHtml(item.qty) : ''}</span>
+              <span class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate block">${escapeHtml(item.name)}</span>
+              <span class="text-[10px] text-slate-500 dark:text-slate-300 font-medium">${escapeHtml(item.category)} ${item.qty ? '• ' + escapeHtml(item.qty) : ''}</span>
             </div>
           </div>
           <button onclick="deleteShoppingItem(${item.id})" class="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg">
@@ -2968,8 +2972,8 @@ function renderShopping() {
     html += `
       <div class="pt-4 space-y-2">
         <div class="flex items-center justify-between px-1">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">${t('completedHeader')} (${completed.length})</span>
-          <button onclick="clearCompletedShopping()" class="text-[11px] font-semibold text-rose-600 hover:underline">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">${t('completedHeader')} (${completed.length})</span>
+          <button onclick="clearCompletedShopping()" class="text-[11px] font-semibold text-rose-600 dark:text-rose-400 hover:underline">
             ${t('clearBtn')}
           </button>
         </div>
@@ -2977,12 +2981,12 @@ function renderShopping() {
     `;
     completed.forEach(item => {
       html += `
-        <div class="p-2.5 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between gap-2">
+        <div class="p-2.5 bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#283347] rounded-xl flex items-center justify-between gap-2">
           <div class="flex items-center space-x-2.5 min-w-0">
             <button onclick="toggleShoppingItem(${item.id})" class="w-5 h-5 rounded-md bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">
               ✓
             </button>
-            <span class="text-xs line-through text-slate-500 truncate">${escapeHtml(item.name)}</span>
+            <span class="text-xs line-through text-slate-500 dark:text-slate-400 truncate">${escapeHtml(item.name)}</span>
           </div>
           <button onclick="deleteShoppingItem(${item.id})" class="text-slate-400 hover:text-rose-500 text-xs">✕</button>
         </div>
@@ -3148,18 +3152,18 @@ function renderBudget() {
     const displayAmt = currentLang === 'ne' ? `रू ${toDevanagariDigits(amtFormatted)}` : `Rs. ${amtFormatted}`;
 
     return `
-      <div class="p-3.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl flex items-center justify-between shadow-2xs">
+      <div class="p-3.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl flex items-center justify-between shadow-2xs">
         <div class="space-y-0.5">
           <div class="flex items-center space-x-2">
-            <span class="text-xs font-bold text-slate-900 dark:text-zinc-100">${escapeHtml(e.category)}</span>
-            ${e.payer ? `<span class="px-1.5 py-0.2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 rounded text-[9px] font-bold">${escapeHtml(e.payer)}</span>` : ''}
+            <span class="text-xs font-bold text-slate-900 dark:text-slate-100">${escapeHtml(e.category)}</span>
+            ${e.payer ? `<span class="px-1.5 py-0.2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 rounded text-[9px] font-bold">${escapeHtml(e.payer)}</span>` : ''}
           </div>
-          <div class="text-[11px] text-slate-500 dark:text-zinc-400">
-            ${escapeHtml(e.note || '')} <span class="text-[10px] text-slate-400">• ${escapeHtml(e.date || '')}</span>
+          <div class="text-[11px] text-slate-600 dark:text-slate-300">
+            ${escapeHtml(e.note || '')} <span class="text-[10px] text-slate-400 dark:text-slate-400">• ${escapeHtml(e.date || '')}</span>
           </div>
         </div>
         <div class="flex items-center space-x-2">
-          <span class="text-xs font-extrabold text-slate-900 dark:text-zinc-100">${displayAmt}</span>
+          <span class="text-xs font-extrabold text-slate-900 dark:text-slate-100">${displayAmt}</span>
           <button onclick="deleteExpense(${e.id})" class="p-1 text-slate-400 hover:text-rose-500 text-xs">✕</button>
         </div>
       </div>
@@ -3342,21 +3346,21 @@ function renderBorrowLend() {
     const opacityClass = item.settled ? 'opacity-50' : '';
 
     return `
-      <div class="p-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl space-y-2 shadow-2xs ${opacityClass}">
+      <div class="p-3.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-xl space-y-2 shadow-2xs ${opacityClass}">
         <div class="flex items-start justify-between">
           <div class="space-y-0.5">
             <div class="flex items-center space-x-2">
-              <span class="text-xs font-bold text-slate-900 dark:text-zinc-100">${escapeHtml(item.name)}</span>
+              <span class="text-xs font-bold text-slate-900 dark:text-slate-100">${escapeHtml(item.name)}</span>
               <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${typeBadgeClass}">${typeLabel}</span>
             </div>
-            ${item.note ? `<p class="text-[11px] text-slate-600 dark:text-zinc-400">${escapeHtml(item.note)}</p>` : ''}
-            <span class="text-[10px] text-slate-400">${escapeHtml(item.date || '')}</span>
+            ${item.note ? `<p class="text-[11px] text-slate-600 dark:text-slate-300">${escapeHtml(item.note)}</p>` : ''}
+            <span class="text-[10px] text-slate-400 dark:text-slate-400">${escapeHtml(item.date || '')}</span>
           </div>
           <div class="text-right">
             <span class="text-sm font-extrabold ${isLent ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">${amtDisplay}</span>
           </div>
         </div>
-        <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-zinc-800 text-[11px]">
+        <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-[#283347] text-[11px]">
           <div>
             ${item.settled ? `
               <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center space-x-1">
@@ -3364,14 +3368,14 @@ function renderBorrowLend() {
                 <span>${currentLang === 'ne' ? 'फर्छ्यौट भइसक्यो (Settled)' : 'Settled'}</span>
               </span>
             ` : `
-              <button onclick="toggleSettleBorrow(${item.id})" class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-zinc-800 hover:bg-emerald-100 text-slate-700 dark:text-zinc-300 font-semibold transition">
+              <button onclick="toggleSettleBorrow(${item.id})" class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#111722] hover:bg-emerald-100 text-slate-700 dark:text-slate-200 border border-transparent dark:border-[#283347] font-semibold transition">
                 ${currentLang === 'ne' ? 'फर्छ्यौट भयो (Mark Settled)' : 'Mark Settled'}
               </button>
             `}
           </div>
           <div class="flex items-center space-x-2">
             ${item.settled ? `
-              <button onclick="toggleSettleBorrow(${item.id})" class="text-slate-400 hover:text-slate-600 text-[10px] underline">
+              <button onclick="toggleSettleBorrow(${item.id})" class="text-slate-400 hover:text-slate-200 text-[10px] underline">
                 ${currentLang === 'ne' ? 'पुनः सक्रिय' : 'Reactivate'}
               </button>
             ` : ''}
@@ -3498,12 +3502,12 @@ function renderEmergencyContacts() {
 
   const contacts = state.emergencyContacts || [];
   container.innerHTML = contacts.map(c => `
-    <div class="p-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between shadow-xs">
+    <div class="p-3 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-xl flex items-center justify-between shadow-xs">
       <div>
-        <div class="text-xs font-bold text-slate-900 dark:text-zinc-100">${escapeHtml(c.name)}</div>
-        <div class="text-[10px] text-slate-500 dark:text-zinc-400 font-medium">${escapeHtml(c.relation || '')} • <a href="tel:${escapeHtml(c.phone)}" class="text-emerald-600 font-mono font-bold hover:underline">${escapeHtml(c.phone)}</a></div>
+        <div class="text-xs font-bold text-slate-900 dark:text-slate-100">${escapeHtml(c.name)}</div>
+        <div class="text-[10px] text-slate-500 dark:text-slate-300 font-medium">${escapeHtml(c.relation || '')} • <a href="tel:${escapeHtml(c.phone)}" class="text-emerald-600 dark:text-emerald-400 font-mono font-bold hover:underline">${escapeHtml(c.phone)}</a></div>
       </div>
-      <a href="tel:${escapeHtml(c.phone)}" class="p-2 bg-emerald-50 dark:bg-zinc-800 text-emerald-600 dark:text-emerald-400 rounded-xl hover:bg-emerald-100 transition">
+      <a href="tel:${escapeHtml(c.phone)}" class="p-2 bg-emerald-50 dark:bg-[#111722] border border-transparent dark:border-[#283347] text-emerald-600 dark:text-emerald-400 rounded-xl hover:bg-emerald-100 transition">
         📞
       </a>
     </div>
@@ -3564,7 +3568,7 @@ function renderMedicineRoutine() {
 
     html += `
       <div class="space-y-1.5">
-        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 block px-1">${slot.label}</span>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300 block px-1">${slot.label}</span>
         <div class="space-y-2">
     `;
 
@@ -3578,25 +3582,25 @@ function renderMedicineRoutine() {
         : 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300';
 
       html += `
-        <div class="p-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between gap-2 shadow-2xs ${isTaken ? 'bg-emerald-50/50 dark:bg-emerald-950/20' : ''}">
+        <div class="p-3 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-xl flex items-center justify-between gap-2 shadow-2xs ${isTaken ? 'bg-emerald-50/50 dark:bg-emerald-950/30' : ''}">
           <div class="flex items-center space-x-3 min-w-0">
-            <button onclick="toggleMedicineTaken(${m.id})" class="w-7 h-7 flex-shrink-0 rounded-lg flex items-center justify-center border-2 transition ${isTaken ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-950 text-transparent hover:border-emerald-500'}">
+            <button onclick="toggleMedicineTaken(${m.id})" class="w-7 h-7 flex-shrink-0 rounded-lg flex items-center justify-center border-2 transition ${isTaken ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 dark:border-[#334158] bg-slate-50 dark:bg-[#111722] text-transparent hover:border-emerald-500'}">
               <span class="text-sm font-bold">✓</span>
             </button>
             <div class="min-w-0">
               <div class="flex items-center space-x-2">
-                <span class="text-xs font-extrabold text-slate-900 dark:text-zinc-100 truncate ${isTaken ? 'line-through text-slate-400 dark:text-zinc-500' : ''}">${escapeHtml(m.name)}</span>
+                <span class="text-xs font-extrabold text-slate-900 dark:text-slate-100 truncate ${isTaken ? 'line-through text-slate-400 dark:text-slate-400' : ''}">${escapeHtml(m.name)}</span>
                 <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${foodClass}">${foodLabel}</span>
               </div>
-              <div class="text-[11px] text-slate-500 font-medium">
+              <div class="text-[11px] text-slate-500 dark:text-slate-300 font-medium">
                 ${m.dosage ? `<span>${escapeHtml(m.dosage)}</span> • ` : ''}
-                <span class="${isTaken ? 'text-emerald-600 font-bold' : 'text-slate-400'}">${isTaken ? (currentLang === 'ne' ? 'आज खाइसकियो' : 'Taken today') : (currentLang === 'ne' ? 'खान बाँकी' : 'Pending')}</span>
+                <span class="${isTaken ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-400'}">${isTaken ? (currentLang === 'ne' ? 'आज खाइसकियो' : 'Taken today') : (currentLang === 'ne' ? 'खान बाँकी' : 'Pending')}</span>
               </div>
             </div>
           </div>
           <div class="flex items-center space-x-1 flex-shrink-0">
-            <button onclick="openMedicineModal(${m.id})" class="p-1 text-slate-400 hover:text-slate-600 text-xs">✏️</button>
-            <button onclick="deleteMedicine(${m.id})" class="p-1 text-slate-400 hover:text-rose-600 text-xs">🗑️</button>
+            <button onclick="openMedicineModal(${m.id})" class="p-1 text-slate-400 hover:text-slate-200 text-xs">✏️</button>
+            <button onclick="deleteMedicine(${m.id})" class="p-1 text-slate-400 hover:text-rose-500 text-xs">🗑️</button>
           </div>
         </div>
       `;
@@ -3829,14 +3833,14 @@ function renderVehicleList() {
       : (v.type === 'car' ? (currentLang === 'ne' ? 'कार' : 'Car') : (currentLang === 'ne' ? 'बाइक' : 'Bike'));
 
     return `
-      <div class="p-3.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-2.5 shadow-2xs">
+      <div class="p-3.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl space-y-2.5 shadow-2xs">
         <div class="flex items-start justify-between">
           <div class="flex items-start space-x-2.5">
             <span class="text-2xl">${icon}</span>
             <div>
               <div class="flex items-center space-x-1.5">
-                <h4 class="text-sm font-extrabold text-slate-900 dark:text-zinc-100">${escapeHtml(v.name)}</h4>
-                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400">${typeLabel}</span>
+                <h4 class="text-sm font-extrabold text-slate-900 dark:text-slate-100">${escapeHtml(v.name)}</h4>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-100 dark:bg-[#111722] text-slate-600 dark:text-slate-300 border border-transparent dark:border-[#283347]">${typeLabel}</span>
               </div>
               <div class="mt-0.5">
                 <span class="px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-mono font-extrabold inline-block">
@@ -3846,28 +3850,28 @@ function renderVehicleList() {
             </div>
           </div>
           <div class="flex items-center space-x-1">
-            <button onclick="openVehicleModal(${v.id})" class="p-1.5 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 text-xs font-semibold" title="Edit">
+            <button onclick="openVehicleModal(${v.id})" class="p-1.5 rounded-lg bg-slate-100 dark:bg-[#111722] text-slate-600 dark:text-slate-300 border border-transparent dark:border-[#283347] hover:bg-slate-200 text-xs font-semibold" title="Edit">
               ✏️
             </button>
-            <button onclick="deleteVehicle(${v.id})" class="p-1.5 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:text-rose-600 text-xs font-semibold" title="Delete">
+            <button onclick="deleteVehicle(${v.id})" class="p-1.5 rounded-lg bg-slate-100 dark:bg-[#111722] text-slate-600 dark:text-slate-300 border border-transparent dark:border-[#283347] hover:text-rose-500 text-xs font-semibold" title="Delete">
               🗑️
             </button>
           </div>
         </div>
 
         ${v.notes ? `
-          <div class="text-[11px] text-slate-600 dark:text-zinc-400 bg-slate-50 dark:bg-zinc-950/50 p-2 rounded-xl border border-slate-100 dark:border-zinc-800">
+          <div class="text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-[#111722] p-2 rounded-xl border border-slate-100 dark:border-[#283347]">
             🔧 <span class="font-medium">${escapeHtml(v.notes)}</span>
           </div>
         ` : ''}
 
         <div class="flex items-center justify-between pt-1">
-          <button onclick="openVehicleDetailModal(${v.id})" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 text-[11px] font-bold flex items-center space-x-1 transition">
+          <button onclick="openVehicleDetailModal(${v.id})" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#111722] hover:bg-slate-200 dark:hover:bg-[#151b26] text-slate-700 dark:text-slate-300 border border-transparent dark:border-[#283347] text-[11px] font-bold flex items-center space-x-1 transition">
             <span>⚙️</span>
             <span>${currentLang === 'ne' ? 'प्राविधिक विवरण (Specs)' : 'Technical Specs'}</span>
           </button>
           ${v.taxDue ? `
-            <span class="text-[10px] font-semibold text-amber-700 dark:text-amber-400">
+            <span class="text-[10px] font-semibold text-amber-700 dark:text-amber-300">
               📅 ${currentLang === 'ne' ? 'कर म्याद:' : 'Tax Due:'} ${escapeHtml(v.taxDue)}
             </span>
           ` : ''}
@@ -4036,21 +4040,21 @@ function renderHomeServices() {
   }
 
   container.innerHTML = services.map(s => `
-    <div class="p-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between shadow-2xs">
+    <div class="p-3 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-xl flex items-center justify-between shadow-2xs">
       <div>
-        <div class="text-xs font-bold text-slate-900 dark:text-zinc-100">${escapeHtml(s.role)}: ${escapeHtml(s.name)}</div>
-        <div class="text-[10px] text-slate-500 font-mono font-bold mt-0.5">
-          <a href="tel:${escapeHtml(s.phone)}" class="text-emerald-600 hover:underline">${escapeHtml(s.phone)}</a>
+        <div class="text-xs font-bold text-slate-900 dark:text-slate-100">${escapeHtml(s.role)}: ${escapeHtml(s.name)}</div>
+        <div class="text-[10px] text-slate-500 dark:text-slate-300 font-mono font-bold mt-0.5">
+          <a href="tel:${escapeHtml(s.phone)}" class="text-emerald-600 dark:text-emerald-400 hover:underline">${escapeHtml(s.phone)}</a>
         </div>
       </div>
       <div class="flex items-center space-x-1.5">
-        <a href="tel:${escapeHtml(s.phone)}" class="p-2 bg-emerald-50 dark:bg-zinc-800 text-emerald-600 dark:text-emerald-400 rounded-xl hover:bg-emerald-100 transition" title="Call">
+        <a href="tel:${escapeHtml(s.phone)}" class="p-2 bg-emerald-50 dark:bg-[#111722] text-emerald-600 dark:text-emerald-400 border border-transparent dark:border-[#283347] rounded-xl hover:bg-emerald-100 transition" title="Call">
           📞
         </a>
-        <button onclick="editHomeService(${s.id})" class="p-2 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 rounded-xl hover:bg-slate-200 transition" title="Edit">
+        <button onclick="editHomeService(${s.id})" class="p-2 bg-slate-100 dark:bg-[#111722] text-slate-600 dark:text-slate-300 border border-transparent dark:border-[#283347] rounded-xl hover:bg-slate-200 transition" title="Edit">
           ✏️
         </button>
-        <button onclick="deleteHomeService(${s.id})" class="p-2 bg-slate-100 dark:bg-zinc-800 text-slate-600 hover:text-rose-600 rounded-xl hover:bg-slate-200 transition" title="Delete">
+        <button onclick="deleteHomeService(${s.id})" class="p-2 bg-slate-100 dark:bg-[#111722] text-slate-600 dark:text-slate-300 border border-transparent dark:border-[#283347] hover:text-rose-500 rounded-xl hover:bg-slate-200 transition" title="Delete">
           🗑️
         </button>
       </div>
@@ -4224,6 +4228,158 @@ function showStickyCalendarNotification() {
     }
     showToast(currentLang === 'ne' ? 'आजको मिति नोटिफिकेसन बारमा राखियो 📌' : 'Today\'s date pinned in notifications 📌');
   } catch (err) {}
+}
+
+// ---------------------------------------------------------------------
+// 12.1. AUTOMATED REMINDER & MEDICINE ROUTINE ALARM ENGINE
+// ---------------------------------------------------------------------
+let alarmTimerId = null;
+const firedAlarmsToday = new Set();
+let lastCheckedDateKey = '';
+
+function initAlarmEngine() {
+  const toggle = document.getElementById('alarmMasterToggle');
+  if (toggle) {
+    toggle.checked = state.alarmsEnabled !== false;
+  }
+
+  // Run initial check and set periodic interval (every 25 seconds)
+  checkDailyRemindersAndMedRoutine();
+  if (alarmTimerId) clearInterval(alarmTimerId);
+  alarmTimerId = setInterval(checkDailyRemindersAndMedRoutine, 25000);
+
+  // Resume check when app comes to foreground or screen unlocks
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      checkDailyRemindersAndMedRoutine();
+    }
+  });
+}
+
+function toggleAlarmSystem(e) {
+  const enabled = e.target.checked;
+  state.alarmsEnabled = enabled;
+  saveState();
+
+  if (enabled) {
+    playAlarmTone();
+    if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+      Notification.requestPermission();
+    }
+    showToast(currentLang === 'ne' ? 'औषधि तथा सम्झना अलार्म सक्रिय गरियो ⏰' : 'Medicine & reminder alarms activated ⏰');
+    checkDailyRemindersAndMedRoutine();
+  } else {
+    showToast(currentLang === 'ne' ? 'अलार्म बन्द गरियो' : 'Alarms turned off');
+  }
+}
+
+function playAlarmTone() {
+  playSound('chime');
+  setTimeout(() => playSound('happy'), 320);
+}
+
+function fireAlarmNotice(title, body, type) {
+  if (state.alarmsEnabled === false) return;
+
+  playAlarmTone();
+
+  // Prominent in-app toast
+  showToast(`⏰ ${title}: ${body}`, 7000);
+
+  // Pet companion reaction
+  petCelebrate('chime');
+  const pukuBubble = document.getElementById('pukuBubble');
+  if (pukuBubble && state.petEnabled !== false) {
+    pukuBubble.innerText = currentLang === 'ne' ? `⏰ सम्झना: ${title}` : `⏰ Reminder: ${title}`;
+    pukuBubble.classList.remove('hidden');
+    setTimeout(() => pukuBubble.classList.add('hidden'), 7000);
+  }
+
+  // Trigger system notification
+  if ('Notification' in window && Notification.permission === 'granted') {
+    try {
+      if ('serviceWorker' in navigator && navigator.serviceWorker.ready) {
+        navigator.serviceWorker.ready.then(reg => {
+          reg.showNotification(title, {
+            body: body,
+            icon: '/icon.png',
+            badge: '/icon.png',
+            tag: `sangalo-alarm-${Date.now()}`,
+            vibrate: [250, 150, 250, 150, 250],
+            requireInteraction: true
+          });
+        });
+      } else {
+        new Notification(title, {
+          body: body,
+          icon: '/icon.png',
+          vibrate: [250, 150, 250]
+        });
+      }
+    } catch (err) {
+      console.warn('System notification error:', err);
+    }
+  }
+}
+
+function checkDailyRemindersAndMedRoutine() {
+  if (state.alarmsEnabled === false) return;
+
+  const now = new Date();
+  const curH = String(now.getHours()).padStart(2, '0');
+  const curM = String(now.getMinutes()).padStart(2, '0');
+  const curTime = `${curH}:${curM}`;
+
+  const bs = getBikramSambatDate();
+  const dateKey = `${bs.year}-${bs.month}-${bs.day}`;
+
+  // Reset fired cache if day changed
+  if (lastCheckedDateKey && lastCheckedDateKey !== dateKey) {
+    firedAlarmsToday.clear();
+  }
+  lastCheckedDateKey = dateKey;
+
+  // 1. Calendar Event Reminders
+  const events = (state.calendarEvents && state.calendarEvents[dateKey]) || [];
+  events.forEach(ev => {
+    if (ev.time) {
+      const evTime = ev.time.trim();
+      const fireKey = `cal_${dateKey}_${ev.id || ev.title}_${evTime}`;
+      if (evTime === curTime && !firedAlarmsToday.has(fireKey)) {
+        firedAlarmsToday.add(fireKey);
+        const title = currentLang === 'ne' ? 'पात्रो सम्झना (Calendar Reminder)' : 'Calendar Reminder';
+        const body = `${ev.title || ''} (${evTime})`;
+        fireAlarmNotice(title, body, 'calendar');
+      }
+    }
+  });
+
+  // 2. Daily Medicine Routine
+  // Schedules: Morning 08:00, Afternoon 13:00, Night 20:00
+  const medicines = (state.health && state.health.medicines) || [];
+  if (medicines.length > 0) {
+    const slotSchedule = [
+      { slot: 'morning', hour: '08', minute: '00', labelNe: 'बिहानको औषधि (Morning Meds)', labelEn: 'Morning Medicine' },
+      { slot: 'afternoon', hour: '13', minute: '00', labelNe: 'दिउँसोको औषधि (Afternoon Meds)', labelEn: 'Afternoon Medicine' },
+      { slot: 'night', hour: '20', minute: '00', labelNe: 'रातिको औषधि (Night Meds)', labelEn: 'Night Medicine' }
+    ];
+
+    slotSchedule.forEach(sch => {
+      if (curH === sch.hour && curM === sch.minute) {
+        const fireKey = `med_${dateKey}_${sch.slot}_${sch.hour}:${sch.minute}`;
+        if (!firedAlarmsToday.has(fireKey)) {
+          const pendingMeds = medicines.filter(m => m.slot === sch.slot && (!Array.isArray(m.takenDates) || !m.takenDates.includes(dateKey)));
+          if (pendingMeds.length > 0) {
+            firedAlarmsToday.add(fireKey);
+            const medNames = pendingMeds.map(m => m.name).join(', ');
+            const title = currentLang === 'ne' ? `💊 ${sch.labelNe}` : `💊 ${sch.labelEn}`;
+            const body = currentLang === 'ne' ? `औषधि खाने बेला भयो: ${medNames}` : `Time to take: ${medNames}`;
+            fireAlarmNotice(title, body, 'medicine');
+          }
+        }
+      }
+    });
+  }
 }
 
 // ---------------------------------------------------------------------
@@ -4476,9 +4632,9 @@ async function renderVaultDocs() {
     const btn = document.getElementById('vaultFilter-' + cat);
     if (!btn) return;
     if (cat === currentVaultFilter) {
-      btn.className = 'px-2.5 py-1 rounded-lg font-bold bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 whitespace-nowrap transition';
+      btn.className = 'px-2.5 py-1 rounded-lg font-bold bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 whitespace-nowrap transition';
     } else {
-      btn.className = 'px-2.5 py-1 rounded-lg font-medium bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 whitespace-nowrap hover:bg-slate-200 transition';
+      btn.className = 'px-2.5 py-1 rounded-lg font-medium bg-slate-100 dark:bg-[#111722] text-slate-600 dark:text-slate-300 border border-transparent dark:border-[#283347] whitespace-nowrap hover:bg-slate-200 transition';
     }
   });
 
@@ -4488,8 +4644,8 @@ async function renderVaultDocs() {
 
   if (filteredDocs.length === 0) {
     grid.innerHTML = `
-      <div class="col-span-full py-6 text-center text-slate-400 dark:text-zinc-500 space-y-1">
-        <svg class="w-8 h-8 mx-auto text-slate-300 dark:text-zinc-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+      <div class="col-span-full py-6 text-center text-slate-400 dark:text-slate-400 space-y-1">
+        <svg class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
         </svg>
         <p class="text-xs font-semibold">${currentLang === 'ne' ? 'कुनै कागजात थपिएको छैन' : 'No documents saved in this category'}</p>
@@ -4505,28 +4661,28 @@ async function renderVaultDocs() {
     license: { ne: 'लाइसेन्स', en: 'License', color: 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300' },
     health: { ne: 'स्वास्थ्य', en: 'Health', color: 'bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300' },
     receipt: { ne: 'रसिद', en: 'Receipt', color: 'bg-cyan-50 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300' },
-    other: { ne: 'अन्य', en: 'Other', color: 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300' }
+    other: { ne: 'अन्य', en: 'Other', color: 'bg-slate-100 dark:bg-[#111722] text-slate-700 dark:text-slate-300' }
   };
 
   grid.innerHTML = filteredDocs.map(doc => {
     const catInfo = categoryNames[doc.category] || categoryNames.other;
     const catLabel = currentLang === 'ne' ? catInfo.ne : catInfo.en;
     return `
-      <div class="group relative bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:border-emerald-500/50 rounded-xl overflow-hidden shadow-2xs transition flex flex-col justify-between">
+      <div class="group relative bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] hover:border-emerald-500/50 rounded-xl overflow-hidden shadow-2xs transition flex flex-col justify-between">
         <div onclick="viewFullDocPhoto('${doc.id}')" class="cursor-pointer">
-          <div class="h-28 bg-slate-100 dark:bg-zinc-950 overflow-hidden relative flex items-center justify-center">
+          <div class="h-28 bg-slate-100 dark:bg-[#111722] overflow-hidden relative flex items-center justify-center">
             <img src="${doc.imageData}" class="w-full h-full object-cover group-hover:scale-105 transition duration-200" alt="${escapeHtml(doc.title)}">
             <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 text-[9px] font-bold rounded shadow-2xs ${catInfo.color}">
               ${catLabel}
             </span>
           </div>
           <div class="p-2 space-y-0.5">
-            <h4 class="text-xs font-bold text-slate-900 dark:text-zinc-100 truncate" title="${escapeHtml(doc.title)}">${escapeHtml(doc.title)}</h4>
-            ${doc.docNumber ? `<p class="text-[10px] font-mono text-slate-500 dark:text-zinc-400 truncate">नं: ${escapeHtml(doc.docNumber)}</p>` : ''}
+            <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate" title="${escapeHtml(doc.title)}">${escapeHtml(doc.title)}</h4>
+            ${doc.docNumber ? `<p class="text-[10px] font-mono text-slate-500 dark:text-slate-300 truncate">नं: ${escapeHtml(doc.docNumber)}</p>` : ''}
             ${doc.expiryDate ? `<p class="text-[9px] text-amber-600 dark:text-amber-400 font-semibold truncate">📅 ${escapeHtml(doc.expiryDate)}</p>` : ''}
           </div>
         </div>
-        <div class="px-2 pb-2 pt-1 border-t border-slate-100 dark:border-zinc-800/80 flex items-center justify-between">
+        <div class="px-2 pb-2 pt-1 border-t border-slate-100 dark:border-[#283347] flex items-center justify-between">
           <button onclick="viewFullDocPhoto('${doc.id}')" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">
             ${currentLang === 'ne' ? 'हेर्नुहोस्' : 'View'}
           </button>
@@ -4828,6 +4984,8 @@ function setTab(tabName) {
     renderVehicleList();
     renderHomeServices();
     renderVaultDocs();
+    const alarmTgl = document.getElementById('alarmMasterToggle');
+    if (alarmTgl) alarmTgl.checked = state.alarmsEnabled !== false;
   }
 }
 
@@ -4865,6 +5023,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (state.stickyNotifEnabled) {
     showStickyCalendarNotification();
   }
+
+  // Initialize Automated Reminders & Medicine Alarms
+  initAlarmEngine();
 
   // Register offline Service Worker
   if ('serviceWorker' in navigator) {
