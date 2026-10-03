@@ -2,11 +2,23 @@
 
 > **The Lightweight, Privacy-First Everyday Digital Companion for Nepali Households.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
-[![Platform: Web / PWA / Android](https://img.shields.io/badge/Platform-Web%20%7C%20PWA%20%7C%20Android-blue.svg)](#)
-[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero%20NPM%20Bloat-success.svg)](#)
-[![100% Offline](https://img.shields.io/badge/Offline-100%25%20Functional-purple.svg)](#)
-[![APK Size: ~216 KB](https://img.shields.io/badge/APK%20Size-%7E216%20KB-orange.svg)](#)
+[![Download APK](https://img.shields.io/badge/Download_APK-v1.0.0_(216_KB)-10b981?style=for-the-badge&logo=android&logoColor=white)](https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk)
+[![Latest Release](https://img.shields.io/github/v/release/dahalsandesh/sangalo?style=for-the-badge&color=2563eb)](https://github.com/dahalsandesh/sangalo/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero%20NPM%20Bloat-10b981.svg?style=for-the-badge)](#)
+[![100% Offline](https://img.shields.io/badge/Offline-100%25%20Functional-7c3aed.svg?style=for-the-badge)](#)
+
+---
+
+## 📲 Easy 1-Minute Installation (Android)
+
+Installing Sangalo on your Android device takes less than 60 seconds with zero configuration:
+
+1. **Download:** Tap [**📥 Download Sangalo.apk (Direct)**](https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk) (~216 KB).
+2. **Install:** Tap the downloaded file in your browser or file manager and choose **Install** *(if prompted, enable "Install unknown apps" for your browser)*.
+3. **Open & Enjoy:**
+   - Grant **Notification Permission** when prompted to pin today's Nepali Bikram Sambat date to your status bar with automatic midnight updates.
+   - Works 100% offline — no login, no accounts, no ads, no trackers.
 
 ---
 
@@ -186,6 +198,14 @@ This entire application—from the 91-year Bikram Sambat dual calendar algorithm
 
 ---
 
+## 👤 Author & Creator
+ 
+**Sandesh Dahal**
+- 🌐 Website: [dahalsandesh.com.np](https://dahalsandesh.com.np)
+- 🐙 GitHub: [@dahalsandesh](https://github.com/dahalsandesh)
+
+---
+
 ## 📄 License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
@@ -193,6 +213,6 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 ---
 
 <p align="center">
-  <b>सँगालो</b> — नेपाली घरपरिवारका लागि माया र सरलताका साथ बनाइएको।<br/>
+  <b>सँगालो (Sangalo)</b> — Made with ❤️ by <a href="https://dahalsandesh.com.np"><b>Sandesh Dahal</b></a> (<a href="https://github.com/dahalsandesh">@dahalsandesh</a>)<br/>
   <i>Crafted with care for Nepali households worldwide.</i>
 </p>
