@@ -254,7 +254,12 @@ const i18n = {
     exportBackup: "ब्याकअप डाउनलोड (.json)",
     importBackup: "ब्याकअप रिस्टोर",
     cancelBtn: "रद्द (Cancel)",
-    confirmDeleteBtn: "हटाउनुहोस् (Delete)"
+    confirmDeleteBtn: "हटाउनुहोस् (Delete)",
+    docVaultTitle: "कागजात तथा परिचयपत्र भण्डार",
+    docVaultSub: "नागरिकता, ब्लुबुक, लाइसेन्स र स्वास्थ्य बीमा फोटो",
+    addDocBtn: "कागजात थप्नुहोस्",
+    addDocTitle: "कागजात वा फोटो थप्नुहोस्",
+    saveDocBtn: "सुरक्षित भण्डारमा सेभ गर्नुहोस्"
   },
   en: {
     appTitle: "Sangalo",
@@ -416,7 +421,12 @@ const i18n = {
     exportBackup: "Export Backup (.json)",
     importBackup: "Import Backup",
     cancelBtn: "Cancel",
-    confirmDeleteBtn: "Delete"
+    confirmDeleteBtn: "Delete",
+    docVaultTitle: "Document & Photo Vault",
+    docVaultSub: "Citizenship, Bluebook, License & Insurance Photos",
+    addDocBtn: "Add Document",
+    addDocTitle: "Add Document or Photo",
+    saveDocBtn: "Save to Secure Vault"
   }
 };
 
@@ -1406,9 +1416,15 @@ function initPetEngine() {
 }
 
 function attachPetPointerListeners(canvas) {
+  const container = document.getElementById("floatingPetContainer");
+
   canvas.addEventListener("pointerdown", (e) => {
     e.preventDefault();
     try { canvas.setPointerCapture(e.pointerId); } catch(err) {}
+
+    if (container) container.style.transition = "none";
+    const bubble = document.getElementById("pukuBubble");
+    if (bubble) bubble.classList.add("hidden");
 
     pet.isDragging = true;
     pet.dragStartX = e.clientX;
@@ -1438,6 +1454,10 @@ function attachPetPointerListeners(canvas) {
     pet.screenX = Math.max(10, Math.min(maxX, pet.dragStartPetX + dx));
     pet.screenY = Math.max(10, Math.min(maxY, pet.dragStartPetY + dy));
 
+    if (container) {
+      container.style.transform = `translate3d(${Math.round(pet.screenX)}px, ${Math.round(pet.screenY)}px, 0)`;
+    }
+
     const pDx = e.clientX - pet.lastPointerX;
     if (Math.abs(pDx) > 1) {
       pet.direction = pDx > 0 ? 1 : -1;
@@ -1455,6 +1475,7 @@ function attachPetPointerListeners(canvas) {
     if (!pet.isDragging) return;
     pet.isDragging = false;
     try { canvas.releasePointerCapture(e.pointerId); } catch(err) {}
+    if (container) container.style.transition = "";
 
     const totalDist = Math.hypot(e.clientX - pet.dragStartX, e.clientY - pet.dragStartY);
 
@@ -1918,16 +1939,48 @@ function openPukuPlayModal() {
   updatePukuHappinessDisplay();
 
   const canvas = document.getElementById('pukuPlaygroundCanvas');
-  if (canvas) {
-    canvas.onclick = () => {
+  if (canvas && !canvas._pukuTapAttached) {
+    canvas._pukuTapAttached = true;
+    canvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const tapX = (e.clientX - rect.left) * scaleX;
+      const tapY = (e.clientY - rect.top) * scaleY;
+
       pukuPlayDog.idleTimer = 0;
       if (pukuPlayDog.state === 'sleep') {
         pukuPlayDog.state = 'idle';
         playSound('bark');
-      } else {
-        petPukuLove();
+        return;
       }
-    };
+
+      const distToDog = Math.hypot(tapX - pukuPlayDog.x, tapY - pukuPlayDog.y);
+      if (distToDog < 42) {
+        // Tapped directly on Puku -> Love & Pet!
+        petPukuLove();
+      } else {
+        // Tapped anywhere else on den floor/air -> Drop a treat or ball!
+        const isTreat = Math.random() > 0.45;
+        pukuPlayDog.state = 'run';
+        pukuPlayDog.targetX = Math.max(30, Math.min(canvas.width - 30, tapX));
+        pukuPlayDog.direction = tapX > pukuPlayDog.x ? 1 : -1;
+        pukuPlayItems = [{
+          type: isTreat ? 'treat' : 'ball',
+          x: tapX,
+          y: Math.max(20, Math.min(65, tapY)),
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: -1.5,
+          bounces: isTreat ? 1 : 4,
+          active: true
+        }];
+        playSound(isTreat ? 'bark' : 'pop');
+        state.petHappiness = Math.min(100, (state.petHappiness || 90) + 5);
+        saveState();
+        updatePukuHappinessDisplay();
+      }
+    });
   }
 
   function playgroundLoop() {
@@ -2033,8 +2086,12 @@ function updatePukuPlayground() {
         item.vy = -item.vy * 0.65;
         item.vx *= 0.85;
       }
-      if (item.x > 260) {
-        item.x = 260;
+      if (item.x > 320) {
+        item.x = 320;
+        item.vx = -item.vx;
+      }
+      if (item.x < 15) {
+        item.x = 15;
         item.vx = -item.vx;
       }
     }
@@ -4170,6 +4227,432 @@ function showStickyCalendarNotification() {
 }
 
 // ---------------------------------------------------------------------
+// 12.5. DOCUMENT & PHOTO VAULT (IndexedDB + Auto Compression + Fullscreen Viewer)
+// ---------------------------------------------------------------------
+let vaultDBInstance = null;
+
+function openVaultDB() {
+  return new Promise((resolve, reject) => {
+    if (vaultDBInstance) return resolve(vaultDBInstance);
+    if (!('indexedDB' in window)) {
+      return reject(new Error('IndexedDB not supported'));
+    }
+    const req = indexedDB.open('SangaloVaultDB', 1);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('documents')) {
+        const store = db.createObjectStore('documents', { keyPath: 'id' });
+        store.createIndex('category', 'category', { unique: false });
+        store.createIndex('createdAt', 'createdAt', { unique: false });
+      }
+    };
+    req.onsuccess = (e) => {
+      vaultDBInstance = e.target.result;
+      resolve(vaultDBInstance);
+    };
+    req.onerror = (e) => {
+      console.error('IndexedDB open error:', e.target.error);
+      reject(e.target.error);
+    };
+  });
+}
+
+async function getAllVaultDocs() {
+  try {
+    const db = await openVaultDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('documents', 'readonly');
+      const store = tx.objectStore('documents');
+      const req = store.getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  } catch (err) {
+    console.error('getAllVaultDocs error:', err);
+    return [];
+  }
+}
+
+async function getVaultDoc(id) {
+  try {
+    const db = await openVaultDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('documents', 'readonly');
+      const store = tx.objectStore('documents');
+      const req = store.get(id);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  } catch (err) {
+    console.error('getVaultDoc error:', err);
+    return null;
+  }
+}
+
+async function saveVaultDoc(doc) {
+  const db = await openVaultDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('documents', 'readwrite');
+    const store = tx.objectStore('documents');
+    const req = store.put(doc);
+    req.onsuccess = () => resolve(doc);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function deleteVaultDoc(id) {
+  const db = await openVaultDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('documents', 'readwrite');
+    const store = tx.objectStore('documents');
+    const req = store.delete(id);
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function compressImageFile(file, maxWidth = 1200, maxHeight = 1200, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type.startsWith('image/')) {
+      return reject(new Error('Selected file is not an image'));
+    }
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Failed to read image file'));
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Could not decode image'));
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        const approxBytes = Math.round((dataUrl.length * 3) / 4);
+        resolve({
+          dataUrl,
+          width,
+          height,
+          originalSize: file.size,
+          compressedSize: approxBytes,
+          fileName: file.name
+        });
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+let currentStagedDocImage = null;
+let currentVaultFilter = 'all';
+let activeViewerDoc = null;
+let activeViewerZoom = 1.0;
+
+function filterVaultCategory(cat) {
+  currentVaultFilter = cat;
+  renderVaultDocs();
+}
+
+function openAddDocModal() {
+  currentStagedDocImage = null;
+  const modal = document.getElementById('addDocPhotoModal');
+  const fileInput = document.getElementById('docFileInput');
+  const titleInput = document.getElementById('docTitleInput');
+  const numInput = document.getElementById('docNumberInput');
+  const expInput = document.getElementById('docExpiryInput');
+  const notesInput = document.getElementById('docNotesInput');
+  const previewContainer = document.getElementById('docPreviewContainer');
+  const prompt = document.getElementById('docUploadPrompt');
+  const previewImg = document.getElementById('docPreviewImg');
+
+  if (fileInput) fileInput.value = '';
+  if (titleInput) titleInput.value = '';
+  if (numInput) numInput.value = '';
+  if (expInput) expInput.value = '';
+  if (notesInput) notesInput.value = '';
+  if (previewImg) previewImg.src = '';
+  if (previewContainer) previewContainer.classList.add('hidden');
+  if (prompt) prompt.classList.remove('hidden');
+
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeAddDocModal() {
+  const modal = document.getElementById('addDocPhotoModal');
+  if (modal) modal.classList.add('hidden');
+  currentStagedDocImage = null;
+}
+
+async function handleDocFileSelection(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  try {
+    showToast(currentLang === 'ne' ? 'फोटो तयार गर्दै...' : 'Processing photo...');
+    const result = await compressImageFile(file, 1200, 1200, 0.82);
+    currentStagedDocImage = result.dataUrl;
+
+    const previewContainer = document.getElementById('docPreviewContainer');
+    const previewImg = document.getElementById('docPreviewImg');
+    const prompt = document.getElementById('docUploadPrompt');
+    const sizeBadge = document.getElementById('docSizeBadge');
+
+    if (previewImg) previewImg.src = result.dataUrl;
+    if (sizeBadge) {
+      const origKb = Math.round(result.originalSize / 1024);
+      const compKb = Math.round(result.compressedSize / 1024);
+      sizeBadge.innerText = `${result.width}×${result.height}px • ${compKb} KB (मूल: ${origKb} KB)`;
+    }
+    if (prompt) prompt.classList.add('hidden');
+    if (previewContainer) previewContainer.classList.remove('hidden');
+  } catch (err) {
+    console.error('Image compression failed:', err);
+    showToast(currentLang === 'ne' ? 'फोटो लोड हुन सकेन' : 'Failed to process image');
+  }
+}
+
+async function saveVaultDocumentForm(e) {
+  e.preventDefault();
+  if (!currentStagedDocImage) {
+    showToast(currentLang === 'ne' ? 'कृपया कागजातको फोटो छान्नुहोस्' : 'Please select or capture a photo');
+    return;
+  }
+  const title = document.getElementById('docTitleInput').value.trim();
+  const category = document.getElementById('docCategorySelect').value || 'other';
+  const docNumber = document.getElementById('docNumberInput').value.trim();
+  const expiryDate = document.getElementById('docExpiryInput').value.trim();
+  const notes = document.getElementById('docNotesInput').value.trim();
+
+  const docRecord = {
+    id: 'doc_' + Date.now(),
+    title: title || (currentLang === 'ne' ? 'नयाँ कागजात' : 'New Document'),
+    category,
+    docNumber,
+    expiryDate,
+    notes,
+    imageData: currentStagedDocImage,
+    createdAt: new Date().toISOString()
+  };
+
+  try {
+    await saveVaultDoc(docRecord);
+    closeAddDocModal();
+    renderVaultDocs();
+    showToast(currentLang === 'ne' ? 'कागजात सुरक्षित भण्डारमा सेभ भयो! 📄' : 'Document saved to Vault! 📄');
+    playSound('chime');
+  } catch (err) {
+    console.error('Failed to save document:', err);
+    showToast(currentLang === 'ne' ? 'कागजात सेभ गर्न सकिएन' : 'Failed to save document');
+  }
+}
+
+async function renderVaultDocs() {
+  const grid = document.getElementById('vaultDocGrid');
+  if (!grid) return;
+
+  let docs = [];
+  try {
+    docs = await getAllVaultDocs();
+  } catch (err) {
+    console.error('Error fetching vault docs:', err);
+  }
+
+  // Filter pills highlight
+  const filterBtns = ['all', 'citizenship', 'bluebook', 'license', 'health', 'receipt', 'other'];
+  filterBtns.forEach(cat => {
+    const btn = document.getElementById('vaultFilter-' + cat);
+    if (!btn) return;
+    if (cat === currentVaultFilter) {
+      btn.className = 'px-2.5 py-1 rounded-lg font-bold bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 whitespace-nowrap transition';
+    } else {
+      btn.className = 'px-2.5 py-1 rounded-lg font-medium bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 whitespace-nowrap hover:bg-slate-200 transition';
+    }
+  });
+
+  const filteredDocs = currentVaultFilter === 'all'
+    ? docs
+    : docs.filter(d => d.category === currentVaultFilter);
+
+  if (filteredDocs.length === 0) {
+    grid.innerHTML = `
+      <div class="col-span-full py-6 text-center text-slate-400 dark:text-zinc-500 space-y-1">
+        <svg class="w-8 h-8 mx-auto text-slate-300 dark:text-zinc-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+        </svg>
+        <p class="text-xs font-semibold">${currentLang === 'ne' ? 'कुनै कागजात थपिएको छैन' : 'No documents saved in this category'}</p>
+        <p class="text-[10px]">${currentLang === 'ne' ? 'नागरिकता वा ब्लुबुकको फोटो सुरक्षित राख्न + कागजात थप्नुहोस् थिच्नुहोस्' : 'Tap + Add Document to store citizenship or bluebook photos'}</p>
+      </div>
+    `;
+    return;
+  }
+
+  const categoryNames = {
+    citizenship: { ne: 'नागरिकता', en: 'Citizenship', color: 'bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300' },
+    bluebook: { ne: 'ब्लुबुक', en: 'Bluebook', color: 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' },
+    license: { ne: 'लाइसेन्स', en: 'License', color: 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300' },
+    health: { ne: 'स्वास्थ्य', en: 'Health', color: 'bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300' },
+    receipt: { ne: 'रसिद', en: 'Receipt', color: 'bg-cyan-50 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300' },
+    other: { ne: 'अन्य', en: 'Other', color: 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300' }
+  };
+
+  grid.innerHTML = filteredDocs.map(doc => {
+    const catInfo = categoryNames[doc.category] || categoryNames.other;
+    const catLabel = currentLang === 'ne' ? catInfo.ne : catInfo.en;
+    return `
+      <div class="group relative bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:border-emerald-500/50 rounded-xl overflow-hidden shadow-2xs transition flex flex-col justify-between">
+        <div onclick="viewFullDocPhoto('${doc.id}')" class="cursor-pointer">
+          <div class="h-28 bg-slate-100 dark:bg-zinc-950 overflow-hidden relative flex items-center justify-center">
+            <img src="${doc.imageData}" class="w-full h-full object-cover group-hover:scale-105 transition duration-200" alt="${escapeHtml(doc.title)}">
+            <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 text-[9px] font-bold rounded shadow-2xs ${catInfo.color}">
+              ${catLabel}
+            </span>
+          </div>
+          <div class="p-2 space-y-0.5">
+            <h4 class="text-xs font-bold text-slate-900 dark:text-zinc-100 truncate" title="${escapeHtml(doc.title)}">${escapeHtml(doc.title)}</h4>
+            ${doc.docNumber ? `<p class="text-[10px] font-mono text-slate-500 dark:text-zinc-400 truncate">नं: ${escapeHtml(doc.docNumber)}</p>` : ''}
+            ${doc.expiryDate ? `<p class="text-[9px] text-amber-600 dark:text-amber-400 font-semibold truncate">📅 ${escapeHtml(doc.expiryDate)}</p>` : ''}
+          </div>
+        </div>
+        <div class="px-2 pb-2 pt-1 border-t border-slate-100 dark:border-zinc-800/80 flex items-center justify-between">
+          <button onclick="viewFullDocPhoto('${doc.id}')" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">
+            ${currentLang === 'ne' ? 'हेर्नुहोस्' : 'View'}
+          </button>
+          <div class="flex items-center space-x-1">
+            <button onclick="downloadDocImageById('${doc.id}')" class="p-1 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 rounded" title="Download to Device">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+            </button>
+            <button onclick="confirmDeleteDoc('${doc.id}', '${escapeHtml(doc.title)}')" class="p-1 text-slate-400 hover:text-rose-500 rounded" title="Delete">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function viewFullDocPhoto(docId) {
+  try {
+    const doc = await getVaultDoc(docId);
+    if (!doc) return;
+    activeViewerDoc = doc;
+    activeViewerZoom = 1.0;
+
+    const modal = document.getElementById('viewDocPhotoModal');
+    const titleEl = document.getElementById('viewerDocTitle');
+    const metaEl = document.getElementById('viewerDocMeta');
+    const imgEl = document.getElementById('viewerDocImage');
+    const zoomEl = document.getElementById('viewerZoomLevel');
+
+    if (titleEl) titleEl.innerText = doc.title;
+    if (metaEl) {
+      const parts = [];
+      if (doc.docNumber) parts.push(`No: ${doc.docNumber}`);
+      if (doc.expiryDate) parts.push(`Date: ${doc.expiryDate}`);
+      if (doc.notes) parts.push(doc.notes);
+      metaEl.innerText = parts.join(' • ');
+    }
+    if (imgEl) {
+      imgEl.src = doc.imageData;
+      imgEl.style.transform = 'scale(1.0)';
+    }
+    if (zoomEl) zoomEl.innerText = '100%';
+    if (modal) modal.classList.remove('hidden');
+  } catch (err) {
+    console.error('Error opening doc photo:', err);
+  }
+}
+
+function closeViewDocModal() {
+  const modal = document.getElementById('viewDocPhotoModal');
+  if (modal) modal.classList.add('hidden');
+  activeViewerDoc = null;
+  activeViewerZoom = 1.0;
+}
+
+function zoomViewerDoc(delta) {
+  activeViewerZoom = Math.max(0.5, Math.min(3.5, activeViewerZoom + delta));
+  const imgEl = document.getElementById('viewerDocImage');
+  const zoomEl = document.getElementById('viewerZoomLevel');
+  if (imgEl) imgEl.style.transform = `scale(${activeViewerZoom.toFixed(2)})`;
+  if (zoomEl) zoomEl.innerText = `${Math.round(activeViewerZoom * 100)}%`;
+}
+
+function resetViewerDocZoom() {
+  activeViewerZoom = 1.0;
+  const imgEl = document.getElementById('viewerDocImage');
+  const zoomEl = document.getElementById('viewerZoomLevel');
+  if (imgEl) imgEl.style.transform = 'scale(1.0)';
+  if (zoomEl) zoomEl.innerText = '100%';
+}
+
+function downloadCurrentDocImage() {
+  if (!activeViewerDoc || !activeViewerDoc.imageData) return;
+  const link = document.createElement('a');
+  link.href = activeViewerDoc.imageData;
+  const sanitizedTitle = (activeViewerDoc.title || 'document').replace(/[^a-zA-Z0-9_\u0900-\u097F]/g, '_');
+  link.download = `Sangalo_${sanitizedTitle}.jpg`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast(currentLang === 'ne' ? 'कागजात डाउनलोड भयो 📥' : 'Document downloaded 📥');
+}
+
+async function downloadDocImageById(docId) {
+  try {
+    const doc = await getVaultDoc(docId);
+    if (!doc || !doc.imageData) return;
+    const link = document.createElement('a');
+    link.href = doc.imageData;
+    const sanitizedTitle = (doc.title || 'document').replace(/[^a-zA-Z0-9_\u0900-\u097F]/g, '_');
+    link.download = `Sangalo_${sanitizedTitle}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast(currentLang === 'ne' ? 'कागजात डाउनलोड भयो 📥' : 'Document downloaded 📥');
+  } catch (err) {
+    console.error('Error downloading doc:', err);
+  }
+}
+
+function confirmDeleteDoc(docId, docTitle) {
+  requestConfirm(
+    currentLang === 'ne' ? 'कागजात हटाउने?' : 'Delete Document?',
+    currentLang === 'ne' ? `"${docTitle}" भण्डारबाट सधैंका लागि हट्नेछ।` : `"${docTitle}" will be removed from your secure vault.`,
+    async () => {
+      try {
+        await deleteVaultDoc(docId);
+        renderVaultDocs();
+        showToast(currentLang === 'ne' ? 'कागजात हटाइयो' : 'Document deleted');
+      } catch (err) {
+        console.error('Error deleting doc:', err);
+      }
+    }
+  );
+}
+
+function deleteCurrentViewerDoc() {
+  if (!activeViewerDoc) return;
+  const docId = activeViewerDoc.id;
+  const docTitle = activeViewerDoc.title;
+  closeViewDocModal();
+  confirmDeleteDoc(docId, docTitle);
+}
+
+// ---------------------------------------------------------------------
 // 13. UNIVERSAL CONFIRMATION DIALOG, CLIPBOARD, THEME & TRANSLATIONS
 // ---------------------------------------------------------------------
 let pendingConfirmCallback = null;
@@ -4265,6 +4748,7 @@ function updateAllTranslations() {
   renderMedicineRoutine();
   renderVehicleList();
   renderHomeServices();
+  renderVaultDocs();
   updateBaghStats();
   initPetEngine();
   updatePukuHappinessDisplay();
@@ -4343,6 +4827,7 @@ function setTab(tabName) {
     renderVault();
     renderVehicleList();
     renderHomeServices();
+    renderVaultDocs();
   }
 }
 

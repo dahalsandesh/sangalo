@@ -45,8 +45,8 @@
 <body class="bg-slate-50 dark:bg-[#09090b] text-slate-900 dark:text-zinc-100 min-h-screen safe-bottom selection:bg-emerald-500/20">
 
   <!-- Sticky Top Header -->
-  <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#09090b]/95 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 px-4 py-2.5 shadow-xs">
-    <div class="max-w-md mx-auto flex items-center justify-between">
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#09090b]/95 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 px-3 sm:px-4 py-2.5 shadow-xs">
+    <div class="max-w-xl mx-auto flex items-center justify-between">
       
       <!-- Brand Logo & Live BS Date (Clickable to jump to calendar!) -->
       <div class="flex items-center space-x-2.5">
@@ -81,7 +81,7 @@
   </header>
 
   <!-- Main Scrollable Content Area -->
-  <main class="max-w-md mx-auto p-4 space-y-4">
+  <main class="max-w-xl mx-auto px-2.5 sm:px-4 py-3 space-y-3 sm:space-y-4">
 
     <!-- ============================================================= -->
     <!-- TAB 1: SHOPPING & GROCERY (किनमेल) -->
@@ -592,8 +592,41 @@
         </div>
       </div>
 
+      <!-- Document & Photo Vault (नागरिकता, लाइसेन्स, ब्लुबुक, स्वास्थ्य बीमा) -->
+      <div class="p-3.5 sm:p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl sm:rounded-2xl space-y-3 shadow-xs">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <span class="text-xs font-bold text-slate-900 dark:text-zinc-100" data-i18n="docVaultTitle">कागजात तथा परिचयपत्र भण्डार</span>
+              <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded">सुरक्षित Offline</span>
+            </div>
+            <p class="text-[10px] text-slate-500 font-medium" data-i18n="docVaultSub">नागरिकता, ब्लुबुक, लाइसेन्स र स्वास्थ्य बीमा फोटो</p>
+          </div>
+          <button onclick="openAddDocModal()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-[11px] rounded-lg transition shadow-2xs whitespace-nowrap flex items-center space-x-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            <span data-i18n="addDocBtn">कागजात थप्नुहोस्</span>
+          </button>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-[11px]">
+          <button onclick="filterVaultCategory('all')" id="vaultFilter-all" class="px-2.5 py-1 rounded-lg font-bold bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 whitespace-nowrap transition">सबै</button>
+          <button onclick="filterVaultCategory('citizenship')" id="vaultFilter-citizenship" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 whitespace-nowrap hover:bg-slate-200 transition">नागरिकता</button>
+          <button onclick="filterVaultCategory('bluebook')" id="vaultFilter-bluebook" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 whitespace-nowrap hover:bg-slate-200 transition">ब्लुबुक</button>
+          <button onclick="filterVaultCategory('license')" id="vaultFilter-license" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 whitespace-nowrap hover:bg-slate-200 transition">लाइसेन्स</button>
+          <button onclick="filterVaultCategory('health')" id="vaultFilter-health" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 whitespace-nowrap hover:bg-slate-200 transition">स्वास्थ्य बीमा</button>
+          <button onclick="filterVaultCategory('receipt')" id="vaultFilter-receipt" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 whitespace-nowrap hover:bg-slate-200 transition">बिल / रसिद</button>
+          <button onclick="filterVaultCategory('other')" id="vaultFilter-other" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 whitespace-nowrap hover:bg-slate-200 transition">अन्य</button>
+        </div>
+
+        <!-- Document Grid -->
+        <div id="vaultDocGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">
+          <!-- Rendered dynamically by renderVaultDocs() -->
+        </div>
+      </div>
+
       <!-- Guest Wi-Fi QR Share -->
-      <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-3 shadow-xs">
+      <div class="p-3.5 sm:p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl sm:rounded-2xl space-y-3 shadow-xs">
         <div class="flex justify-between items-center">
           <span class="text-xs font-bold text-slate-900 dark:text-zinc-100" data-i18n="wifiTitle">पाहुना वाई-फाई QR कोड</span>
           <span class="text-[10px] font-medium text-emerald-600 dark:text-emerald-400" data-i18n="scanQr">स्क्यान गर्नुहोस्</span>
@@ -688,7 +721,7 @@
   <!-- ============================================================= -->
   <!-- FLOATING INTERACTIVE PET COMPANION ("पुकु" / PUKU) -->
   <!-- ============================================================= -->
-  <div id="floatingPetContainer" class="hidden fixed top-0 left-0 z-40 select-none pointer-events-none transition-transform duration-75" style="will-change: transform;">
+  <div id="floatingPetContainer" class="hidden fixed top-0 left-0 z-40 select-none pointer-events-none" style="will-change: transform;">
     <!-- Speech bubble -->
     <div id="pukuBubble" class="hidden -mt-10 mb-1 ml-1 px-3 py-1.5 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl shadow-lg text-[11px] font-semibold text-slate-800 dark:text-zinc-200 whitespace-nowrap pointer-events-auto cursor-pointer animate-in fade-in slide-in-from-bottom-2">
       नमस्ते! म पुकु 🐾
@@ -696,8 +729,8 @@
     <!-- Interactive Canvas & Mini Action Buttons -->
     <div class="relative pointer-events-auto flex flex-col items-center">
       <div class="absolute -top-2 left-0 right-0 flex justify-between px-1 pointer-events-auto z-10">
-        <button onclick="dismissPet()" class="w-5 h-5 bg-slate-200/90 dark:bg-zinc-700/90 hover:bg-rose-500 hover:text-white text-slate-600 dark:text-zinc-300 rounded-full flex items-center justify-center text-[10px] font-bold shadow-xs transition" title="Dismiss Pet">✕</button>
-        <button onclick="tossTennisBall(event)" class="w-5 h-5 bg-amber-100 dark:bg-amber-950/80 hover:bg-amber-400 text-amber-700 dark:text-amber-300 rounded-full flex items-center justify-center text-[11px] shadow-xs transition" title="Toss Ball 🎾">🎾</button>
+        <button onclick="dismissPet()" class="w-6 h-6 bg-slate-200/90 dark:bg-zinc-700/90 hover:bg-rose-500 hover:text-white text-slate-700 dark:text-zinc-200 rounded-full flex items-center justify-center text-[11px] font-bold shadow-xs transition" title="Dismiss Pet">✕</button>
+        <button onclick="tossTennisBall(event)" class="w-6 h-6 bg-amber-100 dark:bg-amber-950/80 hover:bg-amber-400 text-amber-700 dark:text-amber-300 rounded-full flex items-center justify-center text-[12px] shadow-xs transition" title="Toss Ball 🎾">🎾</button>
       </div>
       <canvas id="floatingPetCanvas" width="96" height="80" class="cursor-grab active:cursor-grabbing select-none" style="touch-action: none;"></canvas>
     </div>
@@ -742,9 +775,10 @@
         </button>
       </div>
 
-      <!-- Playground Canvas -->
-      <div class="relative bg-gradient-to-b from-amber-50 to-emerald-50/50 dark:from-zinc-950 dark:to-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-xl overflow-hidden flex justify-center py-2">
-        <canvas id="pukuPlaygroundCanvas" width="280" height="90" class="block"></canvas>
+      <!-- Playground Canvas with Touch Interaction -->
+      <div class="relative bg-gradient-to-b from-amber-50 to-emerald-50/50 dark:from-zinc-950 dark:to-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-xl overflow-hidden flex flex-col items-center py-2 px-1">
+        <canvas id="pukuPlaygroundCanvas" width="340" height="96" class="block w-full max-w-full touch-none cursor-pointer"></canvas>
+        <p class="text-[10px] text-center text-slate-400 dark:text-zinc-500 mt-1 select-none">कुनै ठाउँमा छुनुहोस् — पुकुले दौडेर समात्छ वा मुसारिन्छ 🐾</p>
       </div>
 
       <!-- Action Buttons -->
@@ -1019,9 +1053,125 @@
     </div>
   </div>
 
+  <!-- 9. Add Document / Photo Modal -->
+  <div id="addDocPhotoModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="w-full max-w-sm max-h-[92vh] overflow-y-auto bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 space-y-3 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-sm font-extrabold text-slate-900 dark:text-zinc-100" data-i18n="addDocTitle">कागजात वा फोटो थप्नुहोस्</h3>
+          <p class="text-[10px] text-slate-500 font-medium">फोनको क्यामेरा वा ग्यालरीबाट फोटो सुरक्षित राख्नुहोस्</p>
+        </div>
+        <button onclick="closeAddDocModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form onsubmit="saveVaultDocumentForm(event)" class="space-y-3">
+        <!-- Photo Upload Box / Preview Area -->
+        <div>
+          <input type="file" id="docFileInput" accept="image/*" onchange="handleDocFileSelection(event)" class="hidden">
+          <div id="docPhotoDropzone" onclick="document.getElementById('docFileInput').click()" class="border-2 border-dashed border-slate-300 dark:border-zinc-700 hover:border-emerald-500 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer transition bg-slate-50 dark:bg-zinc-950 min-h-[120px] relative overflow-hidden">
+            <div id="docUploadPrompt" class="flex flex-col items-center text-center space-y-1">
+              <svg class="w-8 h-8 text-slate-400 dark:text-zinc-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+              </svg>
+              <span class="text-xs font-bold text-slate-700 dark:text-zinc-300">फोटो खिच्नुहोस् वा ग्यालरीबाट छान्नुहोस्</span>
+              <span class="text-[10px] text-slate-400">नागरिकता, ब्लुबुक, लाइसेन्स वा प्रेस्क्रिप्सन</span>
+            </div>
+            <!-- Image Preview Box -->
+            <div id="docPreviewContainer" class="hidden w-full flex flex-col items-center">
+              <img id="docPreviewImg" src="" class="max-h-40 w-auto rounded-lg object-contain shadow-xs">
+              <span id="docSizeBadge" class="text-[9px] font-mono text-emerald-600 dark:text-emerald-400 mt-1"></span>
+              <span class="text-[10px] font-medium text-slate-500 hover:text-emerald-500 mt-0.5 underline">अर्को फोटो छान्नुहोस्</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">कागजातको नाम (Title)</label>
+          <input id="docTitleInput" type="text" placeholder="e.g. बुबाको नागरिकता, स्कुटरको ब्लुबुक" required class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">प्रकार (Category)</label>
+            <select id="docCategorySelect" class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-800 dark:text-zinc-200 focus:outline-none">
+              <option value="citizenship">नागरिकता (Citizenship)</option>
+              <option value="bluebook">ब्लुबुक (Bluebook)</option>
+              <option value="license">लाइसेन्स (License)</option>
+              <option value="health">स्वास्थ्य बीमा / कार्ड (Health)</option>
+              <option value="receipt">बिल / रसिद (Receipt)</option>
+              <option value="other">अन्य कागजात (Other)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">नम्बर (Reg / Doc No)</label>
+            <input id="docNumberInput" type="text" placeholder="e.g. २७-०१-७५-१२३" class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 dark:text-zinc-100 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">मिति वा म्याद सकिने मिति (Expiry/Date)</label>
+          <input id="docExpiryInput" type="text" placeholder="e.g. २०८२ चैत वा 2026-03" class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">थप नोट (Notes - ऐच्छिक)</label>
+          <input id="docNotesInput" type="text" placeholder="e.g. नवीकरण गर्न बाँकी" class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center space-x-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          <span data-i18n="saveDocBtn">सुरक्षित भण्डारमा सेभ गर्नुहोस्</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 10. Fullscreen Document & Photo Viewer Modal with Zoom & Export -->
+  <div id="viewDocPhotoModal" class="hidden fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col justify-between p-3 select-none">
+    <!-- Top Bar -->
+    <div class="flex items-center justify-between text-white p-2">
+      <div class="flex-1 min-w-0 pr-2">
+        <h3 id="viewerDocTitle" class="text-sm font-bold truncate">कागजात विवरण</h3>
+        <p id="viewerDocMeta" class="text-[11px] text-zinc-400 font-mono truncate"></p>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button onclick="downloadCurrentDocImage()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center space-x-1 shadow-sm transition" title="Save to Device">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+          <span>फोनमा सेभ (Export)</span>
+        </button>
+        <button onclick="closeViewDocModal()" class="p-2 text-zinc-400 hover:text-white rounded-lg">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Center Zoomable Image Viewport -->
+    <div class="flex-1 flex items-center justify-center overflow-hidden relative cursor-grab active:cursor-grabbing" id="docViewerViewport">
+      <img id="viewerDocImage" src="" class="max-h-[75vh] max-w-full object-contain transition-transform duration-100 ease-out" alt="Document Photo">
+    </div>
+
+    <!-- Bottom Controls Bar -->
+    <div class="flex items-center justify-between p-2 bg-zinc-900/80 border border-zinc-800 rounded-xl text-white">
+      <div class="text-[11px] text-zinc-400">
+        <span id="viewerZoomLevel">100%</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button onclick="zoomViewerDoc(-0.25)" class="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-sm font-bold transition">−</button>
+        <button onclick="resetViewerDocZoom()" class="px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold transition">Reset</button>
+        <button onclick="zoomViewerDoc(0.25)" class="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-sm font-bold transition">+</button>
+      </div>
+      <button onclick="deleteCurrentViewerDoc()" class="p-1.5 text-rose-400 hover:text-rose-300 rounded-lg" title="Delete Document">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+      </button>
+    </div>
+  </div>
+
   <!-- Bottom Navigation Bar (5 Touch-Optimized Tabs) -->
   <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#09090b]/95 backdrop-blur-md border-t border-slate-200 dark:border-zinc-800 px-1 py-1 shadow-lg">
-    <div class="max-w-md mx-auto grid grid-cols-5 gap-0.5">
+    <div class="max-w-xl mx-auto px-1 sm:px-4 grid grid-cols-5 gap-0.5">
       
       <!-- 1. Shopping (किनमेल) -->
       <button id="navBtn-shopping" onclick="setTab('shopping')" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-emerald-600 dark:text-emerald-400 transition">
@@ -1064,6 +1214,6 @@
     </div>
   </nav>
 
-  <script src="/app.js?v=6.0"></script>
+  <script src="/app.js?v=7.0"></script>
 </body>
 </html>
