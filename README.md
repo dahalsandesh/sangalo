@@ -172,6 +172,20 @@ Contributions to **सँगालो (Sangalo)** are warmly welcome! Whether yo
 
 ---
 
+## ⚡ Built Entirely on Mobile (Pair-Programmed with AI)
+
+This entire application—from the 91-year Bikram Sambat dual calendar algorithms, custom physics pet engine, interactive medicine routine alarms, native Android APK build pipeline, and bilingual UI/UX—was vibe-coded, compiled, and published entirely on a mobile phone!
+
+- **Host Device:** Xiaomi Redmi Note 15 Pro 5G (`lapis`)
+- **SoC:** MediaTek Dimensity 7300 (MT6878), Octa-core ARM64
+- **Operating Environment:** Ubuntu 26.04 aarch64 (PRoot-Distro) on Android 16 (HyperOS) via Termux
+- **AI Pair Programmer:** Google DeepMind **Antigravity CLI Agent (AGY)** powered by **Gemini 3.8 Flash**
+- **Android Compilation:** Native SDK toolchain (`aapt`, `javac`, `dx`, `apksigner`) running directly on ARM64 Linux without heavyweight Gradle/Maven daemons
+
+> *"Proof that production-grade full-stack web applications and native Android APKs can be engineered, tested, and published to GitHub entirely from a smartphone in your pocket."*
+
+---
+
 ## 📄 License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
