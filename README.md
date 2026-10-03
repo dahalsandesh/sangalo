@@ -10,7 +10,8 @@
 [![100% Offline](https://img.shields.io/badge/Offline-100%25%20Functional-7c3aed.svg?style=for-the-badge)](#)
 
 > 💡 **The 100% Smartphone Engineering Story:**  
-> Sangalo wasn't built on a MacBook, PC, or cloud CI/CD farm. **100% of this application**—from the 91-year astronomical Bikram Sambat database to native Dalvik bytecode compilation and signed APK packaging—was designed, coded, tested, and published to GitHub **entirely on a mid-range smartphone (Xiaomi Redmi Note 15 Pro 5G)** via Termux Ubuntu and an AI coding agent without writing a single line of manual code.
+> Sangalo wasn't built on a MacBook, PC, or cloud CI/CD farm. **100% of this application**—from the 91-year astronomical Bikram Sambat database to native Dalvik bytecode compilation and signed APK packaging—was designed, coded, tested, and published to GitHub **entirely on a mid-range smartphone (Xiaomi Redmi Note 15 Pro 5G)** via Termux Ubuntu and an AI coding agent without writing a single line of manual code.  
+> 👉 **[Read the Step-by-Step Guide: How to Build Apps on Your Phone (No Laptop Required)](MOBILE_DEV_GUIDE.md)**
 
 ---
 
@@ -207,6 +208,10 @@ Contributions to **सँगालो (Sangalo)** are warmly welcome! Whether yo
 1. **Architect & Direct:** The author ([Sandesh Dahal](https://dahalsandesh.com.np)) steered architecture, UX, calendar accuracy, and real-world family testing purely through natural language prompts.
 2. **Autonomous Execution:** AGY and Gemini 3.8 Flash authored the 91-year Bikram Sambat astronomical database, Verlet physics pet simulation, Android Java bridges, alarms, and offline vaults without writing manual code.
 3. **Instant On-Device Feedback Loop:** Code edits were compiled into APKs and tested on the exact same physical device in real time, eliminating emulation lag.
+
+### 📖 Complete Tutorial & Masterclass
+Want to learn how to turn your Android phone into an autonomous development workstation and compile apps directly (or connect a laptop over SSH/Wi-Fi)?  
+👉 **[Read the Full Step-by-Step Guide: How to Build Mobile Apps on Android (No Laptop Required)](MOBILE_DEV_GUIDE.md)**
 
 ---
 
