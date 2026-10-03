@@ -80,6 +80,7 @@ cat << 'EOF' > "$BUILD_DIR/AndroidManifest.xml"
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:label="@string/app_name"
@@ -97,6 +98,19 @@ cat << 'EOF' > "$BUILD_DIR/AndroidManifest.xml"
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".CalendarReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="com.sangalo.family.ACTION_NOTIFICATION_DISMISSED" />
+                <action android:name="com.sangalo.family.ACTION_MIDNIGHT_TICK" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
 EOF
@@ -197,38 +211,30 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
+        public void syncCalendarSchedule(final String jsonSchedule) {
+            try {
+                android.content.SharedPreferences prefs = getSharedPreferences(CalendarReceiver.PREFS_NAME, Context.MODE_PRIVATE);
+                prefs.edit().putString(CalendarReceiver.KEY_SCHEDULE, jsonSchedule).apply();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @JavascriptInterface
         public void showStickyNotification(final String title, final String body) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                        if (nm == null) return;
+                        android.content.SharedPreferences prefs = getSharedPreferences(CalendarReceiver.PREFS_NAME, Context.MODE_PRIVATE);
+                        prefs.edit()
+                             .putBoolean(CalendarReceiver.KEY_STICKY_ENABLED, true)
+                             .putString(CalendarReceiver.KEY_LAST_TITLE, title)
+                             .putString(CalendarReceiver.KEY_LAST_BODY, body)
+                             .apply();
 
-                        Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-                        if (Build.VERSION.SDK_INT >= 23) {
-                            flags |= PendingIntent.FLAG_IMMUTABLE;
-                        }
-                        PendingIntent pi = PendingIntent.getActivity(MainActivity.this, 0, intent, flags);
-
-                        Notification.Builder builder;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            builder = new Notification.Builder(MainActivity.this, CHANNEL_STICKY_ID);
-                        } else {
-                            builder = new Notification.Builder(MainActivity.this);
-                            builder.setPriority(Notification.PRIORITY_LOW);
-                        }
-
-                        builder.setContentTitle(title)
-                               .setContentText(body)
-                               .setSmallIcon(R.mipmap.ic_launcher)
-                               .setContentIntent(pi)
-                               .setOngoing(true)
-                               .setAutoCancel(false);
-
-                        nm.notify(1001, builder.build());
+                        CalendarReceiver.postDailyNotification(MainActivity.this);
+                        CalendarReceiver.scheduleMidnightAlarm(MainActivity.this);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -242,6 +248,10 @@ public class MainActivity extends Activity {
                 @Override
                 public void run() {
                     try {
+                        android.content.SharedPreferences prefs = getSharedPreferences(CalendarReceiver.PREFS_NAME, Context.MODE_PRIVATE);
+                        prefs.edit().putBoolean(CalendarReceiver.KEY_STICKY_ENABLED, false).apply();
+                        CalendarReceiver.cancelMidnightAlarm(MainActivity.this);
+
                         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                         if (nm != null) {
                             nm.cancel(1001);
@@ -511,6 +521,189 @@ public class MainActivity extends Activity {
 }
 EOF
 
+# 5.1 Create Android CalendarReceiver.java
+cat << 'EOF' > "$BUILD_DIR/src/com/sangalo/family/CalendarReceiver.java"
+package com.sangalo.family;
+
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import org.json.JSONObject;
+
+public class CalendarReceiver extends BroadcastReceiver {
+    public static final String PREFS_NAME = "SangaloPrefs";
+    public static final String KEY_STICKY_ENABLED = "sticky_notif_enabled";
+    public static final String KEY_LAST_TITLE = "last_title";
+    public static final String KEY_LAST_BODY = "last_body";
+    public static final String KEY_SCHEDULE = "calendar_schedule";
+
+    public static final String ACTION_DISMISSED = "com.sangalo.family.ACTION_NOTIFICATION_DISMISSED";
+    public static final String ACTION_MIDNIGHT_TICK = "com.sangalo.family.ACTION_MIDNIGHT_TICK";
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (context == null || intent == null) return;
+        String action = intent.getAction();
+        if (action == null) return;
+
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        boolean enabled = prefs.getBoolean(KEY_STICKY_ENABLED, false);
+
+        if (!enabled) return;
+
+        // Repost or update notification
+        postDailyNotification(context);
+
+        // Schedule next midnight tick
+        scheduleMidnightAlarm(context);
+    }
+
+    public static void postDailyNotification(Context context) {
+        try {
+            SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            boolean enabled = prefs.getBoolean(KEY_STICKY_ENABLED, false);
+            if (!enabled) return;
+
+            NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (nm == null) return;
+
+            String title = prefs.getString(KEY_LAST_TITLE, "सँगालो दैनिक पात्रो");
+            String body = prefs.getString(KEY_LAST_BODY, "");
+
+            String todayKey = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
+            String scheduleJson = prefs.getString(KEY_SCHEDULE, null);
+            if (scheduleJson != null && scheduleJson.length() > 0) {
+                try {
+                    JSONObject obj = new JSONObject(scheduleJson);
+                    if (obj.has(todayKey)) {
+                        JSONObject dayObj = obj.getJSONObject(todayKey);
+                        title = dayObj.optString("title", title);
+                        body = dayObj.optString("body", body);
+                        prefs.edit()
+                             .putString(KEY_LAST_TITLE, title)
+                             .putString(KEY_LAST_BODY, body)
+                             .apply();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel(
+                    MainActivity.CHANNEL_STICKY_ID,
+                    "Daily Calendar",
+                    NotificationManager.IMPORTANCE_LOW
+                );
+                channel.setDescription("Pinned daily calendar date");
+                channel.setShowBadge(false);
+                nm.createNotificationChannel(channel);
+            }
+
+            Intent tapIntent = new Intent(context, MainActivity.class);
+            tapIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (Build.VERSION.SDK_INT >= 23) {
+                flags |= PendingIntent.FLAG_IMMUTABLE;
+            }
+            PendingIntent tapPi = PendingIntent.getActivity(context, 0, tapIntent, flags);
+
+            // DeleteIntent to catch swipe and immediately re-pin
+            Intent deleteIntent = new Intent(context, CalendarReceiver.class);
+            deleteIntent.setAction(ACTION_DISMISSED);
+            int dFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (Build.VERSION.SDK_INT >= 23) {
+                dFlags |= PendingIntent.FLAG_IMMUTABLE;
+            }
+            PendingIntent deletePi = PendingIntent.getBroadcast(context, 0, deleteIntent, dFlags);
+
+            Notification.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                builder = new Notification.Builder(context, MainActivity.CHANNEL_STICKY_ID);
+            } else {
+                builder = new Notification.Builder(context);
+                builder.setPriority(Notification.PRIORITY_LOW);
+            }
+
+            builder.setContentTitle(title)
+                   .setContentText(body)
+                   .setSmallIcon(R.mipmap.ic_launcher)
+                   .setContentIntent(tapPi)
+                   .setDeleteIntent(deletePi)
+                   .setOngoing(true)
+                   .setAutoCancel(false);
+
+            Notification notif = builder.build();
+            notif.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+            nm.notify(1001, notif);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void scheduleMidnightAlarm(Context context) {
+        try {
+            AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            if (am == null) return;
+
+            Intent intent = new Intent(context, CalendarReceiver.class);
+            intent.setAction(ACTION_MIDNIGHT_TICK);
+            int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (Build.VERSION.SDK_INT >= 23) {
+                flags |= PendingIntent.FLAG_IMMUTABLE;
+            }
+            PendingIntent pi = PendingIntent.getBroadcast(context, 2001, intent, flags);
+
+            Calendar nextMidnight = Calendar.getInstance();
+            nextMidnight.add(Calendar.DAY_OF_YEAR, 1);
+            nextMidnight.set(Calendar.HOUR_OF_DAY, 0);
+            nextMidnight.set(Calendar.MINUTE, 0);
+            nextMidnight.set(Calendar.SECOND, 5);
+            nextMidnight.set(Calendar.MILLISECOND, 0);
+
+            if (Build.VERSION.SDK_INT >= 23) {
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextMidnight.getTimeInMillis(), pi);
+            } else if (Build.VERSION.SDK_INT >= 19) {
+                am.setExact(AlarmManager.RTC_WAKEUP, nextMidnight.getTimeInMillis(), pi);
+            } else {
+                am.set(AlarmManager.RTC_WAKEUP, nextMidnight.getTimeInMillis(), pi);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void cancelMidnightAlarm(Context context) {
+        try {
+            AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            if (am == null) return;
+
+            Intent intent = new Intent(context, CalendarReceiver.class);
+            intent.setAction(ACTION_MIDNIGHT_TICK);
+            int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (Build.VERSION.SDK_INT >= 23) {
+                flags |= PendingIntent.FLAG_IMMUTABLE;
+            }
+            PendingIntent pi = PendingIntent.getBroadcast(context, 2001, intent, flags);
+            am.cancel(pi);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+EOF
+
 # 6. Compilation
 echo "[4/7] Compiling Android resources with AAPT..."
 aapt package -f -m \
@@ -523,7 +716,8 @@ echo "[5/7] Compiling Java classes (Java 8 compatibility)..."
 javac -encoding UTF-8 -source 8 -target 8 -d "$BUILD_DIR/bin" \
     -cp "$ANDROID_JAR" \
     "$BUILD_DIR/gen/com/sangalo/family/R.java" \
-    "$BUILD_DIR/src/com/sangalo/family/MainActivity.java"
+    "$BUILD_DIR/src/com/sangalo/family/MainActivity.java" \
+    "$BUILD_DIR/src/com/sangalo/family/CalendarReceiver.java"
 
 echo "[6/7] Converting bytecode to Dalvik DEX with DX..."
 dx --dex --output="$BUILD_DIR/bin/classes.dex" "$BUILD_DIR/bin"

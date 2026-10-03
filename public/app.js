@@ -950,6 +950,14 @@ function getBikramSambatDate(adDate = new Date()) {
   const nepWeekday = nepaliWeekdays[weekdayIndex];
   const nepWeekdayEn = nepaliWeekdaysEn[weekdayIndex];
 
+  const monthsEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const weekdaysFullEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const adDay = adDate.getDate();
+  const adMonthEn = monthsEn[adDate.getMonth()];
+  const adYear = adDate.getFullYear();
+  const adWeekdayEn = weekdaysFullEn[weekdayIndex];
+  const adFormatted = `${adDay} ${adMonthEn} ${adYear}`;
+
   return {
     year: bs.year,
     month,
@@ -959,7 +967,13 @@ function getBikramSambatDate(adDate = new Date()) {
     nepMonthEn,
     nepWeekday,
     nepWeekdayEn,
+    adDay,
+    adMonthEn,
+    adYear,
+    adWeekdayEn,
+    adFormatted,
     devanagariFormatted: toDevanagariDigits(bs.year) + " " + nepMonth + " " + toDevanagariDigits(day) + ", " + nepWeekday,
+    devanagariGateFormatted: toDevanagariDigits(bs.year) + " " + nepMonth + " " + toDevanagariDigits(day) + " गते, " + nepWeekday,
     englishFormatted: nepMonthEn + " " + day + ", " + bs.year + " (" + nepWeekdayEn + ")"
   };
 }
@@ -4417,8 +4431,34 @@ function showStickyCalendarNotification() {
   const bs = getBikramSambatDate();
   const festName = getFestival(bs.year, bs.month, bs.day);
 
-  const title = `📅 ${bs.devanagariFormatted}`;
-  const body = festName ? `चाडपर्व: ${festName} 🌸` : `ई.सं.: ${bs.englishFormatted}`;
+  const title = `📅 ${bs.devanagariGateFormatted || bs.devanagariFormatted}`;
+  const body = festName
+    ? `🌸 ${festName} • ई.सं. (AD): ${bs.adFormatted}`
+    : `ई.सं. (AD): ${bs.adFormatted}, ${bs.adWeekdayEn}`;
+
+  // Sync 60-day calendar schedule to Android SharedPreferences for automatic midnight updates
+  if (isAndroidNativeApp() && typeof window.AndroidBridge.syncCalendarSchedule === 'function') {
+    try {
+      const schedule = {};
+      for (let i = 0; i < 60; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() + i);
+        const curBs = getBikramSambatDate(d);
+        const fName = getFestival(curBs.year, curBs.month, curBs.day);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const dayNum = String(d.getDate()).padStart(2, '0');
+        const key = `${y}-${m}-${dayNum}`;
+        schedule[key] = {
+          title: `📅 ${curBs.devanagariGateFormatted || curBs.devanagariFormatted}`,
+          body: fName ? `🌸 ${fName} • ई.सं. (AD): ${curBs.adFormatted}` : `ई.सं. (AD): ${curBs.adFormatted}, ${curBs.adWeekdayEn}`
+        };
+      }
+      window.AndroidBridge.syncCalendarSchedule(JSON.stringify(schedule));
+    } catch (e) {
+      console.warn('Sync calendar schedule error:', e);
+    }
+  }
 
   if (isAndroidNativeApp() && typeof window.AndroidBridge.showStickyNotification === 'function') {
     window.AndroidBridge.showStickyNotification(title, body);
@@ -4654,9 +4694,12 @@ function checkDailyRemindersAndMedRoutine() {
   const bs = getBikramSambatDate();
   const dateKey = `${bs.year}-${bs.month}-${bs.day}`;
 
-  // Reset fired cache if day changed
+  // Reset fired cache if day changed & refresh sticky notification automatically
   if (lastCheckedDateKey && lastCheckedDateKey !== dateKey) {
     firedAlarmsToday.clear();
+    if (state.stickyNotifEnabled) {
+      showStickyCalendarNotification();
+    }
   }
   lastCheckedDateKey = dateKey;
 
