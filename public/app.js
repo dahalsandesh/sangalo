@@ -5243,6 +5243,34 @@ function fallbackCopy(text, successMsg) {
   document.body.removeChild(ta);
 }
 
+function openExternalLink(url) {
+  if (!url) return;
+  if (window.AndroidBridge && typeof window.AndroidBridge.openExternalUrl === 'function') {
+    window.AndroidBridge.openExternalUrl(url);
+  } else {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+}
+window.openExternalLink = openExternalLink;
+
+async function shareSangaloApp() {
+  const shareData = {
+    title: 'सँगालो (Sangalo) 🇳🇵',
+    text: 'नेपाली घरपरिवारका लागि दैनिक डिजिटल साथी (पात्रो, औषधि अलार्म, हिसाब, कागजात भण्डार) — सँगालो एप डाउनलोड गर्नुहोस्:\nhttps://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk',
+    url: 'https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk'
+  };
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      return;
+    } catch (e) {
+      // User cancelled share dialog or unsupported
+    }
+  }
+  copyToClipboard(shareData.url, currentLang === 'ne' ? 'सँगालो डाउनलोड लिंक कपी भयो!' : 'Download link copied to clipboard!');
+}
+window.shareSangaloApp = shareSangaloApp;
+
 function initTheme() {
   if (state.theme === 'dark') {
     document.documentElement.classList.add('dark');
@@ -5416,11 +5444,11 @@ function initApp() {
       apkAction.innerHTML = `
         <div class="space-y-2">
           <div class="p-2.5 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700/60 rounded-xl text-xs font-bold text-emerald-900 dark:text-emerald-200 text-center">
-            ✅ तपाईंले अहिले मोबाइल एप (.apk) चलाइरहनुभएको छ (Running Offline Standalone App)
+            ✅ तपाईंले अहिले मोबाइल एप (.apk v1.0.0) चलाइरहनुभएको छ
           </div>
-          <button type="button" onclick="copyToClipboard('/sdcard/Documents/Projects/Sangalo.apk', 'APK फाइल लोकेसन कपी भयो!')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center space-x-1.5 active:scale-95">
-            <span>📋</span>
-            <span>APK फाइल लोकेसन कपी गर्नुहोस्</span>
+          <button type="button" onclick="shareSangaloApp()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center space-x-1.5 active:scale-95">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
+            <span>📲 साथी तथा परिवारलाई एप सेयर गर्नुहोस् (Share App)</span>
           </button>
         </div>
       `;

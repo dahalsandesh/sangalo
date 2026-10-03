@@ -318,6 +318,24 @@ public class MainActivity extends Activity {
                 }
             });
         }
+
+        @JavascriptInterface
+        public void openExternalUrl(final String url) {
+            if (url == null || url.trim().isEmpty()) return;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(mContext, "लिंक खोल्न सकिएन: " + url, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
 
     private synchronized void startAlarmSound() {
@@ -451,16 +469,19 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url != null && (url.startsWith("tel:") || url.startsWith("mailto:") || url.startsWith("sms:") || url.startsWith("intent:"))) {
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(intent);
-                        return true;
-                    } catch (Exception e) {
-                        return true;
-                    }
+                if (url == null) return false;
+                if (url.startsWith("file:///android_asset/")) {
+                    return false; // let webview load internal assets
                 }
-                return false;
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    return true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return true;
+                }
             }
         });
 

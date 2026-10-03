@@ -717,20 +717,16 @@
         </div>
         <p class="text-xs text-emerald-800/80 dark:text-emerald-400 font-medium" data-i18n="apkDesc">इन्टरनेट नभए पनि चल्ने गरी परिवारका सदस्यहरूको एन्ड्रोइड फोनमा यो एप इन्स्टल गर्न सक्नुहुन्छ।</p>
         <div id="apkDownloadCardAction" class="pt-1 space-y-2">
-          <a href="https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk" target="_blank" rel="noopener noreferrer" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-bold rounded-xl text-center shadow-xs transition flex items-center justify-center space-x-1.5">
+          <button type="button" onclick="openExternalLink('https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk')" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-bold rounded-xl text-center shadow-xs transition flex items-center justify-center space-x-1.5">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
             <span data-i18n="downloadApkBtn">Sangalo.apk डाउनलोड (v1.0.0)</span>
-          </a>
-          <div class="grid grid-cols-2 gap-2 pt-0.5">
-            <a href="/download" download onclick="if(window.location.protocol==='file:'){copyToClipboard('/sdcard/Documents/Projects/Sangalo.apk', 'APK फाइल लोकेसन कपी भयो!'); return false;}" class="py-1.5 bg-slate-100 dark:bg-[#111722] hover:bg-slate-200 dark:hover:bg-[#151b26] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-[#283347] text-[11px] font-semibold rounded-xl text-center transition">
-              🏠 Local Offline
-            </a>
-            <button type="button" onclick="copyToClipboard('https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk', 'डाउनलोड लिंक कपी भयो!');" class="py-1.5 bg-slate-100 dark:bg-[#111722] hover:bg-slate-200 dark:hover:bg-[#151b26] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-[#283347] text-[11px] font-semibold rounded-xl text-center transition">
-              📋 Share Link
-            </button>
-          </div>
+          </button>
+          <button type="button" onclick="shareSangaloApp()" class="w-full py-2 bg-slate-100 dark:bg-[#111722] hover:bg-slate-200 dark:hover:bg-[#151b26] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-[#283347] text-xs font-semibold rounded-xl text-center transition flex items-center justify-center space-x-1.5 active:scale-95">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
+            <span>📲 साथी तथा परिवारलाई एप सेयर गर्नुहोस् (Share App)</span>
+          </button>
         </div>
       </div>
 
@@ -749,10 +745,8 @@
       </div>
 
       <!-- Subtle Minimal Footer (Only visible when scrolling to bottom of Vault tab) -->
-      <div class="pt-6 pb-2 text-center select-none">
-        <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
-          सँगालो v1.0 • by <a href="https://dahalsandesh.com.np" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition underline underline-offset-2">Sandesh Dahal</a>
-        </p>
+      <div class="pt-6 pb-2 text-center select-none text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+        सँगालो v1.0 • by <a href="https://dahalsandesh.com.np" onclick="openExternalLink('https://dahalsandesh.com.np'); return false;" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition underline underline-offset-2">Sandesh Dahal</a> • <a href="https://github.com/dahalsandesh/sangalo" onclick="openExternalLink('https://github.com/dahalsandesh/sangalo'); return false;" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition underline underline-offset-2">GitHub</a>
       </div>
     </section>
 
