@@ -1,12 +1,12 @@
-const CACHE_NAME = 'sangalo-v9';
+const CACHE_NAME = 'sangalo-v12';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/app.js',
+  '/tailwind.min.js',
   '/manifest.json',
   '/icon.svg',
-  '/icon.png',
-  'https://cdn.tailwindcss.com'
+  '/icon.png'
 ];
 
 self.addEventListener('install', (event) => {

@@ -261,7 +261,15 @@ const i18n = {
     addDocTitle: "कागजात वा फोटो थप्नुहोस्",
     saveDocBtn: "सुरक्षित भण्डारमा सेभ गर्नुहोस्",
     alarmToggleTitle: "औषधि तथा सम्झना अलार्म (Medicine & Reminder Alarms)",
-    alarmToggleDesc: "औषधिको समय र पात्रोका सम्झनाहरूमा घण्टी (Chime) तथा सूचना बज्नेछ।"
+    alarmToggleDesc: "औषधिको समय र पात्रोका सम्झनाहरूमा घण्टी (Chime) तथा सूचना बज्नेछ।",
+    customizeQuickAdd: "मिलाउनुहोस्",
+    quickAddModalTitle: "१-ट्याप सामान अनुकूलन",
+    quickAddModalSub: "बारम्बार चाहिने सामान थप्नुहोस् वा हटाउनुहोस्",
+    quickItemNamePlaceholder: "सामानको नाम (e.g. अण्डा, स्याउ)",
+    addQuickItemBtn: "+ १-ट्यापमा थप्नुहोस्",
+    activeQuickItems: "हालका १-ट्याप सामग्रीहरू:",
+    resetDefaultsBtn: "पूर्वनिर्धारित रिसेट (Reset)",
+    doneBtn: "सकियो (Done)"
   },
   en: {
     appTitle: "Sangalo",
@@ -430,7 +438,15 @@ const i18n = {
     addDocTitle: "Add Document or Photo",
     saveDocBtn: "Save to Secure Vault",
     alarmToggleTitle: "Medicine & Reminder Alarms",
-    alarmToggleDesc: "Play audio chime and notification for medication schedules and calendar reminders."
+    alarmToggleDesc: "Play audio chime and notification for medication schedules and calendar reminders.",
+    customizeQuickAdd: "Customize",
+    quickAddModalTitle: "Customize 1-Tap Quick Add",
+    quickAddModalSub: "Add or remove frequent household essentials",
+    quickItemNamePlaceholder: "Item name (e.g. Eggs, Apples)",
+    addQuickItemBtn: "+ Add to Quick List",
+    activeQuickItems: "Active 1-Tap Essentials:",
+    resetDefaultsBtn: "Reset to Defaults",
+    doneBtn: "Done"
   }
 };
 
@@ -586,6 +602,19 @@ function loadState() {
   }
   if (typeof state.petHappiness !== 'number') {
     state.petHappiness = 90;
+  }
+  if (!state.quickAddItems || !Array.isArray(state.quickAddItems) || state.quickAddItems.length === 0) {
+    state.quickAddItems = [
+      { id: 'qa-1', name: 'चामल', enName: 'Rice', cat: 'किराना' },
+      { id: 'qa-2', name: 'दाल', enName: 'Daal', cat: 'किराना' },
+      { id: 'qa-3', name: 'तोरीको तेल', enName: 'Oil', cat: 'किराना' },
+      { id: 'qa-4', name: 'दूध', enName: 'Milk', cat: 'डेरी र दूध' },
+      { id: 'qa-5', name: 'आलु', enName: 'Potato', cat: 'तरकारी र फलफूल' },
+      { id: 'qa-6', name: 'प्याज', enName: 'Onion', cat: 'तरकारी र फलफूल' },
+      { id: 'qa-7', name: 'चियापत्ती', enName: 'Tea', cat: 'किराना' },
+      { id: 'qa-8', name: 'चिउरा', enName: 'Chiura', cat: 'किराना' },
+      { id: 'qa-9', name: 'साबुन र सरफ', enName: 'Soap & Powder', cat: 'सरसफाइ' }
+    ];
   }
 }
 
@@ -1032,6 +1061,7 @@ function renderWeekdayHeaders() {
 function renderFullCalendarGrid() {
   const container = document.getElementById('calendarMonthGrid');
   const titleEl = document.getElementById('calendarMonthTitle');
+  const subtitleEl = document.getElementById('calendarMonthSubtitle');
   const dualDisplayEl = document.getElementById('calendarDualDisplay');
   if (!container) return;
 
@@ -1047,6 +1077,12 @@ function renderFullCalendarGrid() {
   const todayBs = getBikramSambatDate();
   const isCurrentMonth = (todayBs.year === year && todayBs.month === month);
 
+  const adFirst = bsToAdDate(year, month, 1);
+  const adLast = bsToAdDate(year, month, daysInMonth);
+  const adMonth1 = adFirst.toLocaleDateString('en-US', { month: 'short' });
+  const adMonth2 = adLast.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  const adRange = adMonth1 === adMonth2.split(' ')[0] ? adMonth2 : `${adMonth1} / ${adMonth2}`;
+
   const monthName = currentLang === 'ne' ? nepaliMonths[month - 1] : nepaliMonthsEn[month - 1];
   const yearName = currentLang === 'ne' ? toDevanagariDigits(year) : year;
   const yearSelect = document.getElementById('calendarYearSelect');
@@ -1057,12 +1093,17 @@ function renderFullCalendarGrid() {
   if (titleEl) {
     titleEl.innerText = `${monthName} ${yearName}`;
   }
+  if (subtitleEl) {
+    subtitleEl.innerText = currentLang === 'ne' 
+      ? `नेपाली पात्रो (वि.सं.) • ${adRange}` 
+      : `Bikram Sambat (BS) • ${adRange}`;
+  }
 
   let html = '';
 
   // Empty leading cells
   for (let i = 0; i < startCol; i++) {
-    html += `<div class="h-10 rounded-xl bg-slate-50/50 dark:bg-zinc-950/30 border border-transparent"></div>`;
+    html += `<div class="h-12 rounded-xl bg-slate-50/40 dark:bg-[#111722]/30 border border-transparent"></div>`;
   }
 
   // Active day cells
@@ -1082,25 +1123,38 @@ function renderFullCalendarGrid() {
     const dayDisplay = currentLang === 'ne' ? devDay : day;
     const adDayNum = adDate.getDate();
 
-    let borderClass = 'border-slate-200 dark:border-zinc-800';
-    let bgClass = 'bg-white dark:bg-zinc-900';
-    let textClass = isSaturday ? 'text-rose-600 dark:text-rose-400 font-extrabold' : 'text-slate-900 dark:text-zinc-100 font-bold';
+    let borderClass = 'border-slate-200 dark:border-[#283347]';
+    let bgClass = 'bg-white dark:bg-[#18202d]';
+    let textClass = 'text-slate-900 dark:text-slate-100 font-bold';
+
+    if (isSaturday) {
+      borderClass = 'border-rose-200/80 dark:border-rose-900/40';
+      bgClass = 'bg-rose-50/70 dark:bg-rose-950/25';
+      textClass = 'text-rose-600 dark:text-rose-400 font-extrabold';
+    }
+
+    if (festName) {
+      borderClass = 'border-amber-300/90 dark:border-amber-700/60';
+      bgClass = isSaturday ? 'bg-amber-50/80 dark:bg-amber-950/30' : 'bg-amber-50/75 dark:bg-amber-950/25';
+      textClass = isSaturday ? 'text-rose-600 dark:text-rose-400 font-extrabold' : 'text-amber-900 dark:text-amber-200 font-extrabold';
+    }
 
     if (isToday) {
-      borderClass = 'border-emerald-500 ring-2 ring-emerald-500/20';
-      bgClass = 'bg-emerald-50/40 dark:bg-emerald-950/30';
+      borderClass = 'border-emerald-500 ring-2 ring-emerald-500/25';
+      bgClass = 'bg-emerald-50/70 dark:bg-emerald-950/40';
+      textClass = 'text-emerald-900 dark:text-emerald-100 font-black';
     }
 
     html += `
       <div onclick="openDateDetails('${dateKey}', ${day}, '${festKey}')" 
-           class="h-12 p-1 rounded-xl border ${borderClass} ${bgClass} cursor-pointer hover:border-emerald-400 flex flex-col justify-between transition-all select-none relative">
+           class="h-12 p-1 rounded-xl border ${borderClass} ${bgClass} cursor-pointer hover:border-emerald-400 flex flex-col justify-between transition-all select-none relative group active:scale-95">
         <div class="flex justify-between items-start leading-none">
           <span class="text-xs ${textClass}">${dayDisplay}</span>
-          <span class="text-[9px] text-slate-400 font-mono">${adDayNum}</span>
+          <span class="text-[9px] ${isSaturday ? 'text-rose-400 dark:text-rose-500 font-bold' : 'text-slate-400 dark:text-slate-300 font-mono'}">${adDayNum}</span>
         </div>
-        <div class="flex items-center space-x-0.5 truncate">
-          ${festName ? '<span class="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" title="' + festName + '"></span>' : ''}
-          ${userEvents.length > 0 ? '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0"></span>' : ''}
+        <div class="flex items-center space-x-0.5 truncate leading-none">
+          ${festName ? `<span class="inline-block px-1 py-0.5 text-[8px] font-bold bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 rounded truncate max-w-full" title="${escapeHtml(festName)}">${festName.length > 5 ? escapeHtml(festName.substring(0, 4)) + '..' : escapeHtml(festName)}</span>` : ''}
+          ${userEvents.length > 0 ? `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" title="${userEvents.length} सम्झना"></span>` : ''}
         </div>
       </div>
     `;
@@ -1109,16 +1163,10 @@ function renderFullCalendarGrid() {
   container.innerHTML = html;
 
   if (dualDisplayEl) {
-    const adFirst = bsToAdDate(year, month, 1);
-    const adLast = bsToAdDate(year, month, daysInMonth);
-    const adMonth1 = adFirst.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-    const adMonth2 = adLast.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-    const adRange = adMonth1 === adMonth2 ? adMonth1 : `${adMonth1} / ${adMonth2}`;
-
     dualDisplayEl.innerHTML = `
-      <div class="flex justify-between items-center text-[11px] font-medium text-slate-500 dark:text-zinc-400">
+      <div class="flex justify-between items-center text-[11px] font-medium text-slate-500 dark:text-slate-400">
         <span>${currentLang === 'ne' ? 'ई.सं. (AD) समकक्षी महिना:' : 'Gregorian (AD) equivalent:'}</span>
-        <span class="font-mono font-bold text-slate-800 dark:text-zinc-200">${adRange}</span>
+        <span class="font-mono font-bold text-slate-800 dark:text-slate-200">${adRange}</span>
       </div>
     `;
   }
@@ -1238,31 +1286,39 @@ function renderRemindersList() {
   const container = document.getElementById('upcomingRemindersList');
   if (!container) return;
 
+  const todayAd = new Date();
+  todayAd.setHours(0, 0, 0, 0);
+
   const currentYear = (calendarState && calendarState.currentBsYear) || 2081;
   const currentMonth = (calendarState && calendarState.currentBsMonth) || 1;
   const items = [];
 
-  // 1. Gather verified official festivals for current month and next month
-  for (let mOffset = 0; mOffset <= 1; mOffset++) {
+  // 1. Gather verified official festivals for current month and next 2 months
+  for (let mOffset = 0; mOffset <= 2; mOffset++) {
     let y = currentYear;
     let m = currentMonth + mOffset;
-    if (m > 12) {
-      m = 1;
+    while (m > 12) {
+      m -= 12;
       y++;
     }
     const days = getBsMonthDays(y, m);
     for (let d = 1; d <= days; d++) {
       const fest = getFestival(y, m, d);
       if (fest) {
-        items.push({
-          type: 'festival',
-          year: y,
-          month: m,
-          day: d,
-          title: fest,
-          dateKey: `${y}-${m}-${d}`,
-          sortKey: y * 10000 + m * 100 + d
-        });
+        const evAd = bsToAdDate(y, m, d);
+        evAd.setHours(0, 0, 0, 0);
+        const diffDays = Math.round((evAd.getTime() - todayAd.getTime()) / (1000 * 60 * 60 * 24));
+        if (diffDays >= 0 && diffDays <= 40) {
+          items.push({
+            type: 'festival',
+            year: y,
+            month: m,
+            day: d,
+            title: fest,
+            dateKey: `${y}-${m}-${d}`,
+            diffDays: diffDays
+          });
+        }
       }
     }
   }
@@ -1273,63 +1329,88 @@ function renderRemindersList() {
       const parts = key.split('-').map(Number);
       if (parts.length === 3) {
         const y = parts[0], m = parts[1], d = parts[2];
-        state.events[key].forEach(ev => {
-          items.push({
-            type: 'user',
-            id: ev.id,
-            year: y,
-            month: m,
-            day: d,
-            title: ev.title,
-            time: ev.time,
-            dateKey: key,
-            sortKey: y * 10000 + m * 100 + d
+        const evAd = bsToAdDate(y, m, d);
+        evAd.setHours(0, 0, 0, 0);
+        const diffDays = Math.round((evAd.getTime() - todayAd.getTime()) / (1000 * 60 * 60 * 24));
+        if (diffDays >= 0 && diffDays <= 40) {
+          state.events[key].forEach(ev => {
+            items.push({
+              type: 'user',
+              id: ev.id,
+              year: y,
+              month: m,
+              day: d,
+              title: ev.title,
+              time: ev.time,
+              dateKey: key,
+              diffDays: diffDays
+            });
           });
-        });
+        }
       }
     });
   }
 
-  items.sort((a, b) => a.sortKey - b.sortKey);
+  // Sort by diffDays ascending (nearest first)
+  items.sort((a, b) => a.diffDays - b.diffDays);
 
   if (items.length === 0) {
-    container.innerHTML = `<div class="text-xs text-slate-500 dark:text-zinc-400 py-3 text-center">${t('noReminders')}</div>`;
+    container.innerHTML = `<div class="text-xs text-slate-500 dark:text-slate-400 py-3 text-center">${currentLang === 'ne' ? 'आगामी कुनै सम्झना वा चाडपर्व छैन' : 'No upcoming reminders or festivals'}</div>`;
     return;
   }
 
-  container.innerHTML = items.slice(0, 6).map(it => {
+  // Nearest 4 items only to keep view clean and compact
+  const nearestItems = items.slice(0, 4);
+
+  container.innerHTML = nearestItems.map(it => {
     const mName = currentLang === 'ne' ? nepaliMonths[it.month - 1] : nepaliMonthsEn[it.month - 1];
     const dDev = currentLang === 'ne' ? toDevanagariDigits(it.day) : it.day;
     const yDev = currentLang === 'ne' ? toDevanagariDigits(it.year) : it.year;
     const dateFormatted = `${mName} ${dDev}, ${yDev}`;
 
+    let countdownBadge = '';
+    if (it.diffDays === 0) {
+      countdownBadge = `<span class="px-2 py-0.5 text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-300 rounded-md shadow-2xs whitespace-nowrap">${currentLang === 'ne' ? 'आज' : 'Today'}</span>`;
+    } else if (it.diffDays === 1) {
+      countdownBadge = `<span class="px-2 py-0.5 text-[10px] font-extrabold bg-sky-100 dark:bg-sky-950/90 text-sky-800 dark:text-sky-300 rounded-md shadow-2xs whitespace-nowrap">${currentLang === 'ne' ? 'भोलि' : 'Tomorrow'}</span>`;
+    } else {
+      const daysDev = currentLang === 'ne' ? toDevanagariDigits(it.diffDays) : it.diffDays;
+      countdownBadge = `<span class="px-2 py-0.5 text-[10px] font-bold bg-slate-100 dark:bg-[#111722] text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-[#334158] rounded-md font-mono whitespace-nowrap">${daysDev} ${currentLang === 'ne' ? 'दिन बाँकी' : 'days left'}</span>`;
+    }
+
     if (it.type === 'festival') {
       return `
         <div onclick="openDateDetails('${it.dateKey}', ${it.day}, '${it.month}-${it.day}')" 
-             class="p-2.5 bg-gradient-to-r from-amber-50/60 to-white dark:from-zinc-900 dark:to-zinc-900 border border-amber-200/60 dark:border-zinc-800 rounded-xl flex items-center justify-between shadow-2xs cursor-pointer hover:border-amber-400 transition">
-          <div>
-            <div class="flex items-center space-x-1.5">
-              <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 rounded-md">🎉 चाडपर्व</span>
-              <span class="text-xs font-bold text-slate-900 dark:text-zinc-100">${escapeHtml(it.title)}</span>
+             class="p-2.5 bg-white dark:bg-[#18202d] border border-amber-200/80 dark:border-amber-900/40 rounded-xl flex items-center justify-between shadow-2xs cursor-pointer hover:border-amber-400 transition active:scale-95">
+          <div class="flex-1 min-w-0 pr-2">
+            <div class="flex items-center space-x-1.5 truncate">
+              <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 rounded-md flex-shrink-0">🎉 चाडपर्व</span>
+              <span class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">${escapeHtml(it.title)}</span>
             </div>
-            <div class="text-[10px] text-amber-700 dark:text-amber-400 font-medium mt-0.5">${dateFormatted}</div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">${dateFormatted}</div>
           </div>
-          <span class="text-xs text-slate-400">→</span>
+          <div class="flex items-center space-x-2 flex-shrink-0">
+            ${countdownBadge}
+            <span class="text-xs text-slate-400">→</span>
+          </div>
         </div>
       `;
     } else {
       return `
-        <div class="p-2.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between shadow-2xs">
-          <div>
-            <div class="flex items-center space-x-1.5">
-              <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 rounded-md">📌 सम्झना</span>
-              <span class="text-xs font-bold text-slate-900 dark:text-zinc-100">${escapeHtml(it.title)}</span>
+        <div class="p-2.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-xl flex items-center justify-between shadow-2xs">
+          <div class="flex-1 min-w-0 pr-2">
+            <div class="flex items-center space-x-1.5 truncate">
+              <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 rounded-md flex-shrink-0">📌 सम्झना</span>
+              <span class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">${escapeHtml(it.title)}</span>
             </div>
-            <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">${dateFormatted} ${it.time ? '• ' + it.time : ''}</div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">${dateFormatted} ${it.time ? '• ' + it.time : ''}</div>
           </div>
-          <button onclick="deleteEvent('${it.dateKey}', ${it.id})" class="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
+          <div class="flex items-center space-x-1.5 flex-shrink-0">
+            ${countdownBadge}
+            <button onclick="deleteEvent('${it.dateKey}', ${it.id})" class="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg transition" title="Delete">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
         </div>
       `;
     }
@@ -2864,31 +2945,140 @@ function rollDice() {
 // ---------------------------------------------------------------------
 // 9. SHOPPING & ESSENTIALS
 // ---------------------------------------------------------------------
-const quickAddList = [
-  { key: 'itemRice', name: 'चामल', enName: 'Rice', cat: 'किराना' },
-  { key: 'itemDaal', name: 'दाल', enName: 'Daal', cat: 'किराना' },
-  { key: 'itemOil', name: 'तोरीको तेल', enName: 'Oil', cat: 'किराना' },
-  { key: 'itemMilk', name: 'दूध', enName: 'Milk', cat: 'डेरी र दूध' },
-  { key: 'itemPotato', name: 'आलु', enName: 'Potato', cat: 'तरकारी र फलफूल' },
-  { key: 'itemOnion', name: 'प्याज', enName: 'Onion', cat: 'तरकारी र फलफूल' },
-  { key: 'itemTea', name: 'चियापत्ती', enName: 'Tea', cat: 'किराना' },
-  { key: 'itemChiura', name: 'चिउरा', enName: 'Chiura', cat: 'किराना' },
-  { key: 'itemSoap', name: 'साबुन र सरफ', enName: 'Soap & Powder', cat: 'सरसफाइ' }
+const defaultQuickAddItems = [
+  { id: 'qa-1', name: 'चामल', enName: 'Rice', cat: 'किराना' },
+  { id: 'qa-2', name: 'दाल', enName: 'Daal', cat: 'किराना' },
+  { id: 'qa-3', name: 'तोरीको तेल', enName: 'Oil', cat: 'किराना' },
+  { id: 'qa-4', name: 'दूध', enName: 'Milk', cat: 'डेरी र दूध' },
+  { id: 'qa-5', name: 'आलु', enName: 'Potato', cat: 'तरकारी र फलफूल' },
+  { id: 'qa-6', name: 'प्याज', enName: 'Onion', cat: 'तरकारी र फलफूल' },
+  { id: 'qa-7', name: 'चियापत्ती', enName: 'Tea', cat: 'किराना' },
+  { id: 'qa-8', name: 'चिउरा', enName: 'Chiura', cat: 'किराना' },
+  { id: 'qa-9', name: 'साबुन र सरफ', enName: 'Soap & Powder', cat: 'सरसफाइ' }
 ];
+
+function getQuickAddItems() {
+  if (!state.quickAddItems || !Array.isArray(state.quickAddItems) || state.quickAddItems.length === 0) {
+    state.quickAddItems = JSON.parse(JSON.stringify(defaultQuickAddItems));
+    saveState();
+  }
+  return state.quickAddItems;
+}
 
 function renderQuickAddTray() {
   const container = document.getElementById('quickAddContainer');
   if (!container) return;
 
-  container.innerHTML = quickAddList.map(item => {
-    const label = currentLang === 'ne' ? item.name : item.enName;
+  const items = getQuickAddItems();
+  container.innerHTML = items.map(item => {
+    const label = currentLang === 'ne' ? item.name : (item.enName || item.name);
     return `
-      <button type="button" onclick="quickAddShopping('${label}', '${item.cat}')" 
-              class="px-2.5 py-1 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 hover:border-emerald-500 rounded-xl text-xs font-semibold text-slate-700 dark:text-zinc-300 transition shadow-2xs">
-        + ${label}
+      <button type="button" onclick="quickAddShopping('${escapeHtml(label)}', '${escapeHtml(item.cat || 'किराना')}')" 
+              class="px-2.5 py-1 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] hover:border-emerald-500 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 transition shadow-2xs active:scale-95">
+        + ${escapeHtml(label)}
       </button>
     `;
   }).join('');
+}
+
+function openQuickAddModal() {
+  const modal = document.getElementById('quickAddModal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+
+  const catSelect = document.getElementById('quickAddItemCat');
+  if (catSelect) {
+    const categories = [
+      { ne: 'किराना', en: 'Groceries' },
+      { ne: 'तरकारी र फलफूल', en: 'Veggies & Fruits' },
+      { ne: 'डेरी र दूध', en: 'Dairy & Milk' },
+      { ne: 'खाजा र बेकरी', en: 'Bakery & Snacks' },
+      { ne: 'मासु र माछा', en: 'Meat & Fish' },
+      { ne: 'सरसफाइ', en: 'Cleaning' },
+      { ne: 'औषधि', en: 'Pharmacy' },
+      { ne: 'अन्य', en: 'Other' }
+    ];
+    catSelect.innerHTML = categories.map(c => `
+      <option value="${c.ne}">${currentLang === 'ne' ? c.ne : c.en}</option>
+    `).join('');
+  }
+
+  renderQuickAddModalChips();
+}
+
+function closeQuickAddModal() {
+  const modal = document.getElementById('quickAddModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function renderQuickAddModalChips() {
+  const chipsContainer = document.getElementById('quickAddModalChips');
+  if (!chipsContainer) return;
+
+  const items = getQuickAddItems();
+  if (items.length === 0) {
+    chipsContainer.innerHTML = `<span class="text-xs text-slate-400 py-1">${currentLang === 'ne' ? 'कुनै सामान छैन, माथिबाट नयाँ थप्नुहोस्' : 'No items. Add new above'}</span>`;
+    return;
+  }
+
+  chipsContainer.innerHTML = items.map(it => {
+    const label = currentLang === 'ne' ? it.name : (it.enName || it.name);
+    return `
+      <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-slate-100 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200">
+        <span>${escapeHtml(label)}</span>
+        <button type="button" onclick="deleteQuickAddItem('${it.id}')" class="text-slate-400 hover:text-rose-500 font-black p-0.5 ml-0.5 transition" title="Delete">✕</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function addCustomQuickAddItem(e) {
+  if (e) e.preventDefault();
+  const input = document.getElementById('quickAddItemInput');
+  const catSelect = document.getElementById('quickAddItemCat');
+  if (!input || !input.value.trim()) return;
+
+  const name = input.value.trim();
+  const cat = catSelect ? catSelect.value : 'किराना';
+  const items = getQuickAddItems();
+
+  items.push({
+    id: 'qa-' + Date.now(),
+    name: name,
+    enName: name,
+    cat: cat
+  });
+
+  saveState();
+  playSound('coin');
+  input.value = '';
+  renderQuickAddModalChips();
+  renderQuickAddTray();
+  showToast(currentLang === 'ne' ? '१-ट्याप सामान थपियो' : 'Quick add item added');
+}
+
+function deleteQuickAddItem(id) {
+  state.quickAddItems = getQuickAddItems().filter(i => String(i.id) !== String(id));
+  saveState();
+  playSound('pop');
+  renderQuickAddModalChips();
+  renderQuickAddTray();
+  showToast(currentLang === 'ne' ? 'सामान हटाइयो' : 'Item removed');
+}
+
+function resetQuickAddDefaults() {
+  requestConfirm(
+    currentLang === 'ne' ? 'पूर्वनिर्धारित रिसेट गर्ने?' : 'Reset to Defaults?',
+    currentLang === 'ne' ? 'सबै १-ट्याप सामानहरू सुरुको अवस्थामा फर्कनेछन्।' : 'All quick-add items will be restored to initial defaults.',
+    () => {
+      state.quickAddItems = JSON.parse(JSON.stringify(defaultQuickAddItems));
+      saveState();
+      playSound('magic');
+      renderQuickAddModalChips();
+      renderQuickAddTray();
+      showToast(currentLang === 'ne' ? 'सुरुको सामान सूची रिसेट भयो' : 'Default essentials restored');
+    }
+  );
 }
 
 function populateCategoryDropdowns() {
@@ -3555,9 +3745,9 @@ function renderMedicineRoutine() {
   }
 
   const slots = [
-    { id: 'morning', label: currentLang === 'ne' ? '🌅 बिहान (Morning - 8 AM)' : '🌅 Morning (8 AM)' },
-    { id: 'afternoon', label: currentLang === 'ne' ? '☀️ दिउँसो (Afternoon - 1 PM)' : '☀️ Afternoon (1 PM)' },
-    { id: 'night', label: currentLang === 'ne' ? '🌙 साँझ/राति (Night - 8 PM)' : '🌙 Night (8 PM)' }
+    { id: 'morning', defaultTime: '08:00', label: currentLang === 'ne' ? '🌅 बिहान (Morning)' : '🌅 Morning' },
+    { id: 'afternoon', defaultTime: '13:00', label: currentLang === 'ne' ? '☀️ दिउँसो (Afternoon)' : '☀️ Afternoon' },
+    { id: 'night', defaultTime: '20:00', label: currentLang === 'ne' ? '🌙 साँझ/राति (Night)' : '🌙 Night' }
   ];
 
   let html = '';
@@ -3580,6 +3770,7 @@ function renderMedicineRoutine() {
       const foodClass = m.food === 'before'
         ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
         : 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300';
+      const timeDisplay = m.time || slot.defaultTime;
 
       html += `
         <div class="p-3 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-xl flex items-center justify-between gap-2 shadow-2xs ${isTaken ? 'bg-emerald-50/50 dark:bg-emerald-950/30' : ''}">
@@ -3592,7 +3783,8 @@ function renderMedicineRoutine() {
                 <span class="text-xs font-extrabold text-slate-900 dark:text-slate-100 truncate ${isTaken ? 'line-through text-slate-400 dark:text-slate-400' : ''}">${escapeHtml(m.name)}</span>
                 <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${foodClass}">${foodLabel}</span>
               </div>
-              <div class="text-[11px] text-slate-500 dark:text-slate-300 font-medium">
+              <div class="text-[11px] text-slate-500 dark:text-slate-300 font-medium flex items-center flex-wrap gap-1.5 mt-0.5">
+                <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#111722] text-slate-700 dark:text-slate-300 font-bold border border-slate-200 dark:border-[#283347]">⏰ ${escapeHtml(timeDisplay)}</span>
                 ${m.dosage ? `<span>${escapeHtml(m.dosage)}</span> • ` : ''}
                 <span class="${isTaken ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-400'}">${isTaken ? (currentLang === 'ne' ? 'आज खाइसकियो' : 'Taken today') : (currentLang === 'ne' ? 'खान बाँकी' : 'Pending')}</span>
               </div>
@@ -3615,6 +3807,14 @@ function renderMedicineRoutine() {
   container.innerHTML = html;
 }
 
+function onMedSlotChange(slot) {
+  const timeInput = document.getElementById('medTimeInput');
+  if (!timeInput) return;
+  if (slot === 'morning') timeInput.value = '08:00';
+  else if (slot === 'afternoon') timeInput.value = '13:00';
+  else if (slot === 'night') timeInput.value = '20:00';
+}
+
 function openMedicineModal(editId) {
   const modal = document.getElementById('medicineModal');
   const heading = document.getElementById('medModalHeading');
@@ -3627,6 +3827,7 @@ function openMedicineModal(editId) {
     if (editIdInput) editIdInput.value = m.id;
     document.getElementById('medNameInput').value = m.name || '';
     document.getElementById('medSlotInput').value = m.slot || 'morning';
+    document.getElementById('medTimeInput').value = m.time || (m.slot === 'morning' ? '08:00' : m.slot === 'afternoon' ? '13:00' : '20:00');
     document.getElementById('medDosageInput').value = m.dosage || '१ चक्की';
     const radios = document.getElementsByName('medFood');
     radios.forEach(r => { if (r.value === m.food) r.checked = true; });
@@ -3635,6 +3836,7 @@ function openMedicineModal(editId) {
     if (editIdInput) editIdInput.value = '';
     document.getElementById('medNameInput').value = '';
     document.getElementById('medSlotInput').value = 'morning';
+    document.getElementById('medTimeInput').value = '08:00';
     document.getElementById('medDosageInput').value = '१ चक्की';
   }
 
@@ -3651,6 +3853,7 @@ function saveMedicine(e) {
   const editId = document.getElementById('medEditId').value;
   const name = document.getElementById('medNameInput').value.trim();
   const slot = document.getElementById('medSlotInput').value || 'morning';
+  const time = document.getElementById('medTimeInput').value || (slot === 'morning' ? '08:00' : slot === 'afternoon' ? '13:00' : '20:00');
   const dosage = document.getElementById('medDosageInput').value.trim() || '१ चक्की';
   const foodRadio = document.querySelector('input[name="medFood"]:checked');
   const food = foodRadio ? foodRadio.value : 'after';
@@ -3663,13 +3866,14 @@ function saveMedicine(e) {
   if (editId) {
     const idx = state.health.medicines.findIndex(m => m.id === parseInt(editId));
     if (idx !== -1) {
-      state.health.medicines[idx] = { ...state.health.medicines[idx], name, slot, dosage, food };
+      state.health.medicines[idx] = { ...state.health.medicines[idx], name, slot, time, dosage, food };
     }
   } else {
     state.health.medicines.push({
       id: Date.now(),
       name,
       slot,
+      time,
       dosage,
       food,
       takenDates: []
@@ -4166,15 +4370,24 @@ function importBackup(event) {
 }
 
 // ---------------------------------------------------------------------
-// 12. STICKY NOTIFICATION BAR (Hamro Patro Style)
+// 12. STICKY NOTIFICATION BAR (Hamro Patro Style) & ALARM BRIDGE
 // ---------------------------------------------------------------------
+function isAndroidNativeApp() {
+  return typeof window.AndroidBridge !== 'undefined';
+}
+
 function toggleStickyNotification(e) {
   const enabled = e.target.checked;
   state.stickyNotifEnabled = enabled;
   saveState();
 
   if (enabled) {
-    if ('Notification' in window) {
+    if (isAndroidNativeApp()) {
+      if (typeof window.AndroidBridge.requestNotificationPermission === 'function') {
+        window.AndroidBridge.requestNotificationPermission();
+      }
+      showStickyCalendarNotification();
+    } else if ('Notification' in window) {
       if (Notification.permission === 'granted') {
         showStickyCalendarNotification();
       } else if (Notification.permission !== 'denied') {
@@ -4190,29 +4403,38 @@ function toggleStickyNotification(e) {
         });
       }
     } else {
-      showToast(currentLang === 'ne' ? 'यो डिभाइसमा नोटिफिकेसन समर्थित छैन' : 'Notifications not supported');
+      showToast(currentLang === 'ne' ? 'यो ब्राउजरमा वेब नोटिफिकेसन समर्थित छैन' : 'Web Notifications not supported');
     }
   } else {
+    if (isAndroidNativeApp() && typeof window.AndroidBridge.cancelStickyNotification === 'function') {
+      window.AndroidBridge.cancelStickyNotification();
+    }
     showToast(currentLang === 'ne' ? 'नोटिफिकेसन बन्द गरियो' : 'Notification pinned date turned off');
   }
 }
 
 function showStickyCalendarNotification() {
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
-
   const bs = getBikramSambatDate();
   const festName = getFestival(bs.year, bs.month, bs.day);
 
   const title = `📅 ${bs.devanagariFormatted}`;
   const body = festName ? `चाडपर्व: ${festName} 🌸` : `ई.सं.: ${bs.englishFormatted}`;
 
+  if (isAndroidNativeApp() && typeof window.AndroidBridge.showStickyNotification === 'function') {
+    window.AndroidBridge.showStickyNotification(title, body);
+    showToast(currentLang === 'ne' ? 'आजको मिति नोटिफिकेसन बारमा राखियो 📌' : 'Today\'s date pinned in notifications 📌');
+    return;
+  }
+
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
   try {
-    if ('serviceWorker' in navigator && navigator.serviceWorker.ready) {
+    if ('serviceWorker' in navigator && window.location.protocol.startsWith('http') && navigator.serviceWorker.ready) {
       navigator.serviceWorker.ready.then(reg => {
         reg.showNotification(title, {
           body: body,
-          icon: '/icon.png',
-          badge: '/icon.png',
+          icon: 'icon.png',
+          badge: 'icon.png',
           tag: 'sangalo-daily-patro',
           renotify: false,
           silent: true
@@ -4221,7 +4443,7 @@ function showStickyCalendarNotification() {
     } else {
       new Notification(title, {
         body: body,
-        icon: '/icon.png',
+        icon: 'icon.png',
         tag: 'sangalo-daily-patro',
         silent: true
       });
@@ -4236,6 +4458,7 @@ function showStickyCalendarNotification() {
 let alarmTimerId = null;
 const firedAlarmsToday = new Set();
 let lastCheckedDateKey = '';
+let currentRingingAlarmInfo = null;
 
 function initAlarmEngine() {
   const toggle = document.getElementById('alarmMasterToggle');
@@ -4243,10 +4466,10 @@ function initAlarmEngine() {
     toggle.checked = state.alarmsEnabled !== false;
   }
 
-  // Run initial check and set periodic interval (every 25 seconds)
+  // Run initial check and set periodic interval (every 20 seconds)
   checkDailyRemindersAndMedRoutine();
   if (alarmTimerId) clearInterval(alarmTimerId);
-  alarmTimerId = setInterval(checkDailyRemindersAndMedRoutine, 25000);
+  alarmTimerId = setInterval(checkDailyRemindersAndMedRoutine, 20000);
 
   // Resume check when app comes to foreground or screen unlocks
   document.addEventListener('visibilitychange', () => {
@@ -4262,13 +4485,21 @@ function toggleAlarmSystem(e) {
   saveState();
 
   if (enabled) {
-    playAlarmTone();
-    if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
-      Notification.requestPermission();
+    if (isAndroidNativeApp()) {
+      if (typeof window.AndroidBridge.requestNotificationPermission === 'function') {
+        window.AndroidBridge.requestNotificationPermission();
+      }
+    } else {
+      playAlarmTone();
+      if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+        Notification.requestPermission();
+      }
     }
     showToast(currentLang === 'ne' ? 'औषधि तथा सम्झना अलार्म सक्रिय गरियो ⏰' : 'Medicine & reminder alarms activated ⏰');
     checkDailyRemindersAndMedRoutine();
   } else {
+    stopAlarmAudioAndVibration();
+    closeAlarmPopupModal();
     showToast(currentLang === 'ne' ? 'अलार्म बन्द गरियो' : 'Alarms turned off');
   }
 }
@@ -4278,15 +4509,70 @@ function playAlarmTone() {
   setTimeout(() => playSound('happy'), 320);
 }
 
-function fireAlarmNotice(title, body, type) {
+function stopAlarmAudioAndVibration() {
+  if (isAndroidNativeApp() && typeof window.AndroidBridge.stopAlarmSound === 'function') {
+    window.AndroidBridge.stopAlarmSound();
+  }
+}
+
+function closeAlarmPopupModal() {
+  const modal = document.getElementById('medAlarmPopupModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function fireAlarmNotice(title, body, type, payload) {
   if (state.alarmsEnabled === false) return;
 
-  playAlarmTone();
+  currentRingingAlarmInfo = { title, body, type, payload };
 
-  // Prominent in-app toast
-  showToast(`⏰ ${title}: ${body}`, 7000);
+  // 1. Play Native Alarm / Vibration or Web Audio
+  if (isAndroidNativeApp() && typeof window.AndroidBridge.triggerAlarm === 'function') {
+    window.AndroidBridge.triggerAlarm(title, body, type || 'alarm');
+  } else {
+    playAlarmTone();
+  }
 
-  // Pet companion reaction
+  // 2. Open In-App Alarm Popup Modal
+  const modal = document.getElementById('medAlarmPopupModal');
+  if (modal) {
+    const titleEl = document.getElementById('alarmPopupTitle');
+    const subEl = document.getElementById('alarmPopupSubtitle');
+    const nameEl = document.getElementById('alarmPopupItemName');
+    const detEl = document.getElementById('alarmPopupDetails');
+    const timeEl = document.getElementById('alarmPopupTime');
+    const takeBtn = document.getElementById('alarmTakeBtn');
+    const takeBtnText = document.getElementById('alarmTakeBtnText');
+
+    const now = new Date();
+    const curTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    if (timeEl) timeEl.innerText = curTime;
+
+    if (type === 'medicine') {
+      if (titleEl) titleEl.innerText = currentLang === 'ne' ? 'औषधि खाने बेला भयो!' : 'Time for Medicine!';
+      if (subEl) subEl.innerText = currentLang === 'ne' ? 'औषधि तालिका सम्झना' : 'Daily Medicine Routine';
+      if (nameEl) nameEl.innerText = payload && payload.name ? payload.name : (body || title);
+      
+      let details = '';
+      if (payload && payload.dosage) details += payload.dosage;
+      if (payload && payload.food) {
+        details += (details ? ' • ' : '') + (payload.food === 'before' ? (currentLang === 'ne' ? 'खानाअघि' : 'Before food') : (currentLang === 'ne' ? 'खानापछि' : 'After food'));
+      }
+      if (detEl) detEl.innerText = details || (body || '');
+      if (takeBtnText) takeBtnText.innerText = currentLang === 'ne' ? 'खाएँ (Mark as Taken)' : 'Mark as Taken';
+      if (takeBtn) takeBtn.classList.remove('hidden');
+    } else {
+      if (titleEl) titleEl.innerText = currentLang === 'ne' ? 'पात्रो सम्झना अलार्म!' : 'Calendar Reminder!';
+      if (subEl) subEl.innerText = currentLang === 'ne' ? 'तालिका अनुसारको सम्झना' : 'Scheduled reminder';
+      if (nameEl) nameEl.innerText = body || title;
+      if (detEl) detEl.innerText = title;
+      if (takeBtnText) takeBtnText.innerText = currentLang === 'ne' ? 'बुझेँ (Acknowledge)' : 'Acknowledge';
+      if (takeBtn) takeBtn.classList.remove('hidden');
+    }
+
+    modal.classList.remove('hidden');
+  }
+
+  // 3. Pet companion reaction
   petCelebrate('chime');
   const pukuBubble = document.getElementById('pukuBubble');
   if (pukuBubble && state.petEnabled !== false) {
@@ -4295,31 +4581,66 @@ function fireAlarmNotice(title, body, type) {
     setTimeout(() => pukuBubble.classList.add('hidden'), 7000);
   }
 
-  // Trigger system notification
-  if ('Notification' in window && Notification.permission === 'granted') {
+  // 4. Web notification fallback if browser supports it
+  if (!isAndroidNativeApp() && 'Notification' in window && Notification.permission === 'granted') {
     try {
-      if ('serviceWorker' in navigator && navigator.serviceWorker.ready) {
-        navigator.serviceWorker.ready.then(reg => {
-          reg.showNotification(title, {
-            body: body,
-            icon: '/icon.png',
-            badge: '/icon.png',
-            tag: `sangalo-alarm-${Date.now()}`,
-            vibrate: [250, 150, 250, 150, 250],
-            requireInteraction: true
-          });
-        });
-      } else {
-        new Notification(title, {
-          body: body,
-          icon: '/icon.png',
-          vibrate: [250, 150, 250]
-        });
-      }
-    } catch (err) {
-      console.warn('System notification error:', err);
-    }
+      new Notification(title, {
+        body: body,
+        icon: 'icon.png',
+        vibrate: [250, 150, 250, 150, 250]
+      });
+    } catch (err) {}
   }
+}
+
+function handleAlarmTakenAction() {
+  stopAlarmAudioAndVibration();
+  closeAlarmPopupModal();
+
+  if (currentRingingAlarmInfo && currentRingingAlarmInfo.type === 'medicine' && currentRingingAlarmInfo.payload) {
+    const medId = currentRingingAlarmInfo.payload.id;
+    if (medId) {
+      const todayBs = getBikramSambatDate();
+      const todayKey = `${todayBs.year}-${todayBs.month}-${todayBs.day}`;
+      const m = state.health.medicines.find(item => item.id === medId);
+      if (m) {
+        if (!Array.isArray(m.takenDates)) m.takenDates = [];
+        if (!m.takenDates.includes(todayKey)) {
+          m.takenDates.push(todayKey);
+          saveState();
+          renderMedicineRoutine();
+        }
+      }
+    }
+    showToast(currentLang === 'ne' ? 'औषधि खाइयो! 💊 स्वस्थ रहनुहोस्!' : 'Medicine taken! 💊 Stay healthy!');
+  } else {
+    showToast(currentLang === 'ne' ? 'सम्झना स्वीकृत भयो' : 'Reminder acknowledged');
+  }
+  currentRingingAlarmInfo = null;
+}
+
+function handleAlarmSnoozeAction(mins) {
+  stopAlarmAudioAndVibration();
+  closeAlarmPopupModal();
+
+  const snoozedAlarm = currentRingingAlarmInfo;
+  currentRingingAlarmInfo = null;
+
+  const snoozeMins = mins || 5;
+  showToast(currentLang === 'ne' ? `${snoozeMins} मिनेट पछि पुनः अलार्म बज्नेछ ⏰` : `Alarm snoozed for ${snoozeMins} min ⏰`);
+
+  if (snoozedAlarm) {
+    setTimeout(() => {
+      fireAlarmNotice(snoozedAlarm.title, snoozedAlarm.body, snoozedAlarm.type, snoozedAlarm.payload);
+    }, snoozeMins * 60 * 1000);
+  }
+}
+
+function handleAlarmDismissAction() {
+  stopAlarmAudioAndVibration();
+  closeAlarmPopupModal();
+  currentRingingAlarmInfo = null;
+  showToast(currentLang === 'ne' ? 'अलार्म बन्द गरियो' : 'Alarm dismissed');
 }
 
 function checkDailyRemindersAndMedRoutine() {
@@ -4340,7 +4661,7 @@ function checkDailyRemindersAndMedRoutine() {
   lastCheckedDateKey = dateKey;
 
   // 1. Calendar Event Reminders
-  const events = (state.calendarEvents && state.calendarEvents[dateKey]) || [];
+  const events = (state.events && state.events[dateKey]) || (state.calendarEvents && state.calendarEvents[dateKey]) || [];
   events.forEach(ev => {
     if (ev.time) {
       const evTime = ev.time.trim();
@@ -4349,37 +4670,28 @@ function checkDailyRemindersAndMedRoutine() {
         firedAlarmsToday.add(fireKey);
         const title = currentLang === 'ne' ? 'पात्रो सम्झना (Calendar Reminder)' : 'Calendar Reminder';
         const body = `${ev.title || ''} (${evTime})`;
-        fireAlarmNotice(title, body, 'calendar');
+        fireAlarmNotice(title, body, 'calendar', ev);
       }
     }
   });
 
-  // 2. Daily Medicine Routine
-  // Schedules: Morning 08:00, Afternoon 13:00, Night 20:00
+  // 2. Daily Medicine Routine with Custom Times
   const medicines = (state.health && state.health.medicines) || [];
-  if (medicines.length > 0) {
-    const slotSchedule = [
-      { slot: 'morning', hour: '08', minute: '00', labelNe: 'बिहानको औषधि (Morning Meds)', labelEn: 'Morning Medicine' },
-      { slot: 'afternoon', hour: '13', minute: '00', labelNe: 'दिउँसोको औषधि (Afternoon Meds)', labelEn: 'Afternoon Medicine' },
-      { slot: 'night', hour: '20', minute: '00', labelNe: 'रातिको औषधि (Night Meds)', labelEn: 'Night Medicine' }
-    ];
-
-    slotSchedule.forEach(sch => {
-      if (curH === sch.hour && curM === sch.minute) {
-        const fireKey = `med_${dateKey}_${sch.slot}_${sch.hour}:${sch.minute}`;
-        if (!firedAlarmsToday.has(fireKey)) {
-          const pendingMeds = medicines.filter(m => m.slot === sch.slot && (!Array.isArray(m.takenDates) || !m.takenDates.includes(dateKey)));
-          if (pendingMeds.length > 0) {
-            firedAlarmsToday.add(fireKey);
-            const medNames = pendingMeds.map(m => m.name).join(', ');
-            const title = currentLang === 'ne' ? `💊 ${sch.labelNe}` : `💊 ${sch.labelEn}`;
-            const body = currentLang === 'ne' ? `औषधि खाने बेला भयो: ${medNames}` : `Time to take: ${medNames}`;
-            fireAlarmNotice(title, body, 'medicine');
-          }
+  medicines.forEach(m => {
+    const medTime = m.time || (m.slot === 'morning' ? '08:00' : m.slot === 'afternoon' ? '13:00' : '20:00');
+    if (medTime === curTime) {
+      const fireKey = `med_${dateKey}_${m.id}_${medTime}`;
+      if (!firedAlarmsToday.has(fireKey)) {
+        const isTaken = Array.isArray(m.takenDates) && m.takenDates.includes(dateKey);
+        if (!isTaken) {
+          firedAlarmsToday.add(fireKey);
+          const title = currentLang === 'ne' ? 'औषधि खाने बेला भयो' : 'Medicine Reminder';
+          const body = `${m.name} (${m.dosage || '१ चक्की'})${m.food === 'before' ? (currentLang === 'ne' ? ' - खानाअघि' : ' - Before food') : (currentLang === 'ne' ? ' - खानापछि' : ' - After food')}`;
+          fireAlarmNotice(title, body, 'medicine', m);
         }
       }
-    });
-  }
+    }
+  });
 }
 
 // ---------------------------------------------------------------------
@@ -4413,6 +4725,12 @@ function openVaultDB() {
   });
 }
 
+function getFallbackVaultDocs() {
+  if (!state.vault) state.vault = {};
+  if (!Array.isArray(state.vault.fallbackDocs)) state.vault.fallbackDocs = [];
+  return state.vault.fallbackDocs;
+}
+
 async function getAllVaultDocs() {
   try {
     const db = await openVaultDB();
@@ -4421,11 +4739,11 @@ async function getAllVaultDocs() {
       const store = tx.objectStore('documents');
       const req = store.getAll();
       req.onsuccess = () => resolve(req.result || []);
-      req.onerror = () => reject(req.error);
+      req.onerror = () => resolve(getFallbackVaultDocs());
     });
   } catch (err) {
-    console.error('getAllVaultDocs error:', err);
-    return [];
+    console.warn('getAllVaultDocs using localStorage fallback:', err);
+    return getFallbackVaultDocs();
   }
 }
 
@@ -4436,35 +4754,61 @@ async function getVaultDoc(id) {
       const tx = db.transaction('documents', 'readonly');
       const store = tx.objectStore('documents');
       const req = store.get(id);
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
+      req.onsuccess = () => resolve(req.result || getFallbackVaultDocs().find(d => String(d.id) === String(id)));
+      req.onerror = () => resolve(getFallbackVaultDocs().find(d => String(d.id) === String(id)));
     });
   } catch (err) {
-    console.error('getVaultDoc error:', err);
-    return null;
+    console.warn('getVaultDoc using localStorage fallback:', err);
+    return getFallbackVaultDocs().find(d => String(d.id) === String(id)) || null;
   }
 }
 
 async function saveVaultDoc(doc) {
-  const db = await openVaultDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction('documents', 'readwrite');
-    const store = tx.objectStore('documents');
-    const req = store.put(doc);
-    req.onsuccess = () => resolve(doc);
-    req.onerror = () => reject(req.error);
-  });
+  try {
+    const db = await openVaultDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('documents', 'readwrite');
+      const store = tx.objectStore('documents');
+      const req = store.put(doc);
+      req.onsuccess = () => resolve(doc);
+      req.onerror = () => {
+        const list = getFallbackVaultDocs();
+        const idx = list.findIndex(d => String(d.id) === String(doc.id));
+        if (idx >= 0) list[idx] = doc; else list.unshift(doc);
+        saveState();
+        resolve(doc);
+      };
+    });
+  } catch (err) {
+    console.warn('saveVaultDoc using localStorage fallback:', err);
+    const list = getFallbackVaultDocs();
+    const idx = list.findIndex(d => String(d.id) === String(doc.id));
+    if (idx >= 0) list[idx] = doc; else list.unshift(doc);
+    saveState();
+    return doc;
+  }
 }
 
 async function deleteVaultDoc(id) {
-  const db = await openVaultDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction('documents', 'readwrite');
-    const store = tx.objectStore('documents');
-    const req = store.delete(id);
-    req.onsuccess = () => resolve(true);
-    req.onerror = () => reject(req.error);
-  });
+  try {
+    const db = await openVaultDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('documents', 'readwrite');
+      const store = tx.objectStore('documents');
+      const req = store.delete(id);
+      req.onsuccess = () => resolve(true);
+      req.onerror = () => {
+        state.vault.fallbackDocs = getFallbackVaultDocs().filter(d => String(d.id) !== String(id));
+        saveState();
+        resolve(true);
+      };
+    });
+  } catch (err) {
+    console.warn('deleteVaultDoc using localStorage fallback:', err);
+    state.vault.fallbackDocs = getFallbackVaultDocs().filter(d => String(d.id) !== String(id));
+    saveState();
+    return true;
+  }
 }
 
 function compressImageFile(file, maxWidth = 1200, maxHeight = 1200, quality = 0.82) {
@@ -5005,7 +5349,7 @@ window.tapPuku = interactWithPet;
 // ---------------------------------------------------------------------
 // 15. INITIALIZATION
 // ---------------------------------------------------------------------
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
   initTheme();
   initCalendarState();
   updateAllTranslations();
@@ -5019,18 +5363,45 @@ document.addEventListener('DOMContentLoaded', () => {
     initBaghChal('vs_tiger_bot');
   }
 
-  // Restore Sticky Notification if enabled
-  if (state.stickyNotifEnabled) {
+  // Check if running inside Standalone APK or Web
+  const isStandalone = window.location.protocol === 'file:' || 
+                       (window.AndroidBridge && typeof window.AndroidBridge.isNativeApp === 'function' && window.AndroidBridge.isNativeApp());
+  
+  if (isStandalone) {
+    const apkAction = document.getElementById('apkDownloadCardAction');
+    if (apkAction) {
+      apkAction.innerHTML = `
+        <div class="space-y-2">
+          <div class="p-2.5 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700/60 rounded-xl text-xs font-bold text-emerald-900 dark:text-emerald-200 text-center">
+            ✅ तपाईंले अहिले मोबाइल एप (.apk) चलाइरहनुभएको छ (Running Offline Standalone App)
+          </div>
+          <button type="button" onclick="copyToClipboard('/sdcard/Documents/Projects/Sangalo.apk', 'APK फाइल लोकेसन कपी भयो!')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center space-x-1.5 active:scale-95">
+            <span>📋</span>
+            <span>APK फाइल लोकेसन कपी गर्नुहोस्</span>
+          </button>
+        </div>
+      `;
+    }
+  }
+
+  // Restore Sticky Notification if enabled (on Android Native Bridge or HTTP/HTTPS)
+  if (state.stickyNotifEnabled && (isAndroidNativeApp() || window.location.protocol.startsWith('http'))) {
     showStickyCalendarNotification();
   }
 
   // Initialize Automated Reminders & Medicine Alarms
   initAlarmEngine();
 
-  // Register offline Service Worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').then(reg => {
+  // Register offline Service Worker only on HTTP/HTTPS
+  if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+    navigator.serviceWorker.register('sw.js').then(reg => {
       reg.update().catch(() => {});
     }).catch(() => {});
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
