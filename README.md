@@ -4,9 +4,13 @@
 
 [![Download APK](https://img.shields.io/badge/Download_APK-v1.0.0_(216_KB)-10b981?style=for-the-badge&logo=android&logoColor=white)](https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk)
 [![Latest Release](https://img.shields.io/github/v/release/dahalsandesh/sangalo?style=for-the-badge&color=2563eb)](https://github.com/dahalsandesh/sangalo/releases/latest)
+[![Built on Mobile](https://img.shields.io/badge/Built%20100%25%20On-Redmi%20Note%2015%20Pro%20(Phone)-e11d48?style=for-the-badge&logo=android&logoColor=white)](#-built-entirely-on-mobile-pair-programmed-with-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero%20NPM%20Bloat-10b981.svg?style=for-the-badge)](#)
 [![100% Offline](https://img.shields.io/badge/Offline-100%25%20Functional-7c3aed.svg?style=for-the-badge)](#)
+
+> 💡 **The 100% Smartphone Engineering Story:**  
+> Sangalo wasn't built on a MacBook, PC, or cloud CI/CD farm. **100% of this application**—from the 91-year astronomical Bikram Sambat database to native Dalvik bytecode compilation and signed APK packaging—was designed, coded, tested, and published to GitHub **entirely on a mid-range smartphone (Xiaomi Redmi Note 15 Pro 5G)** via Termux Ubuntu and an AI coding agent without writing a single line of manual code.
 
 ---
 
@@ -186,15 +190,23 @@ Contributions to **सँगालो (Sangalo)** are warmly welcome! Whether yo
 
 ## ⚡ Built Entirely on Mobile (Pair-Programmed with AI)
 
-This entire application—from the 91-year Bikram Sambat dual calendar algorithms, custom physics pet engine, interactive medicine routine alarms, native Android APK build pipeline, and bilingual UI/UX—was vibe-coded, compiled, and published entirely on a mobile phone!
+> *"Imagine telling someone a decade ago that you could build, compile, cryptographically sign, and publish a production-grade native Android app—without touching a computer or writing a single line of manual code—entirely from a mid-range phone in your palm."*
 
+**सँगालो (Sangalo)** is living proof that the barrier to building world-class software has been democratized. No high-end MacBook, 32GB workstation, or cloud CI/CD pipeline was used at any point during development.
+
+### 🛠️ The Pocket Engineering Stack
 - **Host Device:** Xiaomi Redmi Note 15 Pro 5G (`lapis`)
-- **SoC:** MediaTek Dimensity 7300 (MT6878), Octa-core ARM64
-- **Operating Environment:** Ubuntu 26.04 aarch64 (PRoot-Distro) on Android 16 (HyperOS) via Termux
+- **Processor:** MediaTek Dimensity 7300 (MT6878), Octa-core ARM64 (4x Cortex-A78 @ 2.6GHz, 4x Cortex-A55 @ 2.0GHz)
+- **RAM & Storage:** 8 GB RAM (+8 GB swap), 256 GB UFS
+- **OS & Environment:** Ubuntu 26.04 aarch64 inside a PRoot-Distro container on Android 16 (HyperOS) via Termux
 - **AI Pair Programmer:** Google DeepMind **Antigravity CLI Agent (AGY)** powered by **Gemini 3.8 Flash**
-- **Android Compilation:** Native SDK toolchain (`aapt`, `javac`, `dx`, `apksigner`) running directly on ARM64 Linux without heavyweight Gradle/Maven daemons
+- **Native Android Compilation:** Zero Gradle bloat — native ARM64 toolchain (`javac`, `dx`, `aapt`, `apksigner`, `zipalign`) compiling Dalvik bytecode directly in ~10 seconds
+- **Version Control & Publishing:** Git & GitHub CLI (`gh`) authenticating and pushing directly from the mobile terminal
 
-> *"Proof that production-grade full-stack web applications and native Android APKs can be engineered, tested, and published to GitHub entirely from a smartphone in your pocket."*
+### 💡 The Human-AI Workflow
+1. **Architect & Direct:** The author ([Sandesh Dahal](https://dahalsandesh.com.np)) steered architecture, UX, calendar accuracy, and real-world family testing purely through natural language prompts.
+2. **Autonomous Execution:** AGY and Gemini 3.8 Flash authored the 91-year Bikram Sambat astronomical database, Verlet physics pet simulation, Android Java bridges, alarms, and offline vaults without writing manual code.
+3. **Instant On-Device Feedback Loop:** Code edits were compiled into APKs and tested on the exact same physical device in real time, eliminating emulation lag.
 
 ---
 
