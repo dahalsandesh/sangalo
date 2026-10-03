@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="ne" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>सँगालो — Sangalo Nepali Family Companion</title>
+  <link rel="manifest" href="/manifest.json?v=5">
+  <link rel="icon" href="/icon.svg?v=5" type="image/svg+xml">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#ecfdf5', 500: '#10b981', 600: '#059669', 700: '#047857' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Mukta", "Noto Sans Devanagari", Inter, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    input, textarea, select {
+      user-select: text;
+    }
+    .safe-bottom {
+      padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 16px));
+    }
+    #baghCanvas {
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-[#09090b] text-slate-900 dark:text-zinc-100 min-h-screen safe-bottom selection:bg-emerald-500/20">
+
+  <!-- Sticky Top Header -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#09090b]/95 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 px-4 py-2.5 shadow-xs">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      
+      <!-- Brand Logo & Live BS Date (Clickable to jump to calendar!) -->
+      <div class="flex items-center space-x-2.5">
+        <div onclick="setTab('calendar')" class="w-9 h-9 rounded-xl overflow-hidden cursor-pointer transition hover:scale-105 active:scale-95 shadow-2xs border border-emerald-300 dark:border-emerald-700/60 bg-white dark:bg-zinc-800 flex items-center justify-center" title="पात्रो हेर्नुहोस्">
+          <img src="/icon.svg?v=5" class="w-7 h-7 object-contain" alt="सँगालो">
+        </div>
+        <div onclick="setTab('calendar')" class="cursor-pointer group">
+          <h1 class="text-sm font-extrabold tracking-tight text-slate-900 dark:text-zinc-100 leading-tight group-hover:text-emerald-600 transition" data-i18n="appTitle">सँगालो</h1>
+          <p id="headerDateDual" class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 group-hover:underline flex items-center gap-1">
+            <span>Loading date...</span>
+            <span class="text-[9px] opacity-75">📅</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Controls: Language Toggle & Theme -->
+      <div class="flex items-center space-x-1.5">
+        <!-- Language Switcher Button -->
+        <button id="langToggleBtn" onclick="toggleLanguage()" class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-zinc-900 border border-emerald-200 dark:border-zinc-800 text-xs font-bold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-zinc-800 transition shadow-2xs">
+          English
+        </button>
+
+        <!-- Theme Toggle Button -->
+        <button onclick="toggleTheme()" class="p-1.5 rounded-lg bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200 transition" title="Toggle theme">
+          <svg id="themeIcon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Scrollable Content Area -->
+  <main class="max-w-md mx-auto p-4 space-y-4">
+
+    <!-- ============================================================= -->
+    <!-- TAB 1: SHOPPING & GROCERY (किनमेल) -->
+    <!-- ============================================================= -->
+    <section id="view-shopping" class="space-y-4">
+      
+      <!-- Top Actions Banner: Structured Clipboard Copy -->
+      <div class="flex justify-between items-center">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900 dark:text-zinc-100" data-i18n="shoppingTitle">घरको किनमेल सूची</h2>
+          <p id="shoppingCountBadge" class="text-xs text-slate-500 dark:text-zinc-400 font-medium">0 बाँकी</p>
+        </div>
+        <button onclick="copyShoppingList()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white rounded-xl text-xs font-semibold flex items-center space-x-1.5 shadow-sm transition whitespace-nowrap">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+          </svg>
+          <span data-i18n="copyListBtn">सूची कपी गर्नुहोस्</span>
+        </button>
+      </div>
+
+      <!-- Quick Add Nepali Essentials Tray (100% Dynamic Language) -->
+      <div class="space-y-1.5">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400" data-i18n="quickAddHeader">दैनिक उपभोग्य सामग्री (१-ट्याप थप्नुहोस्)</span>
+        <div id="quickAddContainer" class="flex flex-wrap gap-1.5">
+          <!-- Rendered dynamically by renderQuickAddTray() -->
+        </div>
+      </div>
+
+      <!-- Add Custom Item Form (Overflow-Safe) -->
+      <form onsubmit="addShoppingItem(event)" class="p-3.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-2.5 shadow-xs">
+        <div class="flex gap-2">
+          <input id="shopItemInput" type="text" placeholder="सामानको नाम लेख्नुहोस्..." data-i18n-placeholder="addItemPlaceholder" required class="flex-1 min-w-0 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition">
+          <input id="shopItemQty" type="text" placeholder="परिमाण" data-i18n-placeholder="qtyPlaceholder" class="w-20 min-w-0 flex-shrink-0 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-2 py-2 text-sm text-center text-slate-900 dark:text-zinc-100 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition">
+        </div>
+        <div class="flex items-center gap-2">
+          <select id="shopItemCat" class="flex-1 min-w-0 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 focus:outline-none">
+            <!-- Populated dynamically -->
+          </select>
+          <button type="submit" class="flex-shrink-0 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-semibold text-xs rounded-xl shadow-xs transition whitespace-nowrap" data-i18n="addItemBtn">
+            सूचीमा थप्नुहोस्
+          </button>
+        </div>
+      </form>
+
+      <!-- Shopping List Items Container -->
+      <div id="shoppingListContainer" class="space-y-2">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 2: BUDGET & BORROW/LEND (खर्च र हिसाब) -->
+    <!-- ============================================================= -->
+    <section id="view-budget" class="hidden space-y-4">
+      
+      <!-- Monthly Spend Summary Card -->
+      <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-3 shadow-xs">
+        <div class="flex justify-between items-center text-xs font-semibold text-slate-500 dark:text-zinc-400">
+          <span class="uppercase tracking-wider" data-i18n="monthlySpend">यो महिनाको कुल खर्च</span>
+          <button onclick="setBudgetLimit()" class="hover:underline text-emerald-600 dark:text-emerald-400 font-bold" id="budgetLimitText">लक्ष्य: रू ३०,०००</button>
+        </div>
+        <div class="flex justify-between items-baseline">
+          <div id="budgetTotalSpent" class="text-2xl font-extrabold text-slate-900 dark:text-zinc-100">रू ०</div>
+          <div id="budgetPctText" class="text-xs font-bold text-slate-500 dark:text-zinc-400">०%</div>
+        </div>
+        <div class="w-full bg-slate-100 dark:bg-zinc-950 rounded-full h-2.5 overflow-hidden border border-slate-200 dark:border-zinc-800">
+          <div id="budgetProgressBar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Add Expense Form with Quick Suggestion Chips (Less Typing for Elders) -->
+      <form onsubmit="addExpense(event)" class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-3 shadow-xs">
+        <span class="text-xs font-bold text-slate-900 dark:text-zinc-100 block" data-i18n="recordExpense">नयाँ खर्च दर्ता गर्नुहोस्</span>
+        
+        <div class="flex gap-2">
+          <div class="relative flex-1 min-w-0">
+            <span class="absolute left-3 top-2.5 text-slate-400 text-sm font-bold">रू</span>
+            <input id="expAmount" type="number" step="1" placeholder="रकम (रू)" data-i18n-placeholder="amountPlaceholder" required class="w-full pl-8 pr-3 py-2 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm font-bold text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500 transition">
+          </div>
+          <select id="expCategory" class="flex-1 min-w-0 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-2.5 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 focus:outline-none">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <!-- 1-Tap Category Suggestion Chips -->
+        <div class="flex flex-wrap gap-1.5 pt-0.5">
+          <button type="button" onclick="selectExpCat('किराना')" class="px-2 py-0.5 bg-slate-100 dark:bg-zinc-800 hover:bg-emerald-100 rounded-lg text-[11px] font-semibold text-slate-700 dark:text-zinc-300 transition">🛒 किराना</button>
+          <button type="button" onclick="selectExpCat('तरकारी')" class="px-2 py-0.5 bg-slate-100 dark:bg-zinc-800 hover:bg-emerald-100 rounded-lg text-[11px] font-semibold text-slate-700 dark:text-zinc-300 transition">🥦 तरकारी</button>
+          <button type="button" onclick="selectExpCat('इन्टरनेट/बिजुली')" class="px-2 py-0.5 bg-slate-100 dark:bg-zinc-800 hover:bg-emerald-100 rounded-lg text-[11px] font-semibold text-slate-700 dark:text-zinc-300 transition">💡 बिजुली/नेट</button>
+          <button type="button" onclick="selectExpCat('खाजा/खाना')" class="px-2 py-0.5 bg-slate-100 dark:bg-zinc-800 hover:bg-emerald-100 rounded-lg text-[11px] font-semibold text-slate-700 dark:text-zinc-300 transition">☕ खाजा</button>
+          <button type="button" onclick="selectExpCat('स्वास्थ्य/औषधि')" class="px-2 py-0.5 bg-slate-100 dark:bg-zinc-800 hover:bg-emerald-100 rounded-lg text-[11px] font-semibold text-slate-700 dark:text-zinc-300 transition">💊 औषधि</button>
+          <button type="button" onclick="selectExpCat('गाडीभाडा/पेट्रोल')" class="px-2 py-0.5 bg-slate-100 dark:bg-zinc-800 hover:bg-emerald-100 rounded-lg text-[11px] font-semibold text-slate-700 dark:text-zinc-300 transition">⛽ पेट्रोल/भाडा</button>
+        </div>
+
+        <div class="flex gap-2">
+          <input id="expPayer" type="text" placeholder="कसले तिर्यो?" data-i18n-placeholder="payerPlaceholder" class="w-1/2 min-w-0 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition">
+          <input id="expNote" type="text" placeholder="विवरण / पसल..." data-i18n-placeholder="notePlaceholder" class="flex-1 min-w-0 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition">
+        </div>
+
+        <!-- 1-Tap Payer Suggestion Chips -->
+        <div class="flex flex-wrap gap-1.5 items-center">
+          <span class="text-[10px] font-bold text-slate-400 uppercase">१-ट्याप:</span>
+          <button type="button" onclick="setExpPayer('म (Me)')" class="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 rounded-md text-[11px] font-semibold transition">म</button>
+          <button type="button" onclick="setExpPayer('बुबा (Dad)')" class="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 rounded-md text-[11px] font-semibold transition">बुबा</button>
+          <button type="button" onclick="setExpPayer('आमा (Mom)')" class="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 rounded-md text-[11px] font-semibold transition">आमा</button>
+          <button type="button" onclick="setExpPayer('दाइ (Brother)')" class="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 rounded-md text-[11px] font-semibold transition">दाइ</button>
+          <button type="button" onclick="setExpPayer('दिदी (Sister)')" class="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 rounded-md text-[11px] font-semibold transition">दिदी</button>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-slate-900 dark:bg-zinc-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 font-bold text-xs rounded-xl transition shadow-xs" data-i18n="saveExpenseBtn">
+          खर्च सेभ गर्नुहोस्
+        </button>
+      </form>
+
+      <!-- Fair Bill Splitter & Borrow/Lend Tracker Section -->
+      <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-3.5 shadow-xs">
+        
+        <!-- Toggle Tabs: Equal Split vs Borrow/Lend Tracker -->
+        <div class="flex p-1 bg-slate-100 dark:bg-zinc-950 rounded-xl text-xs font-bold">
+          <button id="splitTabBtn-equal" onclick="setSplitSubTab('equal')" class="flex-1 py-1.5 rounded-lg bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 shadow-2xs transition" data-i18n="equalSplitTab">
+            बराबर बाँडफाँड
+          </button>
+          <button id="splitTabBtn-borrow" onclick="setSplitSubTab('borrow')" class="flex-1 py-1.5 rounded-lg text-slate-500 dark:text-zinc-400 hover:text-slate-900 transition" data-i18n="borrowTab">
+            सापटी हिसाब (Borrow / Lend)
+          </button>
+        </div>
+
+        <!-- Sub-View 1: Equal Splitter -->
+        <div id="subView-split-equal" class="space-y-3">
+          <span class="text-xs font-bold text-slate-900 dark:text-zinc-100 block" data-i18n="splitTitle">बिल बाँडफाँड हिसाब</span>
+          <div class="flex gap-2">
+            <input id="splitAmount" type="number" step="1" placeholder="कुल रकम (रू)" data-i18n-placeholder="billAmount" class="flex-1 min-w-0 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-zinc-100 focus:outline-none">
+            <input id="splitPeople" type="number" value="2" min="1" placeholder="जना" data-i18n-placeholder="peopleCount" class="w-20 min-w-0 flex-shrink-0 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-2 py-2 text-xs text-center font-bold text-slate-900 dark:text-zinc-100 focus:outline-none">
+            <button type="button" onclick="calculateBillSplit()" class="px-3.5 py-2 bg-emerald-100 dark:bg-zinc-800 hover:bg-emerald-200 text-emerald-800 dark:text-emerald-300 text-xs font-bold rounded-xl transition flex-shrink-0 whitespace-nowrap" data-i18n="splitBtn">
+              हिसाब
+            </button>
+          </div>
+          <div id="splitResult"></div>
+        </div>
+
+        <!-- Sub-View 2: Borrow / Lend Tracker -->
+        <div id="subView-split-borrow" class="hidden space-y-3">
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="text-xs font-bold text-slate-900 dark:text-zinc-100 block" data-i18n="borrowTitle">सापटी तथा लेनदेन हिसाब</span>
+              <p class="text-[10px] text-slate-500 font-medium" data-i18n="borrowSub">कसलाई कति दियो वा कसबाट कति लिन बाँकी छ</p>
+            </div>
+            <button onclick="openBorrowModal()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg transition shadow-2xs whitespace-nowrap">
+              + नयाँ सापटी
+            </button>
+          </div>
+
+          <!-- Borrow/Lend Balance Summary -->
+          <div class="grid grid-cols-2 gap-2 text-center text-xs font-bold">
+            <div class="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-xl">
+              <span class="text-[10px] text-emerald-700 dark:text-emerald-400 block font-medium" data-i18n="totalLent">मैले लिन बाँकी</span>
+              <span id="borrowTotalLent" class="text-sm font-extrabold text-emerald-700 dark:text-emerald-400">रू ०</span>
+            </div>
+            <div class="p-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 rounded-xl">
+              <span class="text-[10px] text-rose-700 dark:text-rose-400 block font-medium" data-i18n="totalBorrowed">मैले तिर्न बाँकी</span>
+              <span id="borrowTotalBorrowed" class="text-sm font-extrabold text-rose-700 dark:text-rose-400">रू ०</span>
+            </div>
+          </div>
+
+          <!-- Borrow/Lend Items List -->
+          <div id="borrowLendList" class="space-y-2 pt-1">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Expense History List -->
+      <div class="space-y-1.5">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 px-1" data-i18n="recentExpenses">हालैका खर्चहरू</span>
+        <div id="expenseListContainer" class="space-y-2">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 3: CALENDAR & HEALTH (पात्रो, सम्झना र औषधि) -->
+    <!-- ============================================================= -->
+    <section id="view-calendar" class="hidden space-y-4">
+      
+      <!-- Full Monthly Bikram Sambat Calendar Card -->
+      <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs space-y-3">
+        
+        <!-- Month Navigation Header & Add Reminder Quick Button -->
+        <div class="flex items-center justify-between">
+          <button onclick="prevCalendarMonth()" class="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 transition" title="अघिल्लो महिना">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+          </button>
+          
+          <div class="text-center">
+            <h2 id="calendarMonthTitle" class="text-base font-extrabold text-slate-900 dark:text-zinc-100 leading-tight">
+              असोज २०८३
+            </h2>
+            <span class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400" data-i18n="calendarSub">वि.सं. पात्रो (गतेमा छोएर सम्झना थप्नुहोस्)</span>
+          </div>
+
+          <button onclick="nextCalendarMonth()" class="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 transition" title="पछिल्लो महिना">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+          </button>
+        </div>
+
+        <!-- Add Event / Reminder Quick Trigger Button -->
+        <div class="flex justify-end pt-0.5">
+          <button onclick="openAddEventModalQuick()" class="px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-300 rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-2xs">
+            <span>+</span>
+            <span data-i18n="addEventQuickBtn">नयाँ सम्झना थप्नुहोस्</span>
+          </button>
+        </div>
+
+        <!-- Weekday Headers (7 Columns, Saturday Holiday in Red) -->
+        <div id="calendarWeekdayHeaders" class="grid grid-cols-7 gap-1 text-center font-bold text-[11px] pt-1">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- 30-32 Day Cells Grid Container -->
+        <div id="calendarMonthGrid" class="grid grid-cols-7 gap-1">
+          <!-- Rendered dynamically by renderFullCalendarGrid() -->
+        </div>
+
+        <!-- Today Dual Date Banner -->
+        <div id="calendarDualDisplay" class="pt-2 border-t border-slate-100 dark:border-zinc-800">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Upcoming Reminders & Festivals Card -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between px-1">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400" data-i18n="upcomingReminders">
+            आगामी सम्झना तथा चाडपर्व
+          </h3>
+          <span class="text-[10px] text-slate-400 font-medium" data-i18n="top5Notes">आगामी सम्झनाहरू</span>
+        </div>
+        <div id="upcomingRemindersList" class="space-y-2">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- ELDER-FRIENDLY DAILY MEDICINE ROUTINE & REMINDERS (औषधि तालिका) -->
+      <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-3 shadow-xs">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">💊</span>
+            <div>
+              <h3 class="text-xs font-extrabold text-slate-900 dark:text-zinc-100" data-i18n="medRoutineTitle">दैनिक औषधि तालिका (Medicine Routine)</h3>
+              <p class="text-[10px] text-slate-500 dark:text-zinc-400 font-medium" data-i18n="medRoutineSub">घरका ज्येष्ठ नागरिक तथा परिवारका लागि दैनिक औषधि र समय</p>
+            </div>
+          </div>
+          <button onclick="openMedicineModal()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-2xs transition whitespace-nowrap">
+            + औषधि
+          </button>
+        </div>
+
+        <!-- Medicine Routine Lists (Morning, Afternoon, Night) -->
+        <div id="medicineRoutineList" class="space-y-2.5 pt-1">
+          <!-- Rendered dynamically by renderMedicineRoutine() -->
+        </div>
+      </div>
+
+      <!-- In Case of Emergency (ICE) Card -->
+      <div class="p-4 bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40 rounded-2xl space-y-3 shadow-xs">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-1.5">
+            <span class="text-base">🚨</span>
+            <span class="text-xs font-bold text-rose-800 dark:text-rose-300 uppercase tracking-wider" data-i18n="iceTitle">आपतकालीन स्वास्थ्य कार्ड (ICE)</span>
+          </div>
+          <button onclick="copyEmergencySummary()" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-lg shadow-2xs transition" data-i18n="copyCardBtn">
+            कार्ड कपी
+          </button>
+        </div>
+
+        <!-- Medical Profile Form -->
+        <div class="grid grid-cols-2 gap-2.5 pt-1">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1" data-i18n="bloodType">रक्त समूह (Blood Group)</label>
+            <input id="iceBloodType" type="text" placeholder="e.g. O+, A+, B+" onchange="saveHealthField('bloodType', this.value)" class="w-full bg-white dark:bg-zinc-950 border border-rose-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1" data-i18n="allergies">एलर्जी (Allergies)</label>
+            <input id="iceAllergies" type="text" placeholder="e.g. Penicillin, Peanuts" onchange="saveHealthField('allergies', this.value)" class="w-full bg-white dark:bg-zinc-950 border border-rose-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1" data-i18n="conditions">दीर्घरोग / स्वास्थ्य अवस्था</label>
+          <input id="iceConditions" type="text" placeholder="e.g. Asthma, सामान्य" onchange="saveHealthField('conditions', this.value)" class="w-full bg-white dark:bg-zinc-950 border border-rose-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1" data-i18n="medications">दैनिक खाने औषधिहरू (नोट)</label>
+          <input id="iceMeds" type="text" placeholder="e.g. दैनिक भिटामिन, प्रेसरको औषधि" onchange="saveHealthField('medications', this.value)" class="w-full bg-white dark:bg-zinc-950 border border-rose-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1" data-i18n="insurance">स्वास्थ्य बीमा #</label>
+            <input id="iceInsurance" type="text" placeholder="बीमा नम्बर" onchange="saveHealthField('insurance', this.value)" class="w-full bg-white dark:bg-zinc-950 border border-rose-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1" data-i18n="hospital">आकस्मिक अस्पताल</label>
+            <input id="iceHospital" type="text" placeholder="अस्पतालको नाम" onchange="saveHealthField('hospital', this.value)" class="w-full bg-white dark:bg-zinc-950 border border-rose-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500">
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Contacts (100 Police, 102 Ambulance, 101 Fire + Family) -->
+      <div class="space-y-2">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 px-1" data-i18n="emergencyContacts">आपतकालीन नम्बरहरू</span>
+        
+        <form onsubmit="addEmergencyContact(event)" class="p-3.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-2.5 shadow-xs">
+          <div class="grid grid-cols-2 gap-2">
+            <input id="contactName" type="text" placeholder="नाम" data-i18n-placeholder="contactNamePlaceholder" required class="bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+            <input id="contactRelation" type="text" placeholder="सम्बन्ध (e.g. बुबा)" data-i18n-placeholder="contactRelPlaceholder" class="bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+          </div>
+          <div class="flex gap-2">
+            <input id="contactPhone" type="tel" placeholder="फोन नम्बर" data-i18n-placeholder="contactPhonePlaceholder" required class="flex-1 min-w-0 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-mono font-bold text-slate-900 dark:text-zinc-100 focus:outline-none">
+            <button type="submit" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition whitespace-nowrap" data-i18n="addContactBtn">थप्नुहोस्</button>
+          </div>
+        </form>
+
+        <div id="iceContactsList" class="space-y-2">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 4: CHAUTARI & BAGH-CHAL (चौतारी - बाघचाल) -->
+    <!-- ============================================================= -->
+    <section id="view-chautari" class="hidden space-y-4">
+      
+      <!-- Chautari Header Banner -->
+      <div class="p-4 bg-gradient-to-r from-amber-50 via-orange-50 to-white dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-950 border border-amber-200 dark:border-amber-800/40 rounded-2xl shadow-xs">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🐯</span>
+          <div>
+            <h2 class="text-sm font-extrabold text-amber-900 dark:text-amber-300" data-i18n="baghchalTitle">बाघचाल (Bagh-Chal)</h2>
+            <p class="text-xs text-amber-800/80 dark:text-amber-400/80 font-medium" data-i18n="baghchalDesc">नेपालको मौलिक परम्परागत खेल: ४ बाघ र २० बाख्रा</p>
+          </div>
+        </div>
+
+        <!-- Mode Buttons -->
+        <div class="flex gap-1.5 mt-3">
+          <button onclick="initBaghChal('vs_tiger_bot')" class="flex-1 py-1.5 px-2 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center" data-i18n="playGoats">
+            बाख्रा खेल्ने
+          </button>
+          <button onclick="initBaghChal('vs_goat_bot')" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center" data-i18n="playTigers">
+            बाघ खेल्ने
+          </button>
+          <button onclick="initBaghChal('two_player')" class="flex-1 py-1.5 px-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center" data-i18n="twoPlayer">
+            २ जना खेल्ने
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Scoreboard -->
+      <div class="p-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs space-y-2">
+        <div class="grid grid-cols-3 gap-2 text-center text-xs font-bold">
+          <div class="p-2 bg-slate-50 dark:bg-zinc-950 rounded-xl border border-slate-100 dark:border-zinc-800">
+            <span class="text-[10px] text-slate-500 dark:text-zinc-400 block font-medium" data-i18n="goatsInHand">बाँकी बाख्रा</span>
+            <span id="baghInHand" class="text-sm font-extrabold text-cyan-600 dark:text-cyan-400">२०</span>
+          </div>
+          <div class="p-2 bg-slate-50 dark:bg-zinc-950 rounded-xl border border-slate-100 dark:border-zinc-800">
+            <span class="text-[10px] text-slate-500 dark:text-zinc-400 block font-medium" data-i18n="goatsCaptured">खाएको बाख्रा</span>
+            <span id="baghCaptured" class="text-sm font-extrabold text-orange-600 dark:text-orange-400">० / ५</span>
+          </div>
+          <div class="p-2 bg-slate-50 dark:bg-zinc-950 rounded-xl border border-slate-100 dark:border-zinc-800">
+            <span class="text-[10px] text-slate-500 dark:text-zinc-400 block font-medium" data-i18n="tigersTrapped">थुनिएका बाघ</span>
+            <span id="baghTrapped" class="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">० / ४</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between px-2 pt-1 border-t border-slate-100 dark:border-zinc-800/80">
+          <div id="baghStatus" class="text-xs font-bold text-slate-800 dark:text-zinc-200">
+            बाख्राको पालो (Goat's Turn)
+          </div>
+          <div class="flex items-center space-x-2">
+            <button id="undoBaghBtn" onclick="undoBaghMove()" class="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline" data-i18n="undoMove">
+              १ चाल फिर्ता
+            </button>
+            <span class="text-slate-300 dark:text-zinc-700">•</span>
+            <button onclick="initBaghChal(baghGame.mode)" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline" data-i18n="restartGame">
+              नयाँ खेल
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bagh-Chal 5x5 Board Canvas -->
+      <div class="p-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs flex justify-center">
+        <canvas id="baghCanvas" class="w-full max-w-[340px] aspect-square block rounded-xl cursor-pointer"></canvas>
+      </div>
+
+      <!-- Traditional Rules Card -->
+      <div class="p-3.5 bg-slate-100 dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800 rounded-2xl text-xs text-slate-600 dark:text-zinc-400 space-y-1 leading-relaxed">
+        <div class="font-bold text-slate-800 dark:text-zinc-200" data-i18n="rulesTitle">नियमहरू (Bagh-Chal Rules):</div>
+        <div data-i18n="rule1">• बाख्राले २० वटा बाख्रा बोर्डमा पालैपालो राख्छ। बाघले १ कदम हिँड्छ वा बाख्रामाथि फड्को मारेर खान्छ।</div>
+        <div data-i18n="rule2">• ५ वटा बाख्रा खाएमा **बाघको जीत** हुन्छ। चारै वटा बाघलाई चारैतिरबाट थुनेमा **बाख्राको जीत** हुन्छ!</div>
+      </div>
+
+      <!-- Casual Game: Snakes & Ladders / Ludo Dice Roller -->
+      <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">🎲</span>
+            <div>
+              <h3 class="text-xs font-bold text-slate-900 dark:text-zinc-100" data-i18n="diceGameTitle">साँप र भर्‍याङ पासा (Dice Roll)</h3>
+              <p class="text-[10px] text-slate-500 dark:text-zinc-400 font-medium" data-i18n="diceGameSub">लुडो वा साँप र भर्‍याङ खेल्दा पासा फाल्नुहोस्</p>
+            </div>
+          </div>
+          <button onclick="rollDice()" class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-xs transition whitespace-nowrap" data-i18n="rollDiceBtn">
+            पासा फाल्नुहोस्
+          </button>
+        </div>
+        <div class="flex items-center justify-center py-4 bg-amber-50/50 dark:bg-zinc-950 rounded-xl border border-amber-100 dark:border-zinc-800/80">
+          <div id="diceFace" onclick="rollDice()" class="text-6xl cursor-pointer select-none transition-transform hover:scale-110 active:scale-90" title="Tap to roll">⚅</div>
+        </div>
+      </div>
+
+      <!-- Interactive Puppy Play Area Card -->
+      <div class="p-4 bg-gradient-to-br from-amber-50/60 to-emerald-50/40 dark:from-zinc-900 dark:to-zinc-950 border border-amber-200/60 dark:border-zinc-800 rounded-2xl shadow-xs space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">🐾</span>
+            <div>
+              <h3 class="text-xs font-extrabold text-slate-900 dark:text-zinc-100" data-i18n="pukuPlayTitle">पुकुसँग खेल्नुहोस् (Play with Puku)</h3>
+              <p class="text-[10px] text-slate-500 font-medium" data-i18n="pukuPlaySub">घरको साथीलाई मुसार्नुहोस् वा treat दिनुहोस्</p>
+            </div>
+          </div>
+          <button onclick="openPukuPlayModal()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-white font-bold text-xs rounded-xl shadow-2xs transition whitespace-nowrap">
+            खेल्ने कोठा 🏠
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 5: VAULT (भण्डार) -->
+    <!-- ============================================================= -->
+    <section id="view-vault" class="hidden space-y-4">
+
+      <!-- Pet Companion Toggle (None or Active) -->
+      <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs space-y-2.5">
+        <div class="flex items-center justify-between">
+          <div class="flex-1 pr-3">
+            <span class="text-xs font-bold text-slate-900 dark:text-zinc-100 block" data-i18n="petToggleTitle">पुकु साथी (Pet Companion)</span>
+            <p class="text-[11px] text-slate-500 dark:text-zinc-400 font-medium mt-0.5" data-i18n="petToggleDesc">स्क्रिनमा हिँड्ने साथी देखाउने वा हटाउने</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+            <input type="checkbox" id="petMasterToggle" onchange="togglePetCompanion(event)" class="sr-only peer">
+            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Sticky Notification Bar Date Toggle (Hamro Patro Style) -->
+      <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs space-y-2.5">
+        <div class="flex items-center justify-between">
+          <div class="flex-1 pr-3">
+            <span class="text-xs font-bold text-slate-900 dark:text-zinc-100 block" data-i18n="stickyNotifTitle">नोटिफिकेसन बारमा आजको मिति राख्नुहोस्</span>
+            <p class="text-[11px] text-slate-500 dark:text-zinc-400 font-medium mt-0.5" data-i18n="stickyNotifDesc">हाम्रो पात्रो जस्तै फोनको माथिल्लो नोटिफिकेसनमा दैनिक नेपाली मिति देखाउनुहोस्।</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+            <input type="checkbox" id="stickyNotifToggle" onchange="toggleStickyNotification(event)" class="sr-only peer">
+            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Guest Wi-Fi QR Share -->
+      <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-3 shadow-xs">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold text-slate-900 dark:text-zinc-100" data-i18n="wifiTitle">पाहुना वाई-फाई QR कोड</span>
+          <span class="text-[10px] font-medium text-emerald-600 dark:text-emerald-400" data-i18n="scanQr">स्क्यान गर्नुहोस्</span>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row items-center gap-4">
+          <div class="p-2 bg-white rounded-xl border border-slate-200 dark:border-zinc-700 shadow-inner flex-shrink-0">
+            <canvas id="wifiQrCanvas" class="w-36 h-36 block"></canvas>
+          </div>
+          <div class="space-y-2 w-full">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5" data-i18n="wifiSsidLabel">वाई-फाईको नाम (SSID)</label>
+              <input id="wifiSsid" type="text" placeholder="Home_Fiber_5G" onchange="saveWifiConfig()" class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-zinc-100 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5" data-i18n="wifiPassLabel">पासवर्ड (Password)</label>
+              <input id="wifiPass" type="text" placeholder="Password123" onchange="saveWifiConfig()" class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-zinc-100 focus:outline-none">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Multiple Household Vehicles (Non-Tech Summary + Advanced Technical Popup) -->
+      <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-3 shadow-xs">
+        <div class="flex justify-between items-center">
+          <div>
+            <span class="text-xs font-bold text-slate-900 dark:text-zinc-100 block" data-i18n="vehicleTitle">घरका सवारी साधनहरू (Vehicles)</span>
+            <p class="text-[10px] text-slate-500 font-medium" data-i18n="vehicleSub">स्कुटर, मोटरसाइकल तथा गाडी विवरण</p>
+          </div>
+          <button onclick="openVehicleModal()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-lg transition shadow-2xs whitespace-nowrap">
+            + सवारी थप्नुहोस्
+          </button>
+        </div>
+
+        <!-- Vehicle Cards Container -->
+        <div id="vehicleListContainer" class="space-y-2 pt-1">
+          <!-- Rendered dynamically by renderVehicleList() -->
+        </div>
+      </div>
+
+      <!-- Home Service Directory (With Edit & Delete Support) -->
+      <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-3 shadow-xs">
+        <div class="flex justify-between items-center">
+          <div>
+            <span class="text-xs font-bold text-slate-900 dark:text-zinc-100 block" data-i18n="homeServices">घरायसी सेवा सम्पर्क</span>
+            <p class="text-[10px] text-slate-500 font-medium" data-i18n="homeServicesSub">प्लम्बर, इलेक्ट्रिसियन तथा मिस्त्रीहरूको नम्बर</p>
+          </div>
+          <button onclick="openAddHomeServiceModal()" class="px-2.5 py-1 bg-slate-800 dark:bg-zinc-700 hover:bg-slate-700 text-white font-bold text-[11px] rounded-lg transition shadow-2xs whitespace-nowrap">
+            + सम्पर्क
+          </button>
+        </div>
+
+        <div id="homeContactsList" class="space-y-2 pt-1">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Standalone Android APK Download Card -->
+      <div class="p-4 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 rounded-2xl space-y-2.5 shadow-xs">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold text-emerald-900 dark:text-emerald-300 block" data-i18n="apkTitle">मोबाइल एप (.apk) सेयर गर्नुहोस्</span>
+          <span class="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">Offline APK</span>
+        </div>
+        <p class="text-xs text-emerald-800/80 dark:text-emerald-400/80 font-medium" data-i18n="apkDesc">इन्टरनेट नभए पनि चल्ने गरी परिवारका सदस्यहरूको एन्ड्रोइड फोनमा यो एप इन्स्टल गर्न सक्नुहुन्छ।</p>
+        <div class="pt-1">
+          <a href="/download" download class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-bold rounded-xl text-center shadow-xs transition flex items-center justify-center space-x-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            <span data-i18n="downloadApkBtn">Sangalo.apk डाउनलोड</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Backup & Restore -->
+      <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-2.5 shadow-xs">
+        <span class="text-xs font-bold text-slate-900 dark:text-zinc-100 block" data-i18n="backupTitle">डाटा ब्याकअप र सुरक्षा</span>
+        <div class="flex gap-2">
+          <button onclick="exportBackup()" class="flex-1 py-2.5 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 text-slate-900 dark:text-zinc-100 text-xs font-semibold rounded-xl transition" data-i18n="exportBackup">
+            ब्याकअप डाउनलोड (.json)
+          </button>
+          <label class="flex-1 py-2.5 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 text-slate-900 dark:text-zinc-100 text-xs font-semibold rounded-xl text-center cursor-pointer transition">
+            <span data-i18n="importBackup">ब्याकअप रिस्टोर</span>
+            <input type="file" accept=".json" onchange="importBackup(event)" class="hidden">
+          </label>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================= -->
+  <!-- FLOATING INTERACTIVE PET COMPANION ("पुकु" / PUKU) -->
+  <!-- ============================================================= -->
+  <div id="floatingPetContainer" class="hidden fixed top-0 left-0 z-40 select-none pointer-events-none transition-transform duration-75" style="will-change: transform;">
+    <!-- Speech bubble -->
+    <div id="pukuBubble" class="hidden -mt-10 mb-1 ml-1 px-3 py-1.5 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl shadow-lg text-[11px] font-semibold text-slate-800 dark:text-zinc-200 whitespace-nowrap pointer-events-auto cursor-pointer animate-in fade-in slide-in-from-bottom-2">
+      नमस्ते! म पुकु 🐾
+    </div>
+    <!-- Interactive Canvas & Mini Action Buttons -->
+    <div class="relative pointer-events-auto flex flex-col items-center">
+      <div class="absolute -top-2 left-0 right-0 flex justify-between px-1 pointer-events-auto z-10">
+        <button onclick="dismissPet()" class="w-5 h-5 bg-slate-200/90 dark:bg-zinc-700/90 hover:bg-rose-500 hover:text-white text-slate-600 dark:text-zinc-300 rounded-full flex items-center justify-center text-[10px] font-bold shadow-xs transition" title="Dismiss Pet">✕</button>
+        <button onclick="tossTennisBall(event)" class="w-5 h-5 bg-amber-100 dark:bg-amber-950/80 hover:bg-amber-400 text-amber-700 dark:text-amber-300 rounded-full flex items-center justify-center text-[11px] shadow-xs transition" title="Toss Ball 🎾">🎾</button>
+      </div>
+      <canvas id="floatingPetCanvas" width="96" height="80" class="cursor-grab active:cursor-grabbing select-none" style="touch-action: none;"></canvas>
+    </div>
+  </div>
+
+  <!-- ============================================================= -->
+  <!-- MODALS -->
+  <!-- ============================================================= -->
+
+  <!-- 1. Universal Delete Confirmation Modal -->
+  <div id="confirmActionModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="w-full max-w-xs bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 space-y-3.5 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+      <div class="text-center space-y-1">
+        <span class="text-3xl">⚠️</span>
+        <h4 id="confirmModalTitle" class="text-sm font-extrabold text-slate-900 dark:text-zinc-100">हटाउन निश्चित हुनुहुन्छ?</h4>
+        <p id="confirmModalMsg" class="text-xs text-slate-500 dark:text-zinc-400">यो विवरण सधैंका लागि हट्नेछ।</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="closeConfirmModal(false)" class="flex-1 py-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 text-slate-700 dark:text-zinc-300 font-bold text-xs rounded-xl transition" data-i18n="cancelBtn">
+          रद्द (Cancel)
+        </button>
+        <button id="confirmModalActionBtn" onclick="closeConfirmModal(true)" class="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl shadow-xs transition" data-i18n="confirmDeleteBtn">
+          हटाउनुहोस् (Delete)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Interactive Puku Playground Drawer / Modal -->
+  <div id="pukuPlayModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white dark:bg-zinc-900 border border-amber-200 dark:border-zinc-800 rounded-2xl p-4 space-y-3.5 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🐕</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-zinc-100">पुकुको खेल कोठा (Puku's Den)</h3>
+            <p id="pukuHappinessText" class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">💖 ९०% खुशी (Very Happy)</p>
+          </div>
+        </div>
+        <button onclick="closePukuPlayModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Playground Canvas -->
+      <div class="relative bg-gradient-to-b from-amber-50 to-emerald-50/50 dark:from-zinc-950 dark:to-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-xl overflow-hidden flex justify-center py-2">
+        <canvas id="pukuPlaygroundCanvas" width="280" height="90" class="block"></canvas>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="feedPukuTreat()" class="p-2.5 bg-amber-50 dark:bg-zinc-800 border border-amber-200 dark:border-zinc-700 hover:bg-amber-100 rounded-xl flex flex-col items-center justify-center transition active:scale-95">
+          <span class="text-xl">🍖</span>
+          <span class="text-[10px] font-bold text-amber-900 dark:text-amber-300 mt-0.5">Treat दिनुहोस्</span>
+        </button>
+        <button onclick="playFetchBall()" class="p-2.5 bg-emerald-50 dark:bg-zinc-800 border border-emerald-200 dark:border-zinc-700 hover:bg-emerald-100 rounded-xl flex flex-col items-center justify-center transition active:scale-95">
+          <span class="text-xl">🎾</span>
+          <span class="text-[10px] font-bold text-emerald-900 dark:text-emerald-300 mt-0.5">बल खेल्ने</span>
+        </button>
+        <button onclick="petPukuLove()" class="p-2.5 bg-rose-50 dark:bg-zinc-800 border border-rose-200 dark:border-zinc-700 hover:bg-rose-100 rounded-xl flex flex-col items-center justify-center transition active:scale-95">
+          <span class="text-xl">❤️</span>
+          <span class="text-[10px] font-bold text-rose-900 dark:text-rose-300 mt-0.5">मुसार्ने (Pet)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Calendar Day Details & Add Reminder Modal -->
+  <div id="calendarEventModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 space-y-3.5 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block" data-i18n="modalDateHeader">पात्रो विवरण (Date Details)</span>
+          <h3 id="modalSelectedDate" class="text-sm font-extrabold text-slate-900 dark:text-zinc-100">मिति</h3>
+        </div>
+        <button onclick="closeDateDetails()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div id="modalFestivalDesc" class="hidden p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 text-amber-800 dark:text-amber-300 font-bold text-xs">
+      </div>
+
+      <div class="space-y-1.5">
+        <span class="text-[11px] font-bold text-slate-600 dark:text-zinc-400 block" data-i18n="modalRegisteredEvents">दर्ता भएका सम्झनाहरू:</span>
+        <div id="modalEventsList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <form onsubmit="saveCalendarEvent(event)" class="space-y-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+        <span class="text-[11px] font-bold text-slate-700 dark:text-zinc-300 block" data-i18n="addEventTitle">नयाँ सम्झना वा कार्यक्रम थप्नुहोस्:</span>
+        <input id="eventTitleInput" type="text" placeholder="सम्झना / कार्यक्रम (e.g. मामाको जन्मदिन)" data-i18n-placeholder="eventPlaceholder" required class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500">
+        <div class="flex gap-2">
+          <input id="eventTimeInput" type="time" class="flex-1 min-w-0 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+          <button type="submit" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-xs transition whitespace-nowrap" data-i18n="saveEventBtn">
+            सुरक्षित गर्नुहोस्
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Daily Medicine Routine Modal -->
+  <div id="medicineModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 space-y-3.5 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 id="medModalHeading" class="text-sm font-extrabold text-slate-900 dark:text-zinc-100">औषधि थप्नुहोस् (Add Medicine)</h3>
+        <button onclick="closeMedicineModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form onsubmit="saveMedicine(event)" class="space-y-2.5">
+        <input type="hidden" id="medEditId" value="">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">औषधिको नाम (Medicine Name)</label>
+          <input id="medNameInput" type="text" placeholder="e.g. प्रेसरको औषधि (Amlodipine)" required class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">समय (Time of Day)</label>
+            <select id="medSlotInput" class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs font-medium text-slate-900 dark:text-zinc-100 focus:outline-none">
+              <option value="morning">🌅 बिहान (Morning - 8 AM)</option>
+              <option value="afternoon">☀️ दिउँसो (Afternoon - 1 PM)</option>
+              <option value="night">🌙 साँझ/राति (Night - 8 PM)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">मात्रा (Dosage)</label>
+            <input id="medDosageInput" type="text" placeholder="e.g. १ चक्की" value="१ चक्की" class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">खानासँग सम्बन्ध (Food Timing)</label>
+          <div class="flex gap-2">
+            <label class="flex-1 p-2 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-center space-x-1.5 cursor-pointer text-xs font-semibold">
+              <input type="radio" name="medFood" value="after" checked class="text-emerald-600">
+              <span>खानापछि</span>
+            </label>
+            <label class="flex-1 p-2 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-center space-x-1.5 cursor-pointer text-xs font-semibold">
+              <input type="radio" name="medFood" value="before" class="text-emerald-600">
+              <span>खानाअघि</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-xs transition">
+          औषधि सेभ गर्नुहोस्
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. Vehicle Add/Edit Modal (with Advanced Technical Specs Popup) -->
+  <div id="vehicleModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 space-y-3.5 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 id="vehModalHeading" class="text-sm font-extrabold text-slate-900 dark:text-zinc-100">सवारी साधन थप्नुहोस्</h3>
+        <button onclick="closeVehicleModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form onsubmit="saveVehicle(event)" class="space-y-2.5">
+        <input type="hidden" id="vehEditId" value="">
+
+        <!-- Quick Vehicle Type Selector -->
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">सवारीको प्रकार (Vehicle Type)</label>
+          <div class="flex gap-1.5">
+            <button type="button" onclick="setVehType('scooter')" id="vtype-scooter" class="flex-1 py-1.5 px-1 bg-emerald-50 border border-emerald-500 rounded-xl text-xs font-bold text-emerald-800 text-center">🛵 स्कुटर</button>
+            <button type="button" onclick="setVehType('bike')" id="vtype-bike" class="flex-1 py-1.5 px-1 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 text-center">🏍️ बाइक</button>
+            <button type="button" onclick="setVehType('car')" id="vtype-car" class="flex-1 py-1.5 px-1 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 text-center">🚗 कार</button>
+          </div>
+          <input type="hidden" id="vehTypeInput" value="scooter">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">गाडी / स्कुटर मोडल (Model Name)</label>
+          <input id="vehNameInput" type="text" placeholder="e.g. Honda Shine / Dio" required class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-zinc-100 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">नम्बर प्लेट (Plate Number)</label>
+          <input id="vehPlateInput" type="text" placeholder="बा २ प ९८७६" required class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-zinc-100 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">दैनिक सर्भिसिङ विवरण (Quick Notes)</label>
+          <input id="vehNotesInput" type="text" placeholder="e.g. 10W-30 मोबिल, टायर हावा ३२ PSI" class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+        </div>
+
+        <!-- Technical Specs Accordion (Non-tech abstraction) -->
+        <details class="p-2.5 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl text-xs">
+          <summary class="font-bold cursor-pointer text-slate-700 dark:text-zinc-300">
+            ⚙️ प्राविधिक विवरण (इन्जिन, ब्लुबुक, बीमा...)
+          </summary>
+          <div class="space-y-2 pt-2.5">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">इन्जिन नम्बर (Engine #)</label>
+              <input id="vehEngineInput" type="text" placeholder="इन्जिन नम्बर..." class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">चेसिस / VIN #</label>
+              <input id="vehVinInput" type="text" placeholder="चेसिस नम्बर..." class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">ब्लुबुक कर तिर्ने मिति (Tax Due)</label>
+              <input id="vehTaxDueInput" type="text" placeholder="e.g. २०८३ चैत मसान्त" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+            </div>
+          </div>
+        </details>
+
+        <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-xs transition">
+          सवारी साधन सेभ गर्नुहोस्
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 6. Vehicle Technical Details Popup Modal (View-Only for Yatayat / Servicing) -->
+  <div id="vehicleDetailModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 space-y-3.5 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">सवारी साधन विवरण पत्र</span>
+          <h3 id="vehDetailTitle" class="text-sm font-extrabold text-slate-900 dark:text-zinc-100">सवारी नाम</h3>
+        </div>
+        <button onclick="closeVehicleDetailModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div id="vehDetailContent" class="space-y-2 text-xs">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Borrow / Lend Record Modal -->
+  <div id="borrowModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 space-y-3.5 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-extrabold text-slate-900 dark:text-zinc-100">सापटी हिसाब दर्ता (Record Borrow/Lend)</h3>
+        <button onclick="closeBorrowModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form onsubmit="saveBorrowLend(event)" class="space-y-2.5">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">प्रकार (Type)</label>
+          <div class="flex gap-2">
+            <label class="flex-1 p-2 bg-slate-50 dark:bg-zinc-950 border border-emerald-500 rounded-xl flex items-center justify-center space-x-1.5 cursor-pointer text-xs font-bold text-emerald-800 dark:text-emerald-400">
+              <input type="radio" name="borrowType" value="lent" checked class="text-emerald-600">
+              <span>मैले दिएको (Lent)</span>
+            </label>
+            <label class="flex-1 p-2 bg-slate-50 dark:bg-zinc-950 border border-rose-500 rounded-xl flex items-center justify-center space-x-1.5 cursor-pointer text-xs font-bold text-rose-800 dark:text-rose-400">
+              <input type="radio" name="borrowType" value="borrowed" class="text-rose-600">
+              <span>मैले लिएको (Borrowed)</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">व्यक्ति वा साथीको नाम (Person Name)</label>
+          <input id="borrowNameInput" type="text" placeholder="e.g. रमेश साथी" required class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-zinc-100 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">रकम (रू Amount)</label>
+          <input id="borrowAmountInput" type="number" step="1" placeholder="e.g. २५००" required class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-zinc-100 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">विवरण वा प्रयोजन (Note)</label>
+          <input id="borrowNoteInput" type="text" placeholder="e.g. चिया खर्च, आपतकालीन" class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-xs transition">
+          हिसाब सेभ गर्नुहोस्
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 8. Home Service Add/Edit Modal -->
+  <div id="homeServiceModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 space-y-3.5 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 id="serviceModalHeading" class="text-sm font-extrabold text-slate-900 dark:text-zinc-100">घरायसी सम्पर्क</h3>
+        <button onclick="closeHomeServiceModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form onsubmit="saveHomeService(event)" class="space-y-2.5">
+        <input type="hidden" id="serviceEditId" value="">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">काम / पेशा (Role)</label>
+          <input id="serviceRoleInput" type="text" placeholder="काम (e.g. प्लम्बर, इलेक्ट्रिसियन)" required class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">नाम (Name)</label>
+          <input id="serviceNameInput" type="text" placeholder="नाम" required class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">फोन नम्बर (Phone)</label>
+          <input id="servicePhoneInput" type="tel" placeholder="फोन नम्बर" required class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs font-mono font-bold text-slate-900 dark:text-zinc-100 focus:outline-none">
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-slate-900 dark:bg-zinc-100 text-white dark:text-slate-900 font-bold text-xs rounded-xl shadow-xs transition">
+          सम्पर्क सेभ गर्नुहोस्
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Bar (5 Touch-Optimized Tabs) -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#09090b]/95 backdrop-blur-md border-t border-slate-200 dark:border-zinc-800 px-1 py-1 shadow-lg">
+    <div class="max-w-md mx-auto grid grid-cols-5 gap-0.5">
+      
+      <!-- 1. Shopping (किनमेल) -->
+      <button id="navBtn-shopping" onclick="setTab('shopping')" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-emerald-600 dark:text-emerald-400 transition">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25c-.669 0-1.189-.578-1.119-1.243l1.263-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+        </svg>
+        <span class="text-[10px] font-bold tracking-tight" data-i18n="shoppingTab">किनमेल</span>
+      </button>
+
+      <!-- 2. Budget (खर्च) -->
+      <button id="navBtn-budget" onclick="setTab('budget')" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 dark:text-zinc-500 transition">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+        </svg>
+        <span class="text-[10px] font-bold tracking-tight" data-i18n="budgetTab">खर्च</span>
+      </button>
+
+      <!-- 3. Calendar (पात्रो) -->
+      <button id="navBtn-calendar" onclick="setTab('calendar')" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 dark:text-zinc-500 transition">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5" />
+        </svg>
+        <span class="text-[10px] font-bold tracking-tight" data-i18n="calendarTab">पात्रो</span>
+      </button>
+
+      <!-- 4. Chautari (चौतारी) -->
+      <button id="navBtn-chautari" onclick="setTab('chautari')" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 dark:text-zinc-500 transition">
+        <span class="text-base mb-0.5">🐯</span>
+        <span class="text-[10px] font-bold tracking-tight" data-i18n="chautariTab">चौतारी</span>
+      </button>
+
+      <!-- 5. Vault (भण्डार) -->
+      <button id="navBtn-vault" onclick="setTab('vault')" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 dark:text-zinc-500 transition">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+        </svg>
+        <span class="text-[10px] font-bold tracking-tight" data-i18n="vaultTab">भण्डार</span>
+      </button>
+
+    </div>
+  </nav>
+
+  <script src="/app.js?v=5.0"></script>
+</body>
+</html>

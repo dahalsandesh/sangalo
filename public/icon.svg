@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="50%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="sunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <linearGradient id="mountainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#064e3b" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Squircle App Background -->
+  <rect width="512" height="512" rx="120" fill="url(#bgGrad)" />
+  <rect x="16" y="16" width="480" height="480" rx="104" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="4" />
+
+  <!-- Golden Rising Sun -->
+  <circle cx="256" cy="190" r="70" fill="url(#sunGrad)" opacity="0.9" />
+
+  <!-- Himalayan Mountain Silhouette -->
+  <!-- Left Peak -->
+  <polygon points="60,340 180,180 300,340" fill="url(#mountainGrad)" opacity="0.85" />
+  <polygon points="180,180 140,230 190,250 180,180" fill="#cbd5e1" opacity="0.4" />
+  <!-- Center/Right Peak (Mt. Everest style) -->
+  <polygon points="190,340 330,140 470,340" fill="url(#mountainGrad)" filter="url(#shadow)" />
+  <polygon points="330,140 280,210 340,230 330,140" fill="#94a3b8" opacity="0.4" />
+
+  <!-- Cozy Traditional Home Roof & Body -->
+  <path d="M160 370 L256 280 L352 370 Z" fill="#b45309" filter="url(#shadow)" />
+  <path d="M150 370 L256 270 L362 370 L346 376 L256 290 L166 376 Z" fill="#78350f" />
+  <rect x="180" y="370" width="152" height="74" rx="12" fill="#fffbeb" />
+  <rect x="232" y="388" width="48" height="56" rx="6" fill="#d97706" />
+
+  <!-- Friendly Golden Paw Emblem -->
+  <ellipse cx="256" cy="406" rx="10" ry="12" fill="#ffffff" />
+  <circle cx="242" cy="392" r="4.5" fill="#ffffff" />
+  <circle cx="252" cy="386" r="4.5" fill="#ffffff" />
+  <circle cx="260" cy="386" r="4.5" fill="#ffffff" />
+  <circle cx="270" cy="392" r="4.5" fill="#ffffff" />
+</svg>

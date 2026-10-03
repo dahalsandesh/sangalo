@@ -1,0 +1,21 @@
+# Build directories and binaries
+.build/
+.android_sdk/
+*.apk
+*.aab
+*.dex
+
+# Keystores (keep personal signing keys private)
+*.jks
+*.keystore
+
+# Node & Python caches
+node_modules/
+__pycache__/
+*.pyc
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*.swp
+*~

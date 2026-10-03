@@ -1,0 +1,41 @@
+{
+  "name": "सँगालो — Sangalo Nepali Family Companion",
+  "short_name": "सँगालो Sangalo",
+  "description": "नेपाली पात्रो, बाघचाल, दैनिक किनमेल, खर्च र पारिवारिक भण्डार",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#10b981",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "किनमेल सूची (Shopping)",
+      "short_name": "किनमेल",
+      "description": "घरको किनमेल सूची खोल्नुहोस्",
+      "url": "/#shopping",
+      "icons": [{ "src": "/icon.svg", "sizes": "512x512" }]
+    },
+    {
+      "name": "नेपाली पात्रो (Calendar)",
+      "short_name": "पात्रो",
+      "description": "वि.सं. पात्रो र सम्झनाहरू",
+      "url": "/#calendar",
+      "icons": [{ "src": "/icon.svg", "sizes": "512x512" }]
+    },
+    {
+      "name": "बाघचाल खेल (Bagh-Chal)",
+      "short_name": "बाघचाल",
+      "description": "परम्परागत बाघचाल खेल्नुहोस्",
+      "url": "/#chautari",
+      "icons": [{ "src": "/icon.svg", "sizes": "512x512" }]
+    }
+  ]
+}
