@@ -4,10 +4,18 @@
 *.apk
 *.aab
 *.dex
+*.idsig
 
-# Keystores (keep personal signing keys private)
+# Keystores & Cryptographic keys (keep personal signing keys private)
 *.jks
 *.keystore
+*.pem
+*.key
+
+# Environment & Sensitive configs
+.env
+*.env
+.env.*
 
 # Node & Python caches
 node_modules/
