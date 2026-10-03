@@ -11,7 +11,7 @@
 
 > 💡 **The 100% Smartphone Engineering Story:**  
 > Sangalo wasn't built on a MacBook, PC, or cloud CI/CD farm. **100% of this application**—from the 91-year astronomical Bikram Sambat database to native Dalvik bytecode compilation and signed APK packaging—was designed, coded, tested, and published to GitHub **entirely on a mid-range smartphone (Xiaomi Redmi Note 15 Pro 5G)** via Termux Ubuntu and an AI coding agent without writing a single line of manual code.  
-> 👉 **[Read the Step-by-Step Guide: How to Build Apps on Your Phone (No Laptop Required)](MOBILE_DEV_GUIDE.md)**
+> 👉 **[Read the Step-by-Step Guide](MOBILE_DEV_GUIDE.md)** • 📱 **[Visit the Dedicated Open-Source Repo: Pocket Developer](https://github.com/dahalsandesh/pocket-developer)**
 
 ---
 
@@ -211,7 +211,8 @@ Contributions to **सँगालो (Sangalo)** are warmly welcome! Whether yo
 
 ### 📖 Complete Tutorial & Masterclass
 Want to learn how to turn your Android phone into an autonomous development workstation and compile apps directly (or connect a laptop over SSH/Wi-Fi)?  
-👉 **[Read the Full Step-by-Step Guide: How to Build Mobile Apps on Android (No Laptop Required)](MOBILE_DEV_GUIDE.md)**
+👉 **[Read the Full Step-by-Step Guide: How to Build Mobile Apps on Android (No Laptop Required)](MOBILE_DEV_GUIDE.md)**  
+📱 **Check out the standalone open-source repository:** [**The Pocket Developer (`pocket-developer`)**](https://github.com/dahalsandesh/pocket-developer)
 
 ---
 

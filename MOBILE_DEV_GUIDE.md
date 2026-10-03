@@ -6,6 +6,9 @@ This guide documents the exact architecture and workflow used to engineer, compi
 
 Whether you don't own a laptop, or you want to connect a laptop/PC to your phone for a dual-screen experience, this guide walks you through every step.
 
+> 🌟 **Looking for the dedicated open-source repository & community project?**  
+> Check out [**The Pocket Developer (`pocket-developer`)**](https://github.com/dahalsandesh/pocket-developer) for standalone scripts, templates, homelab networking guides, and the 1-tap bootstrap installer.
+
 ---
 
 ## 📑 Table of Contents
