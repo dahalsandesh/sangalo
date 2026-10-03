@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sangalo-v6';
+const CACHE_NAME = 'sangalo-v7';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

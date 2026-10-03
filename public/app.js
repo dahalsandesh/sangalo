@@ -4,8 +4,8 @@
 // 100% Offline-Safe, Bilingual, Full BS Calendar, Bagh-Chal, & Companion
 // =====================================================================
 
-const STORAGE_KEY = 'sangalo_data_v5';
-const LANG_KEY = 'sangalo_lang_v5';
+const STORAGE_KEY = 'sangalo_data_v6';
+const LANG_KEY = 'sangalo_lang_v6';
 
 // ---------------------------------------------------------------------
 // 1. WEB AUDIO SYNTHESIZER (No external audio files needed)
@@ -461,8 +461,8 @@ let state = {
     { id: 2, type: 'borrowed', name: 'शर्मा जी', amount: 1000, note: 'किराना सामान', date: '२०८३-०६-०५', settled: false }
   ],
   events: {
-    '2083-6-10': [{ id: 101, title: 'विजया दशमी (Dashain)', time: '' }],
-    '2083-7-15': [{ id: 102, title: 'लक्ष्मी पूजा (Tihar)', time: '18:00' }]
+    '2083-6-20': [{ id: 101, title: 'बुबाको स्वास्थ्य परीक्षण (Doctor Checkup)', time: '10:00' }],
+    '2083-6-28': [{ id: 102, title: 'बिजुलीको महसुल बुझाउने (Electricity Bill)', time: '14:00' }]
   },
   health: {
     bloodType: 'O+',
@@ -500,7 +500,7 @@ function loadState() {
   try {
     let raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
-      raw = localStorage.getItem('sangalo_data_v4') || localStorage.getItem('sangalo_data_v3');
+      raw = localStorage.getItem('sangalo_data_v5') || localStorage.getItem('sangalo_data_v4');
     }
     if (raw) {
       const parsed = JSON.parse(raw);
@@ -510,6 +510,24 @@ function loadState() {
       if (parsed.budget) state.budget = { ...state.budget, ...parsed.budget };
     }
   } catch (e) {}
+
+  // Sanitize any legacy mock festivals accidentally stored in state.events
+  if (state.events && typeof state.events === 'object') {
+    for (const k of Object.keys(state.events)) {
+      if (Array.isArray(state.events[k])) {
+        state.events[k] = state.events[k].filter(ev => {
+          const title = (ev.title || '').toLowerCase();
+          return !(title.includes('dashain') || title.includes('दशैं') || 
+                   title.includes('tihar') || title.includes('तिहार') ||
+                   title.includes('tika') || title.includes('टीका'));
+        });
+        if (state.events[k].length === 0) {
+          delete state.events[k];
+        }
+      }
+    }
+    saveState();
+  }
 
   if (!state.borrowLend || !Array.isArray(state.borrowLend)) {
     state.borrowLend = [
@@ -943,6 +961,7 @@ function prevCalendarMonth() {
     calendarState.currentBsYear--;
   }
   renderFullCalendarGrid();
+  renderRemindersList();
   playSound('pop');
 }
 
@@ -953,7 +972,33 @@ function nextCalendarMonth() {
     calendarState.currentBsYear++;
   }
   renderFullCalendarGrid();
+  renderRemindersList();
   playSound('pop');
+}
+
+function jumpCalendarYear(yearVal) {
+  calendarState.currentBsYear = parseInt(yearVal, 10);
+  renderFullCalendarGrid();
+  renderRemindersList();
+  playSound('pop');
+}
+
+function jumpCalendarMonth(monthVal) {
+  calendarState.currentBsMonth = parseInt(monthVal, 10);
+  renderFullCalendarGrid();
+  renderRemindersList();
+  playSound('pop');
+}
+
+function jumpToTodayCalendar() {
+  const todayBs = getBikramSambatDate();
+  calendarState.currentBsYear = todayBs.year;
+  calendarState.currentBsMonth = todayBs.month;
+  calendarState.selectedDay = todayBs.day;
+  renderFullCalendarGrid();
+  renderRemindersList();
+  playSound('pop');
+  showToast(currentLang === 'ne' ? 'आजको मितिमा पुग्यो' : 'Jumped to today');
 }
 
 function renderWeekdayHeaders() {
@@ -990,6 +1035,11 @@ function renderFullCalendarGrid() {
 
   const monthName = currentLang === 'ne' ? nepaliMonths[month - 1] : nepaliMonthsEn[month - 1];
   const yearName = currentLang === 'ne' ? toDevanagariDigits(year) : year;
+  const yearSelect = document.getElementById('calendarYearSelect');
+  const monthSelect = document.getElementById('calendarMonthSelect');
+  if (yearSelect) yearSelect.value = String(year);
+  if (monthSelect) monthSelect.value = String(month);
+
   if (titleEl) {
     titleEl.innerText = `${monthName} ${yearName}`;
   }
@@ -1174,33 +1224,101 @@ function renderRemindersList() {
   const container = document.getElementById('upcomingRemindersList');
   if (!container) return;
 
-  const allEvents = [];
+  const currentYear = (calendarState && calendarState.currentBsYear) || 2081;
+  const currentMonth = (calendarState && calendarState.currentBsMonth) || 1;
+  const items = [];
+
+  // 1. Gather verified official festivals for current month and next month
+  for (let mOffset = 0; mOffset <= 1; mOffset++) {
+    let y = currentYear;
+    let m = currentMonth + mOffset;
+    if (m > 12) {
+      m = 1;
+      y++;
+    }
+    const days = getBsMonthDays(y, m);
+    for (let d = 1; d <= days; d++) {
+      const fest = getFestival(y, m, d);
+      if (fest) {
+        items.push({
+          type: 'festival',
+          year: y,
+          month: m,
+          day: d,
+          title: fest,
+          dateKey: `${y}-${m}-${d}`,
+          sortKey: y * 10000 + m * 100 + d
+        });
+      }
+    }
+  }
+
+  // 2. Gather user personal events
   if (state.events) {
     Object.keys(state.events).forEach(key => {
-      state.events[key].forEach(ev => allEvents.push({ dateKey: key, ...ev }));
+      const parts = key.split('-').map(Number);
+      if (parts.length === 3) {
+        const y = parts[0], m = parts[1], d = parts[2];
+        state.events[key].forEach(ev => {
+          items.push({
+            type: 'user',
+            id: ev.id,
+            year: y,
+            month: m,
+            day: d,
+            title: ev.title,
+            time: ev.time,
+            dateKey: key,
+            sortKey: y * 10000 + m * 100 + d
+          });
+        });
+      }
     });
   }
 
-  if (allEvents.length === 0) {
+  items.sort((a, b) => a.sortKey - b.sortKey);
+
+  if (items.length === 0) {
     container.innerHTML = `<div class="text-xs text-slate-500 dark:text-zinc-400 py-3 text-center">${t('noReminders')}</div>`;
     return;
   }
 
-  container.innerHTML = allEvents.slice(0, 5).map(ev => {
-    const parts = ev.dateKey.split('-');
-    const mName = currentLang === 'ne' ? nepaliMonths[parts[1] - 1] : nepaliMonthsEn[parts[1] - 1];
-    const dateFormatted = `${mName} ${currentLang === 'ne' ? toDevanagariDigits(parts[2]) : parts[2]}`;
-    return `
-      <div class="p-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between shadow-xs">
-        <div>
-          <div class="text-xs font-bold text-slate-900 dark:text-zinc-100">${escapeHtml(ev.title)}</div>
-          <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">${dateFormatted} ${ev.time ? '• ' + ev.time : ''}</div>
+  container.innerHTML = items.slice(0, 6).map(it => {
+    const mName = currentLang === 'ne' ? nepaliMonths[it.month - 1] : nepaliMonthsEn[it.month - 1];
+    const dDev = currentLang === 'ne' ? toDevanagariDigits(it.day) : it.day;
+    const yDev = currentLang === 'ne' ? toDevanagariDigits(it.year) : it.year;
+    const dateFormatted = `${mName} ${dDev}, ${yDev}`;
+
+    if (it.type === 'festival') {
+      return `
+        <div onclick="openDateDetails('${it.dateKey}', ${it.day}, '${it.month}-${it.day}')" 
+             class="p-2.5 bg-gradient-to-r from-amber-50/60 to-white dark:from-zinc-900 dark:to-zinc-900 border border-amber-200/60 dark:border-zinc-800 rounded-xl flex items-center justify-between shadow-2xs cursor-pointer hover:border-amber-400 transition">
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 rounded-md">🎉 चाडपर्व</span>
+              <span class="text-xs font-bold text-slate-900 dark:text-zinc-100">${escapeHtml(it.title)}</span>
+            </div>
+            <div class="text-[10px] text-amber-700 dark:text-amber-400 font-medium mt-0.5">${dateFormatted}</div>
+          </div>
+          <span class="text-xs text-slate-400">→</span>
         </div>
-        <button onclick="deleteEvent('${ev.dateKey}', ${ev.id})" class="p-1.5 text-slate-400 hover:text-rose-500">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-      </div>
-    `;
+      `;
+    } else {
+      return `
+        <div class="p-2.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between shadow-2xs">
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 rounded-md">📌 सम्झना</span>
+              <span class="text-xs font-bold text-slate-900 dark:text-zinc-100">${escapeHtml(it.title)}</span>
+            </div>
+            <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">${dateFormatted} ${it.time ? '• ' + it.time : ''}</div>
+          </div>
+          <button onclick="deleteEvent('${it.dateKey}', ${it.id})" class="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      `;
+    }
   }).join('');
 }
 

@@ -271,22 +271,56 @@
       <!-- Full Monthly Bikram Sambat Calendar Card -->
       <div class="p-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs space-y-3">
         
-        <!-- Month Navigation Header & Add Reminder Quick Button -->
-        <div class="flex items-center justify-between">
-          <button onclick="prevCalendarMonth()" class="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 transition" title="अघिल्लो महिना">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
-          </button>
-          
-          <div class="text-center">
-            <h2 id="calendarMonthTitle" class="text-base font-extrabold text-slate-900 dark:text-zinc-100 leading-tight">
-              असोज २०८३
-            </h2>
-            <span class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400" data-i18n="calendarSub">वि.सं. पात्रो (गतेमा छोएर सम्झना थप्नुहोस्)</span>
+        <!-- Month & Year Navigation Header with 1-Tap Jump Dropdowns -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <button onclick="prevCalendarMonth()" class="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 transition" title="अघिल्लो महिना">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+            </button>
+            
+            <div class="flex items-center space-x-1.5">
+              <!-- Month Select -->
+              <select id="calendarMonthSelect" onchange="jumpCalendarMonth(this.value)" class="bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 font-extrabold text-xs rounded-xl px-2 py-1.5 border border-slate-200 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+                <option value="1">बैशाख (Baisakh)</option>
+                <option value="2">जेठ (Jestha)</option>
+                <option value="3">असार (Ashadh)</option>
+                <option value="4">साउन (Shrawan)</option>
+                <option value="5">भदौ (Bhadra)</option>
+                <option value="6">असोज (Asoj)</option>
+                <option value="7">कात्तिक (Kartik)</option>
+                <option value="8">मंसिर (Mangsir)</option>
+                <option value="9">पुस (Poush)</option>
+                <option value="10">माघ (Magh)</option>
+                <option value="11">फागुन (Falgun)</option>
+                <option value="12">चैत (Chaitra)</option>
+              </select>
+
+              <!-- Year Select -->
+              <select id="calendarYearSelect" onchange="jumpCalendarYear(this.value)" class="bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 font-extrabold text-xs rounded-xl px-2 py-1.5 border border-slate-200 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+                <option value="2080">२०८० (2080)</option>
+                <option value="2081">२०८१ (2081)</option>
+                <option value="2082">२०८२ (2082)</option>
+                <option value="2083">२०८३ (2083)</option>
+                <option value="2084">२०८४ (2084)</option>
+                <option value="2085">२०८५ (2085)</option>
+              </select>
+
+              <!-- Today Quick Jump Button -->
+              <button onclick="jumpToTodayCalendar()" class="px-2 py-1.5 bg-emerald-100 dark:bg-emerald-950/80 hover:bg-emerald-200 text-emerald-800 dark:text-emerald-300 font-bold text-[11px] rounded-xl transition shadow-2xs whitespace-nowrap" title="आजको मितिमा फर्कनुहोस्">
+                आज
+              </button>
+            </div>
+
+            <button onclick="nextCalendarMonth()" class="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 transition" title="पछिल्लो महिना">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            </button>
           </div>
 
-          <button onclick="nextCalendarMonth()" class="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 transition" title="पछिल्लो महिना">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
-          </button>
+          <div class="text-center">
+            <h2 id="calendarMonthTitle" class="text-xs font-bold text-slate-500 dark:text-zinc-400">
+              वि.सं. पात्रो (गतेमा छोएर सम्झना थप्नुहोस्)
+            </h2>
+          </div>
         </div>
 
         <!-- Add Event / Reminder Quick Trigger Button -->
@@ -1030,6 +1064,6 @@
     </div>
   </nav>
 
-  <script src="/app.js?v=5.0"></script>
+  <script src="/app.js?v=6.0"></script>
 </body>
 </html>
