@@ -102,7 +102,7 @@ Sangalo requires no build tools or package managers. Any static HTTP server work
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/sangalo.git
+git clone https://github.com/dahalsandesh/sangalo.git
 cd sangalo
 
 # Start local server with Python
