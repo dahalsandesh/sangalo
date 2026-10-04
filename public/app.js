@@ -269,7 +269,29 @@ const i18n = {
     addQuickItemBtn: "+ १-ट्यापमा थप्नुहोस्",
     activeQuickItems: "हालका १-ट्याप सामग्रीहरू:",
     resetDefaultsBtn: "पूर्वनिर्धारित रिसेट (Reset)",
-    doneBtn: "सकियो (Done)"
+    doneBtn: "सकियो (Done)",
+    forexBtn: "विदेशी विनिमय",
+    unitConverterBtn: "जग्गा र सुन नाप",
+    dateConverterBtn: "मिति रूपान्तरण",
+    weatherModalTitle: "मौसम, वायु गुणस्तर र पञ्चाङ्ग",
+    forexModalTitle: "विदेशी विनिमय दर (Forex Rates)",
+    unitModalTitle: "नेपाली नाप रूपान्तरण (Unit Converter)",
+    dateConverterModalTitle: "मिति रूपान्तरण (Date Converter)",
+    remittanceCalcTitle: "रेमिट्यान्स / रकम हिसाब (Calculator)",
+    currentTemp: "तापक्रम",
+    humidityWind: "आर्द्रता र हावा",
+    aqiTitle: "वायु गुणस्तर (Air Quality / AQI)",
+    panchangaTitle: "दैनिक पञ्चाङ्ग तथा मुहूर्तः",
+    sunrise: "सूर्योदय (Sunrise)",
+    sunset: "सूर्यास्त (Sunset)",
+    dayLength: "दिनमान (Day Length)",
+    tithi: "आजको तिथि (Tithi)",
+    rahuKaal: "राहु काल (अशुभ समय)",
+    abhijitMuhurat: "शुभ मुहूर्त (अभिजीत)",
+    closeBtn: "बन्द गर्नुहोस् (Close)",
+    refreshBtn: "ताजा गर्नुहोस्",
+    majorCurrencies: "प्रमुख विदेशी मुद्राहरू:",
+    remitEquivalent: "नेपाली रुपैयाँमा:"
   },
   en: {
     appTitle: "Sangalo",
@@ -446,7 +468,29 @@ const i18n = {
     addQuickItemBtn: "+ Add to Quick List",
     activeQuickItems: "Active 1-Tap Essentials:",
     resetDefaultsBtn: "Reset to Defaults",
-    doneBtn: "Done"
+    doneBtn: "Done",
+    forexBtn: "Forex Rates",
+    unitConverterBtn: "Unit Converter",
+    dateConverterBtn: "Date Converter",
+    weatherModalTitle: "Weather, Air Quality & Panchanga",
+    forexModalTitle: "Foreign Exchange Rates (NRB)",
+    unitModalTitle: "Nepali Unit Converter",
+    dateConverterModalTitle: "BS ⇄ AD Date Converter",
+    remittanceCalcTitle: "Remittance Calculator",
+    currentTemp: "Temperature",
+    humidityWind: "Humidity & Wind",
+    aqiTitle: "Air Quality (AQI)",
+    panchangaTitle: "Daily Panchanga & Timings:",
+    sunrise: "Sunrise",
+    sunset: "Sunset",
+    dayLength: "Day Length",
+    tithi: "Today's Tithi",
+    rahuKaal: "Rahu Kaal (Inauspicious)",
+    abhijitMuhurat: "Abhijit Muhurat (Auspicious)",
+    closeBtn: "Close",
+    refreshBtn: "Refresh",
+    majorCurrencies: "Major Currencies:",
+    remitEquivalent: "Equivalent in NPR:"
   }
 };
 
@@ -627,6 +671,499 @@ function saveState() {
 loadState();
 
 // ---------------------------------------------------------------------
+
+// ---------------------------------------------------------------------
+// NEPAL RASTRA BANK (NRB) OFFICIAL FOREX & REMITTANCE ENGINE
+// ---------------------------------------------------------------------
+const FOREX_STORAGE_KEY = 'sangalo_forex_cache_v1';
+let forexState = {
+  rates: [],
+  date: null,
+  isOffline: false
+};
+
+const defaultForexRates = [
+  { iso3: 'USD', name: 'U.S. Dollar', unit: 1, buy: '134.20', sell: '134.80' },
+  { iso3: 'QAR', name: 'Qatari Riyal', unit: 1, buy: '36.81', sell: '36.98' },
+  { iso3: 'AED', name: 'UAE Dirham', unit: 1, buy: '36.54', sell: '36.70' },
+  { iso3: 'SAR', name: 'Saudi Riyal', unit: 1, buy: '35.75', sell: '35.91' },
+  { iso3: 'MYR', name: 'Malaysian Ringgit', unit: 1, buy: '31.25', sell: '31.39' },
+  { iso3: 'AUD', name: 'Australian Dollar', unit: 1, buy: '89.50', sell: '89.90' },
+  { iso3: 'EUR', name: 'European Euro', unit: 1, buy: '147.20', sell: '147.85' },
+  { iso3: 'GBP', name: 'UK Pound Sterling', unit: 1, buy: '175.40', sell: '176.18' },
+  { iso3: 'KWD', name: 'Kuwaiti Dinar', unit: 1, buy: '438.20', sell: '440.15' },
+  { iso3: 'KRW', name: 'South Korean Won', unit: 100, buy: '10.15', sell: '10.20' },
+  { iso3: 'JPY', name: 'Japanese Yen', unit: 10, buy: '9.25', sell: '9.29' },
+  { iso3: 'INR', name: 'Indian Rupee', unit: 100, buy: '160.00', sell: '160.15' }
+];
+
+async function fetchForexRates(forceRefresh = false) {
+  // Load cache first
+  try {
+    const cached = localStorage.getItem(FOREX_STORAGE_KEY);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (parsed && Array.isArray(parsed.rates) && parsed.rates.length > 0) {
+        forexState = parsed;
+        renderForexUI();
+      }
+    }
+  } catch (e) {}
+
+  if (forexState.rates.length === 0) {
+    forexState.rates = defaultForexRates;
+    renderForexUI();
+  }
+
+  // Fetch live from NRB Open API
+  try {
+    const res = await fetch('https://www.nrb.org.np/api/forex/v1/app-rate');
+    if (res.ok) {
+      const liveData = await res.json();
+      if (Array.isArray(liveData) && liveData.length > 0) {
+        forexState.rates = liveData;
+        forexState.date = liveData[0].date || new Date().toISOString().split('T')[0];
+        forexState.isOffline = false;
+        try {
+          localStorage.setItem(FOREX_STORAGE_KEY, JSON.stringify(forexState));
+        } catch (e) {}
+        renderForexUI();
+      }
+    }
+  } catch (err) {
+    forexState.isOffline = true;
+    renderForexUI();
+  }
+}
+
+function renderForexUI() {
+  const tableBody = document.getElementById('forexTableBody');
+  const summaryPill = document.getElementById('forexQuickSummary');
+  const dateBadge = document.getElementById('forexDateBadge');
+
+  if (dateBadge) {
+    if (forexState.date) {
+      dateBadge.innerText = currentLang === 'ne' 
+        ? `नेपाल राष्ट्र बैंक आधिकारिक दर (${toDevanagariDigits(forexState.date)}${forexState.isOffline ? ' • अफलाइन' : ''})`
+        : `NRB Official Rates (${forexState.date}${forexState.isOffline ? ' • Cached' : ''})`;
+    }
+  }
+
+  // Quick summary pill on homepage
+  if (summaryPill) {
+    const usd = forexState.rates.find(r => r.iso3 === 'USD');
+    const qar = forexState.rates.find(r => r.iso3 === 'QAR');
+    if (usd && qar) {
+      const uRate = parseFloat(usd.sell).toFixed(1);
+      const qRate = parseFloat(qar.sell).toFixed(1);
+      summaryPill.innerText = currentLang === 'ne'
+        ? `USD: रू ${toDevanagariDigits(uRate)} • QAR: रू ${toDevanagariDigits(qRate)}`
+        : `USD: Rs ${uRate} • QAR: Rs ${qRate}`;
+    }
+  }
+
+  if (!tableBody) return;
+
+  const targetCurrencies = ['USD', 'QAR', 'AED', 'SAR', 'MYR', 'AUD', 'EUR', 'GBP', 'KWD', 'KRW', 'JPY', 'INR'];
+  let html = '';
+
+  targetCurrencies.forEach(iso => {
+    const r = forexState.rates.find(item => item.iso3 === iso) || defaultForexRates.find(item => item.iso3 === iso);
+    if (!r) return;
+
+    const buyFormatted = currentLang === 'ne' ? toDevanagariDigits(r.buy) : r.buy;
+    const sellFormatted = currentLang === 'ne' ? toDevanagariDigits(r.sell) : r.sell;
+    const unitFormatted = currentLang === 'ne' ? toDevanagariDigits(r.unit) : r.unit;
+
+    html += `
+      <tr class="hover:bg-slate-50 dark:hover:bg-[#161d2b] transition">
+        <td class="px-3 py-2">
+          <div class="font-bold text-slate-900 dark:text-slate-100">${r.iso3}</div>
+          <div class="text-[10px] text-slate-500 dark:text-slate-400 font-sans truncate max-w-[110px]">${r.name}</div>
+        </td>
+        <td class="px-2 py-2 text-center text-slate-600 dark:text-slate-300 font-bold">${unitFormatted}</td>
+        <td class="px-2 py-2 text-right font-bold text-emerald-700 dark:text-emerald-300">रू ${buyFormatted}</td>
+        <td class="px-3 py-2 text-right font-bold text-slate-800 dark:text-slate-200">रू ${sellFormatted}</td>
+      </tr>
+    `;
+  });
+
+  tableBody.innerHTML = html;
+  calculateRemittance();
+}
+
+function calculateRemittance() {
+  const amtInput = document.getElementById('remitAmountInput');
+  const currSelect = document.getElementById('remitCurrencySelect');
+  const resultEl = document.getElementById('remitResultText');
+  if (!amtInput || !currSelect || !resultEl) return;
+
+  const amt = parseFloat(amtInput.value) || 0;
+  const iso = currSelect.value;
+  const r = forexState.rates.find(item => item.iso3 === iso) || defaultForexRates.find(item => item.iso3 === iso);
+
+  if (!r) {
+    resultEl.innerText = 'रू ०';
+    return;
+  }
+
+  const buyRate = parseFloat(r.buy) || parseFloat(r.sell) || 1;
+  const unit = parseFloat(r.unit) || 1;
+  const totalNpr = (amt * buyRate) / unit;
+
+  const formatted = totalNpr.toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+  resultEl.innerText = currentLang === 'ne' ? `रू ${toDevanagariDigits(formatted)}` : `Rs. ${formatted}`;
+}
+
+function openForexModal() {
+  const modal = document.getElementById('forexRatesModal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    renderForexUI();
+  }
+}
+
+function closeForexModal() {
+  const modal = document.getElementById('forexRatesModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+
+// ---------------------------------------------------------------------
+// NEPALI UNIT CONVERTER ENGINE (Land & Gold)
+// ---------------------------------------------------------------------
+let activeConverterTab = 'hill';
+
+function openUnitConverterModal() {
+  const modal = document.getElementById('unitConverterModal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeUnitConverterModal() {
+  const modal = document.getElementById('unitConverterModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function switchConverterTab(tab) {
+  activeConverterTab = tab;
+  ['hill', 'terai', 'gold'].forEach(t => {
+    const view = document.getElementById('convView-' + t);
+    const btn = document.getElementById('tabBtn-conv-' + t);
+    if (t === tab) {
+      if (view) view.classList.remove('hidden');
+      if (btn) {
+        btn.classList.add('bg-white', 'dark:bg-[#18202d]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
+        btn.classList.remove('text-slate-500', 'dark:text-slate-400');
+      }
+    } else {
+      if (view) view.classList.add('hidden');
+      if (btn) {
+        btn.classList.remove('bg-white', 'dark:bg-[#18202d]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      }
+    }
+  });
+}
+
+function convertFromRopani() {
+  const ropani = parseFloat(document.getElementById('ropaniInput')?.value) || 0;
+  const aana = parseFloat(document.getElementById('aanaInput')?.value) || 0;
+  const paisa = parseFloat(document.getElementById('paisaInput')?.value) || 0;
+  const daam = parseFloat(document.getElementById('daamInput')?.value) || 0;
+
+  // 1 Ropani = 5476 sq ft, 1 Aana = 342.25 sq ft, 1 Paisa = 85.5625 sq ft, 1 Daam = 21.390625 sq ft
+  const totalSqFt = (ropani * 5476) + (aana * 342.25) + (paisa * 85.5625) + (daam * 21.390625);
+  const totalSqM = totalSqFt * 0.092903;
+
+  // Terai equivalent (1 Bigha = 72900 sq ft, 1 Kattha = 3645 sq ft, 1 Dhur = 182.25 sq ft)
+  const bigha = Math.floor(totalSqFt / 72900);
+  const remBigha = totalSqFt % 72900;
+  const kattha = Math.floor(remBigha / 3645);
+  const remKattha = remBigha % 3645;
+  const dhur = (remKattha / 182.25).toFixed(1);
+
+  const sqFtEl = document.getElementById('hillResultSqFt');
+  const sqMEl = document.getElementById('hillResultSqM');
+  const teraiEl = document.getElementById('hillResultTerai');
+
+  const sqFtStr = totalSqFt.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+  const sqMStr = totalSqM.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+
+  if (sqFtEl) sqFtEl.innerText = currentLang === 'ne' ? `${toDevanagariDigits(sqFtStr)} Sq. Ft` : `${sqFtStr} Sq. Ft`;
+  if (sqMEl) sqMEl.innerText = currentLang === 'ne' ? `${toDevanagariDigits(sqMStr)} Sq. M` : `${sqMStr} Sq. M`;
+  if (teraiEl) {
+    teraiEl.innerText = currentLang === 'ne'
+      ? `${toDevanagariDigits(bigha)} बिघा ${toDevanagariDigits(kattha)} कट्ठा ${toDevanagariDigits(dhur)} धुर`
+      : `${bigha} Bigha ${kattha} Kattha ${dhur} Dhur`;
+  }
+}
+
+function convertFromBigha() {
+  const bigha = parseFloat(document.getElementById('bighaInput')?.value) || 0;
+  const kattha = parseFloat(document.getElementById('katthaInput')?.value) || 0;
+  const dhur = parseFloat(document.getElementById('dhurInput')?.value) || 0;
+
+  const totalSqFt = (bigha * 72900) + (kattha * 3645) + (dhur * 182.25);
+  const totalSqM = totalSqFt * 0.092903;
+
+  // Hill equivalent (1 Ropani = 5476, 1 Aana = 342.25, 1 Paisa = 85.5625, 1 Daam = 21.390625)
+  const ropani = Math.floor(totalSqFt / 5476);
+  const remRopani = totalSqFt % 5476;
+  const aana = Math.floor(remRopani / 342.25);
+  const remAana = remRopani % 342.25;
+  const paisa = Math.floor(remAana / 85.5625);
+  const remPaisa = remAana % 85.5625;
+  const daam = (remPaisa / 21.390625).toFixed(1);
+
+  const sqFtEl = document.getElementById('teraiResultSqFt');
+  const sqMEl = document.getElementById('teraiResultSqM');
+  const hillEl = document.getElementById('teraiResultHill');
+
+  const sqFtStr = totalSqFt.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+  const sqMStr = totalSqM.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+
+  if (sqFtEl) sqFtEl.innerText = currentLang === 'ne' ? `${toDevanagariDigits(sqFtStr)} Sq. Ft` : `${sqFtStr} Sq. Ft`;
+  if (sqMEl) sqMEl.innerText = currentLang === 'ne' ? `${toDevanagariDigits(sqMStr)} Sq. M` : `${sqMStr} Sq. M`;
+  if (hillEl) {
+    hillEl.innerText = currentLang === 'ne'
+      ? `${toDevanagariDigits(ropani)} रोपनी ${toDevanagariDigits(aana)} आना ${toDevanagariDigits(paisa)} पैसा`
+      : `${ropani} Ropani ${aana} Aana ${paisa} Paisa`;
+  }
+}
+
+function convertFromGoldTola() {
+  const tola = parseFloat(document.getElementById('goldTolaInput')?.value) || 0;
+  const lal = tola * 100;
+  const gram = tola * 11.664;
+
+  const lalEl = document.getElementById('goldLalInput');
+  const gramEl = document.getElementById('goldGramInput');
+  const sumEl = document.getElementById('goldWeightSummary');
+
+  if (lalEl) lalEl.value = lal.toFixed(1);
+  if (gramEl) gramEl.value = gram.toFixed(3);
+  if (sumEl) {
+    const tolaStr = currentLang === 'ne' ? toDevanagariDigits(tola) : tola;
+    const gramStr = currentLang === 'ne' ? toDevanagariDigits(gram.toFixed(3)) : gram.toFixed(3);
+    sumEl.innerText = currentLang === 'ne' ? `${tolaStr} तोला (${gramStr} ग्राम)` : `${tolaStr} Tola (${gramStr} g)`;
+  }
+}
+
+function convertFromGoldLal() {
+  const lal = parseFloat(document.getElementById('goldLalInput')?.value) || 0;
+  const tola = lal / 100;
+  const gram = tola * 11.664;
+
+  const tolaEl = document.getElementById('goldTolaInput');
+  const gramEl = document.getElementById('goldGramInput');
+  const sumEl = document.getElementById('goldWeightSummary');
+
+  if (tolaEl) tolaEl.value = tola.toFixed(3);
+  if (gramEl) gramEl.value = gram.toFixed(3);
+  if (sumEl) {
+    const tolaStr = currentLang === 'ne' ? toDevanagariDigits(tola.toFixed(2)) : tola.toFixed(2);
+    const gramStr = currentLang === 'ne' ? toDevanagariDigits(gram.toFixed(3)) : gram.toFixed(3);
+    sumEl.innerText = currentLang === 'ne' ? `${tolaStr} तोला (${gramStr} ग्राम)` : `${tolaStr} Tola (${gramStr} g)`;
+  }
+}
+
+function convertFromGoldGram() {
+  const gram = parseFloat(document.getElementById('goldGramInput')?.value) || 0;
+  const tola = gram / 11.664;
+  const lal = tola * 100;
+
+  const tolaEl = document.getElementById('goldTolaInput');
+  const lalEl = document.getElementById('goldLalInput');
+  const sumEl = document.getElementById('goldWeightSummary');
+
+  if (tolaEl) tolaEl.value = tola.toFixed(3);
+  if (lalEl) lalEl.value = lal.toFixed(1);
+  if (sumEl) {
+    const tolaStr = currentLang === 'ne' ? toDevanagariDigits(tola.toFixed(2)) : tola.toFixed(2);
+    const gramStr = currentLang === 'ne' ? toDevanagariDigits(gram.toFixed(3)) : gram.toFixed(3);
+    sumEl.innerText = currentLang === 'ne' ? `${tolaStr} तोला (${gramStr} ग्राम)` : `${tolaStr} Tola (${gramStr} g)`;
+  }
+}
+
+
+// ---------------------------------------------------------------------
+// BIKRAM SAMBAT ⇄ AD DATE CONVERTER ENGINE
+// ---------------------------------------------------------------------
+let dateConvMode = 'bsToAd';
+
+function openDateConverterModal() {
+  const modal = document.getElementById('dateConverterModal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    renderDateConvInputs();
+    calculateDateConversion();
+  }
+}
+
+function closeDateConverterModal() {
+  const modal = document.getElementById('dateConverterModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function switchDateConvMode(mode) {
+  dateConvMode = mode;
+  const btnBsToAd = document.getElementById('tabBtn-conv-bsToAd');
+  const btnAdToBs = document.getElementById('tabBtn-conv-adToBs');
+
+  if (mode === 'bsToAd') {
+    btnBsToAd?.classList.add('bg-white', 'dark:bg-[#18202d]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
+    btnBsToAd?.classList.remove('text-slate-500', 'dark:text-slate-400');
+    btnAdToBs?.classList.remove('bg-white', 'dark:bg-[#18202d]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
+    btnAdToBs?.classList.add('text-slate-500', 'dark:text-slate-400');
+  } else {
+    btnAdToBs?.classList.add('bg-white', 'dark:bg-[#18202d]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
+    btnAdToBs?.classList.remove('text-slate-500', 'dark:text-slate-400');
+    btnBsToAd?.classList.remove('bg-white', 'dark:bg-[#18202d]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
+    btnBsToAd?.classList.add('text-slate-500', 'dark:text-slate-400');
+  }
+
+  renderDateConvInputs();
+  calculateDateConversion();
+}
+
+function renderDateConvInputs() {
+  const container = document.getElementById('dateConvInputsContainer');
+  if (!container) return;
+
+  const todayBs = getBikramSambatDate();
+  const now = new Date();
+
+  if (dateConvMode === 'bsToAd') {
+    // BS inputs (Year, Month, Day)
+    let yOpts = '';
+    for (let y = 2000; y <= 2090; y++) {
+      const selected = y === todayBs.year ? 'selected' : '';
+      const lbl = currentLang === 'ne' ? toDevanagariDigits(y) : y;
+      yOpts += `<option value="${y}" ${selected}>${lbl}</option>`;
+    }
+
+    let mOpts = '';
+    for (let m = 1; m <= 12; m++) {
+      const selected = m === todayBs.month ? 'selected' : '';
+      const lbl = currentLang === 'ne' ? nepaliMonths[m - 1] : nepaliMonthsEn[m - 1];
+      mOpts += `<option value="${m}" ${selected}>${lbl}</option>`;
+    }
+
+    let dOpts = '';
+    for (let d = 1; d <= 32; d++) {
+      const selected = d === todayBs.day ? 'selected' : '';
+      const lbl = currentLang === 'ne' ? toDevanagariDigits(d) : d;
+      dOpts += `<option value="${d}" ${selected}>${lbl}</option>`;
+    }
+
+    container.innerHTML = `
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">साल (Year BS)</label>
+        <select id="convBsYear" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${yOpts}</select>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">महिना (Month)</label>
+        <select id="convBsMonth" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${mOpts}</select>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">गते (Day)</label>
+        <select id="convBsDay" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${dOpts}</select>
+      </div>
+    `;
+  } else {
+    // AD inputs (Year, Month, Day)
+    let yOpts = '';
+    const curAdYear = now.getFullYear();
+    for (let y = 1944; y <= 2033; y++) {
+      const selected = y === curAdYear ? 'selected' : '';
+      yOpts += `<option value="${y}" ${selected}>${y}</option>`;
+    }
+
+    const adMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let mOpts = '';
+    const curAdMonth = now.getMonth() + 1;
+    for (let m = 1; m <= 12; m++) {
+      const selected = m === curAdMonth ? 'selected' : '';
+      mOpts += `<option value="${m}" ${selected}>${adMonths[m - 1]}</option>`;
+    }
+
+    let dOpts = '';
+    const curAdDay = now.getDate();
+    for (let d = 1; d <= 31; d++) {
+      const selected = d === curAdDay ? 'selected' : '';
+      dOpts += `<option value="${d}" ${selected}>${d}</option>`;
+    }
+
+    container.innerHTML = `
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">Year (AD)</label>
+        <select id="convAdYear" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${yOpts}</select>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">Month</label>
+        <select id="convAdMonth" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${mOpts}</select>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">Day</label>
+        <select id="convAdDay" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${dOpts}</select>
+      </div>
+    `;
+  }
+}
+
+let lastConvertedBsDate = null;
+
+function calculateDateConversion() {
+  const resultMain = document.getElementById('dateConvResultMain');
+  const resultSub = document.getElementById('dateConvResultSub');
+  if (!resultMain || !resultSub) return;
+
+  if (dateConvMode === 'bsToAd') {
+    const y = parseInt(document.getElementById('convBsYear')?.value) || 2081;
+    const m = parseInt(document.getElementById('convBsMonth')?.value) || 6;
+    let d = parseInt(document.getElementById('convBsDay')?.value) || 18;
+
+    const maxDays = getBsMonthDays(y, m);
+    if (d > maxDays) d = maxDays;
+
+    lastConvertedBsDate = { year: y, month: m, day: d };
+
+    const adDate = bsToAdDate(y, m, d);
+    const adFormatted = adDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const tithi = getLunarTithi(adDate);
+
+    resultMain.innerText = adFormatted;
+    resultSub.innerText = `${tithi.badge} • ${currentLang === 'ne' ? nepaliMonths[m - 1] : nepaliMonthsEn[m - 1]} ${currentLang === 'ne' ? toDevanagariDigits(d) : d}, ${currentLang === 'ne' ? toDevanagariDigits(y) : y}`;
+  } else {
+    const y = parseInt(document.getElementById('convAdYear')?.value) || 2024;
+    const m = parseInt(document.getElementById('convAdMonth')?.value) || 10;
+    const d = parseInt(document.getElementById('convAdDay')?.value) || 4;
+
+    const adDate = new Date(y, m - 1, d);
+    const bsDate = getBikramSambatDate(adDate);
+    lastConvertedBsDate = { year: bsDate.year, month: bsDate.month, day: bsDate.day };
+
+    const mName = currentLang === 'ne' ? nepaliMonths[bsDate.month - 1] : nepaliMonthsEn[bsDate.month - 1];
+    const dStr = currentLang === 'ne' ? toDevanagariDigits(bsDate.day) : bsDate.day;
+    const yStr = currentLang === 'ne' ? toDevanagariDigits(bsDate.year) : bsDate.year;
+    const wName = currentLang === 'ne' ? nepaliWeekdays[adDate.getDay()] : nepaliWeekdaysEn[adDate.getDay()];
+    const tithi = getLunarTithi(adDate);
+
+    resultMain.innerText = `${mName} ${dStr}, ${yStr} (${wName})`;
+    resultSub.innerText = `${tithi.badge} • ${adDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+  }
+}
+
+function jumpCalendarToConvertedDate() {
+  if (lastConvertedBsDate) {
+    calendarState.currentBsYear = lastConvertedBsDate.year;
+    calendarState.currentBsMonth = lastConvertedBsDate.month;
+    renderFullCalendarGrid();
+    setTab('calendar');
+    closeDateConverterModal();
+  }
+}
+
 // 4. BIKRAM SAMBAT (वि.सं.) CALENDAR ENGINE
 // ---------------------------------------------------------------------
 const nepaliMonths = ['बैशाख', 'जेठ', 'असार', 'साउन', 'भदौ', 'असोज', 'कात्तिक', 'मंसिर', 'पुस', 'माघ', 'फागुन', 'चैत'];
@@ -905,6 +1442,356 @@ function toDevanagariDigits(num) {
   return String(num).replace(/\d/g, d => devDigits[d]);
 }
 
+// ---------------------------------------------------------------------
+// LUNAR TITHI ENGINE (100% Offline Vedic Astronomy)
+// ---------------------------------------------------------------------
+const VEDIC_TITHIS = [
+  "शुक्ल प्रतिपदा", "शुक्ल द्वितीया", "शुक्ल तृतीया", "शुक्ल चतुर्थी", "शुक्ल पञ्चमी",
+  "शुक्ल षष्ठी", "शुक्ल सप्तमी", "शुक्ल अष्टमी", "शुक्ल नवमी", "शुक्ल दशमी",
+  "शुक्ल एकादशी (एकादशी व्रत)", "शुक्ल द्वादशी", "शुक्ल त्रयोदशी", "शुक्ल चतुर्दशी", "पूर्णिमा (पूर्णिमा व्रत)",
+  "कृष्ण प्रतिपदा", "कृष्ण द्वितीया", "कृष्ण तृतीया", "कृष्ण चतुर्थी", "कृष्ण पञ्चमी",
+  "कृष्ण षष्ठी", "कृष्ण सप्तमी", "कृष्ण अष्टमी", "कृष्ण नवमी", "कृष्ण दशमी",
+  "कृष्ण एकादशी (एकादशी व्रत)", "कृष्ण द्वादशी", "कृष्ण त्रयोदशी", "कृष्ण चतुर्दशी", "औंसी (दर्श / अमावस्या)"
+];
+
+function getLunarTithi(date) {
+  const d = date ? new Date(date) : new Date();
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
+  const day = d.getDate();
+  const hour = 6.0; // standard dawn / sunrise observation
+
+  const a = Math.floor((14 - month) / 12);
+  const y = year + 4800 - a;
+  const m = month + 12 * a - 3;
+  const jdn = day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+  const jd = jdn + (hour - 12.0) / 24.0;
+
+  const knownNewMoon = 2451549.26;
+  const synodicMonth = 29.530588853;
+  const daysSince = jd - knownNewMoon;
+  const cycles = daysSince / synodicMonth;
+  const phase = cycles - Math.floor(cycles);
+
+  const index = Math.floor(phase * 30) % 30;
+  const name = VEDIC_TITHIS[index];
+  const isShukla = index < 15;
+  const isEkadashi = (index === 10 || index === 25);
+  const isPurnima = (index === 14);
+  const isAunsi = (index === 29);
+
+  let badge = name;
+  if (isEkadashi) badge = "🌟 " + name;
+  else if (isPurnima) badge = "🌕 " + name;
+  else if (isAunsi) badge = "🌑 " + name;
+
+  return { index, name, paksha: isShukla ? "शुक्ल" : "कृष्ण", isEkadashi, isPurnima, isAunsi, badge, phase };
+}
+
+// ---------------------------------------------------------------------
+// WEATHER & SOLAR (SURYAUDAYA / SURYASTA) ENGINE
+// ---------------------------------------------------------------------
+function calculateOfflineSun(date, lat = 27.7172, lng = 85.3240) {
+  const d = date ? new Date(date) : new Date();
+  const startOfYear = new Date(d.getFullYear(), 0, 0);
+  const diff = d - startOfYear;
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  const declination = 23.45 * Math.sin(((360 / 365) * (dayOfYear - 81)) * (Math.PI / 180)) * (Math.PI / 180);
+  const latRad = lat * (Math.PI / 180);
+  const zenithRad = 90.833 * (Math.PI / 180);
+  const cosH = (Math.cos(zenithRad) - Math.sin(latRad) * Math.sin(declination)) / (Math.cos(latRad) * Math.cos(declination));
+
+  let H = 6.0;
+  if (cosH >= -1 && cosH <= 1) {
+    H = (Math.acos(cosH) * (180 / Math.PI)) / 15.0;
+  }
+
+  const B = ((360 / 365) * (dayOfYear - 81)) * (Math.PI / 180);
+  const eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+  const localMeridian = 5.75 * 15.0;
+  const timeCorrection = 4 * (lng - localMeridian) + eot;
+  const solarNoonMinutes = 12 * 60 - timeCorrection;
+
+  const sunriseMinutes = solarNoonMinutes - (H * 60);
+  const sunsetMinutes = solarNoonMinutes + (H * 60);
+
+  const formatHM = (mins) => {
+    let h = Math.floor(mins / 60) % 24;
+    let m = Math.floor(mins % 60);
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  };
+
+  return { sunrise: formatHM(sunriseMinutes), sunset: formatHM(sunsetMinutes) };
+}
+
+// --- WEATHER, AIR QUALITY & VEDIC PANCHANGA ENGINE ---
+let weatherState = {
+  temp: null,
+  apparentTemp: null,
+  humidity: null,
+  wind: null,
+  weatherCode: 0,
+  conditionText: 'सफा (Clear)',
+  icon: '☀️',
+  sunrise: '06:01',
+  sunset: '17:45',
+  dayLengthText: '११ घन्टा ४४ मिनेट',
+  rahuKaalText: '१०:३० – १२:००',
+  abhijitText: '११:४२ – १२:३०',
+  tithiText: 'शुक्ल द्वितीया',
+  aqiVal: null,
+  pm25: null,
+  pm10: null,
+  aqiLevel: 'राम्रो (Good)'
+};
+
+function calculateOfflinePanchanga(dateObj) {
+  const d = dateObj || new Date();
+  const sun = calculateOfflineSun(d);
+  
+  // Parse sunrise & sunset in minutes
+  const [sRh, sRm] = sun.sunrise.split(':').map(Number);
+  const [sSh, sSm] = sun.sunset.split(':').map(Number);
+  const sunriseMins = sRh * 60 + sRm;
+  const sunsetMins = sSh * 60 + sSm;
+
+  // Day length
+  const dayLengthMins = Math.max(0, sunsetMins - sunriseMins);
+  const dlHours = Math.floor(dayLengthMins / 60);
+  const dlMinutes = dayLengthMins % 60;
+  const dayLengthText = currentLang === 'ne'
+    ? `${toDevanagariDigits(dlHours)} घन्टा ${toDevanagariDigits(dlMinutes)} मिनेट`
+    : `${dlHours}h ${dlMinutes}m`;
+
+  // Rahu Kaal calculation (Sunrise to Sunset divided into 8 equal slots)
+  // Day of week: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+  const rahuSlotMap = [7, 1, 6, 4, 5, 3, 2];
+  const slotIndex = rahuSlotMap[d.getDay()];
+  const slotLen = dayLengthMins / 8;
+  const rahuStartMins = sunriseMins + slotIndex * slotLen;
+  const rahuEndMins = rahuStartMins + slotLen;
+
+  const fmtHM = (mins) => {
+    const h = Math.floor(mins / 60) % 24;
+    const m = Math.floor(mins % 60);
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  };
+
+  const rahuStart = fmtHM(rahuStartMins);
+  const rahuEnd = fmtHM(rahuEndMins);
+  const rahuKaalText = currentLang === 'ne'
+    ? `${toDevanagariDigits(rahuStart)} – ${toDevanagariDigits(rahuEnd)}`
+    : `${rahuStart} – ${rahuEnd}`;
+
+  // Abhijit Muhurat calculation (midday ~48 mins centered on solar noon)
+  const solarNoonMins = (sunriseMins + sunsetMins) / 2;
+  const abhijitStart = fmtHM(solarNoonMins - 24);
+  const abhijitEnd = fmtHM(solarNoonMins + 24);
+  const abhijitText = currentLang === 'ne'
+    ? `${toDevanagariDigits(abhijitStart)} – ${toDevanagariDigits(abhijitEnd)}`
+    : `${abhijitStart} – ${abhijitEnd}`;
+
+  const tithiInfo = getLunarTithi(d);
+
+  return {
+    sunrise: sun.sunrise,
+    sunset: sun.sunset,
+    dayLengthText,
+    rahuKaalText,
+    abhijitText,
+    tithiText: tithiInfo.badge
+  };
+}
+
+function updateWeatherSunUI() {
+  const riseEl = document.getElementById('sunSunriseTime');
+  const setEl = document.getElementById('sunSunsetTime');
+  const tempValEl = document.getElementById('weatherTempVal');
+  const iconSymbolEl = document.getElementById('weatherIconSymbol');
+  const tithiEl = document.getElementById('calendarTodayTithi');
+
+  if (riseEl && weatherState.sunrise) {
+    riseEl.innerText = currentLang === 'ne' ? toDevanagariDigits(weatherState.sunrise) : weatherState.sunrise;
+  }
+  if (setEl && weatherState.sunset) {
+    setEl.innerText = currentLang === 'ne' ? toDevanagariDigits(weatherState.sunset) : weatherState.sunset;
+  }
+  if (tempValEl && weatherState.temp !== null) {
+    const tVal = Math.round(weatherState.temp);
+    tempValEl.innerText = currentLang === 'ne' ? `${toDevanagariDigits(tVal)}°C` : `${tVal}°C`;
+  }
+  if (iconSymbolEl && weatherState.icon) {
+    iconSymbolEl.innerText = weatherState.icon;
+  }
+  if (tithiEl && weatherState.tithiText) {
+    tithiEl.innerText = weatherState.tithiText;
+  }
+}
+
+async function fetchWeatherAndSun() {
+  // 1. Initial 100% offline calculations immediately populate UI
+  const p = calculateOfflinePanchanga(new Date());
+  weatherState.sunrise = p.sunrise;
+  weatherState.sunset = p.sunset;
+  weatherState.dayLengthText = p.dayLengthText;
+  weatherState.rahuKaalText = p.rahuKaalText;
+  weatherState.abhijitText = p.abhijitText;
+  weatherState.tithiText = p.tithiText;
+  updateWeatherSunUI();
+
+  // 2. Fetch Live Weather from Open-Meteo
+  try {
+    const lat = 27.7172;
+    const lng = 85.3240;
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=sunrise,sunset&timezone=Asia%2FKathmandu&forecast_days=1`;
+    const res = await fetch(weatherUrl);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.current) {
+        weatherState.temp = data.current.temperature_2m;
+        weatherState.apparentTemp = data.current.apparent_temperature;
+        weatherState.humidity = data.current.relative_humidity_2m;
+        weatherState.wind = data.current.wind_speed_10m;
+        weatherState.weatherCode = data.current.weather_code;
+
+        // Interpret weather code
+        const code = data.current.weather_code;
+        if (code === 0) {
+          weatherState.icon = '☀️';
+          weatherState.conditionText = currentLang === 'ne' ? 'सफा (Clear)' : 'Clear Sky';
+        } else if (code <= 3) {
+          weatherState.icon = '🌤️';
+          weatherState.conditionText = currentLang === 'ne' ? 'आंशिक बदली (Partly Cloudy)' : 'Partly Cloudy';
+        } else if (code <= 48) {
+          weatherState.icon = '🌫️';
+          weatherState.conditionText = currentLang === 'ne' ? 'कुहिरो / हुस्सु (Foggy)' : 'Foggy / Haze';
+        } else if (code <= 67) {
+          weatherState.icon = '🌧️';
+          weatherState.conditionText = currentLang === 'ne' ? 'पानी परेको (Rain)' : 'Rain';
+        } else if (code <= 82) {
+          weatherState.icon = '🌦️';
+          weatherState.conditionText = currentLang === 'ne' ? 'क्षणिक वर्षा (Showers)' : 'Showers';
+        } else {
+          weatherState.icon = '⛈️';
+          weatherState.conditionText = currentLang === 'ne' ? 'चट्याङ / वर्षा (Thunderstorm)' : 'Thunderstorm';
+        }
+
+        if (data.daily && data.daily.sunrise && data.daily.sunrise[0]) {
+          weatherState.sunrise = data.daily.sunrise[0].split('T')[1];
+        }
+        if (data.daily && data.daily.sunset && data.daily.sunset[0]) {
+          weatherState.sunset = data.daily.sunset[0].split('T')[1];
+        }
+
+        // Recompute panchanga with official sunrise/sunset
+        const updatedP = calculateOfflinePanchanga(new Date());
+        weatherState.dayLengthText = updatedP.dayLengthText;
+        weatherState.rahuKaalText = updatedP.rahuKaalText;
+        weatherState.abhijitText = updatedP.abhijitText;
+        updateWeatherSunUI();
+      }
+    }
+  } catch (err) {
+    // Offline resilience preserved
+  }
+
+  // 3. Fetch Live Air Quality (AQI) from Open-Meteo Air Quality API (Free, 0 Key)
+  try {
+    const lat = 27.7172;
+    const lng = 85.3240;
+    const aqiUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&current=pm2_5,pm10,european_aqi`;
+    const resAqi = await fetch(aqiUrl);
+    if (resAqi.ok) {
+      const aqiData = await resAqi.json();
+      if (aqiData && aqiData.current) {
+        weatherState.pm25 = aqiData.current.pm2_5;
+        weatherState.pm10 = aqiData.current.pm10;
+        weatherState.aqiVal = aqiData.current.european_aqi;
+      }
+    }
+  } catch (err) {
+    // Stays offline
+  }
+}
+
+function openWeatherDetailsModal() {
+  const modal = document.getElementById('weatherDetailsModal');
+  if (!modal) return;
+
+  const tVal = weatherState.temp !== null ? Math.round(weatherState.temp) : 22;
+  const tempStr = currentLang === 'ne' ? `${toDevanagariDigits(tVal)}°C` : `${tVal}°C`;
+  
+  const mTemp = document.getElementById('modalCurrentTemp');
+  const mCond = document.getElementById('modalWeatherCondition');
+  const mIcon = document.getElementById('modalWeatherIcon');
+  const mHum = document.getElementById('modalHumidity');
+  const mWind = document.getElementById('modalWind');
+  const mRise = document.getElementById('modalSunriseTime');
+  const mSet = document.getElementById('modalSunsetTime');
+  const mDl = document.getElementById('modalDayLength');
+  const mTithi = document.getElementById('modalTithiText');
+  const mRahu = document.getElementById('modalRahuKaal');
+  const mAbhijit = document.getElementById('modalAbhijitMuhurat');
+
+  if (mTemp) mTemp.innerText = tempStr;
+  if (mCond) mCond.innerText = weatherState.conditionText;
+  if (mIcon) mIcon.innerText = weatherState.icon || '☀️';
+  if (mHum) mHum.innerText = weatherState.humidity ? `${weatherState.humidity}%` : '६५%';
+  if (mWind) mWind.innerText = weatherState.wind ? `${weatherState.wind} km/h` : '८ km/h';
+
+  if (mRise) mRise.innerText = currentLang === 'ne' ? toDevanagariDigits(weatherState.sunrise) : weatherState.sunrise;
+  if (mSet) mSet.innerText = currentLang === 'ne' ? toDevanagariDigits(weatherState.sunset) : weatherState.sunset;
+  if (mDl) mDl.innerText = weatherState.dayLengthText;
+  if (mTithi) mTithi.innerText = weatherState.tithiText;
+  if (mRahu) mRahu.innerText = weatherState.rahuKaalText;
+  if (mAbhijit) mAbhijit.innerText = weatherState.abhijitText;
+
+  // Render AQI details
+  const mAqiVal = document.getElementById('modalAqiVal');
+  const mPm25 = document.getElementById('modalPm25');
+  const mPm10 = document.getElementById('modalPm10');
+  const mAqiBadge = document.getElementById('modalAqiLevelBadge');
+  const mAqiAdvice = document.getElementById('modalAqiAdvice');
+
+  const aqiNum = weatherState.aqiVal || 52;
+  const pm25Num = weatherState.pm25 !== null ? weatherState.pm25 : 18.4;
+  const pm10Num = weatherState.pm10 !== null ? weatherState.pm10 : 28.6;
+
+  if (mAqiVal) mAqiVal.innerText = currentLang === 'ne' ? toDevanagariDigits(aqiNum) : aqiNum;
+  if (mPm25) mPm25.innerText = currentLang === 'ne' ? toDevanagariDigits(pm25Num.toFixed(1)) : pm25Num.toFixed(1);
+  if (mPm10) mPm10.innerText = currentLang === 'ne' ? toDevanagariDigits(pm10Num.toFixed(1)) : pm10Num.toFixed(1);
+
+  if (mAqiBadge && mAqiAdvice) {
+    if (aqiNum <= 50) {
+      mAqiBadge.innerText = currentLang === 'ne' ? 'राम्रो (Good)' : 'Good';
+      mAqiBadge.className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-900 text-emerald-950 dark:text-emerald-200';
+      mAqiAdvice.innerText = currentLang === 'ne'
+        ? 'काठमाडौँको हावा स्वच्छ र श्वासप्रश्वासका लागि उत्तम छ।'
+        : 'Air quality is ideal for all outdoor activities.';
+    } else if (aqiNum <= 100) {
+      mAqiBadge.innerText = currentLang === 'ne' ? 'सन्तोषजनक (Moderate)' : 'Moderate';
+      mAqiBadge.className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-200 dark:bg-amber-900 text-amber-950 dark:text-amber-200';
+      mAqiAdvice.innerText = currentLang === 'ne'
+        ? 'वायु गुणस्तर स्वीकार्य छ; अति संवेदनशील व्यक्तिहरूले सावधानी अपनाउन सक्नुहुन्छ।'
+        : 'Air quality is acceptable; sensitive groups may take light precautions.';
+    } else {
+      mAqiBadge.innerText = currentLang === 'ne' ? 'अस्वस्थ (Unhealthy)' : 'Unhealthy';
+      mAqiBadge.className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-rose-200 dark:bg-rose-900 text-rose-950 dark:text-rose-200';
+      mAqiAdvice.innerText = currentLang === 'ne'
+        ? 'धुवाँ र धुलो बढी छ। बाहिर निस्कँदा मास्क प्रयोग गर्न सिफारिस गरिन्छ।'
+        : 'High particulate matter. Wearing a protective mask outdoors is recommended.';
+    }
+  }
+
+  modal.classList.remove('hidden');
+}
+
+function closeWeatherDetailsModal() {
+  const modal = document.getElementById('weatherDetailsModal');
+  if (modal) modal.classList.add('hidden');
+}
+
 const bsEpochYear = 2000;
 let bsTotalPassedDays = 0;
 const bsYearDaysMapping = bsMonthDays.map(mArr => {
@@ -1159,12 +2046,21 @@ function renderFullCalendarGrid() {
       textClass = 'text-emerald-900 dark:text-emerald-100 font-black';
     }
 
+    const tInfo = getLunarTithi(adDate);
+    let tithiGlyph = '';
+    if (tInfo.isPurnima) tithiGlyph = '🌕';
+    else if (tInfo.isAunsi) tithiGlyph = '🌑';
+    else if (tInfo.isEkadashi) tithiGlyph = '🌟';
+
     html += `
       <div onclick="openDateDetails('${dateKey}', ${day}, '${festKey}')" 
            class="h-12 p-1 rounded-xl border ${borderClass} ${bgClass} cursor-pointer hover:border-emerald-400 flex flex-col justify-between transition-all select-none relative group active:scale-95">
         <div class="flex justify-between items-start leading-none">
           <span class="text-xs ${textClass}">${dayDisplay}</span>
-          <span class="text-[9px] ${isSaturday ? 'text-rose-400 dark:text-rose-500 font-bold' : 'text-slate-400 dark:text-slate-300 font-mono'}">${adDayNum}</span>
+          <div class="flex items-center space-x-0.5 leading-none">
+            ${tithiGlyph ? `<span class="text-[9px]" title="${escapeHtml(tInfo.name)}">${tithiGlyph}</span>` : ''}
+            <span class="text-[9px] ${isSaturday ? 'text-rose-400 dark:text-rose-500 font-bold' : 'text-slate-400 dark:text-slate-300 font-mono'}">${adDayNum}</span>
+          </div>
         </div>
         <div class="flex items-center space-x-0.5 truncate leading-none">
           ${festName ? `<span class="inline-block px-1 py-0.5 text-[8px] font-bold bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 rounded truncate max-w-full" title="${escapeHtml(festName)}">${festName.length > 5 ? escapeHtml(festName.substring(0, 4)) + '..' : escapeHtml(festName)}</span>` : ''}
@@ -1215,11 +2111,13 @@ function openDateDetails(dateKey, dayNum, festKey) {
   titleEl.innerText = `${mName} ${dDev}, ${yDev} (${adFormatted})`;
 
   const festName = getFestival(parseInt(y), parseInt(m), parseInt(d));
+  const tInfo = getLunarTithi(adDate);
   if (festName) {
-    festEl.innerText = `🎉 ${festName}`;
+    festEl.innerText = `🎉 ${festName} • ${tInfo.badge}`;
     festEl.classList.remove('hidden');
   } else {
-    festEl.classList.add('hidden');
+    festEl.innerText = `🌙 ${tInfo.badge}`;
+    festEl.classList.remove('hidden');
   }
 
   renderModalEvents(dateKey);
@@ -4430,12 +5328,25 @@ function toggleStickyNotification(e) {
 function showStickyCalendarNotification() {
   const bs = getBikramSambatDate();
   const festName = getFestival(bs.year, bs.month, bs.day);
+  const tInfo = getLunarTithi(new Date());
 
-  // Clean, high-signal single-line title (No misleading July 17 calendar emoji!)
+  // Clean, high-signal single-line title
   const title = bs.devanagariGateFormatted || bs.devanagariFormatted;
 
-  // Clean festival note only if present; otherwise empty string for clean single-line notification
-  const body = festName ? `🌸 ${festName}` : '';
+  // Real-time temperature & weather icon
+  const tempVal = weatherState.temp !== null ? Math.round(weatherState.temp) : 22;
+  const tempStr = `${weatherState.icon || '☀️'} ${currentLang === 'ne' ? toDevanagariDigits(tempVal) : tempVal}°C`;
+  const sunStr = `🌅 ${toDevanagariDigits(weatherState.sunrise || '०६:०१')}  🌇 ${toDevanagariDigits(weatherState.sunset || '१७:४५')}`;
+
+  // Format rich body with festival, Tithi, temperature & sunrise/sunset
+  let body = '';
+  if (festName) {
+    body = `🌸 ${festName} • ${tInfo.badge} • ${tempStr} • ${sunStr}`;
+  } else if (tInfo.isEkadashi || tInfo.isPurnima || tInfo.isAunsi) {
+    body = `${tInfo.badge} • ${tempStr} • ${sunStr}`;
+  } else {
+    body = `${tInfo.name} • ${tempStr} • ${sunStr}`;
+  }
 
   // Sync 60-day calendar schedule to Android SharedPreferences for automatic midnight updates
   if (isAndroidNativeApp() && typeof window.AndroidBridge.syncCalendarSchedule === 'function') {
@@ -4446,13 +5357,24 @@ function showStickyCalendarNotification() {
         d.setDate(d.getDate() + i);
         const curBs = getBikramSambatDate(d);
         const fName = getFestival(curBs.year, curBs.month, curBs.day);
+        const curTithi = getLunarTithi(d);
         const y = d.getFullYear();
         const m = String(d.getMonth() + 1).padStart(2, '0');
         const dayNum = String(d.getDate()).padStart(2, '0');
         const key = `${y}-${m}-${dayNum}`;
+
+        let bText = '';
+        if (fName) {
+          bText = `🌸 ${fName} • ${curTithi.badge}`;
+        } else if (curTithi.isEkadashi || curTithi.isPurnima || curTithi.isAunsi) {
+          bText = `${curTithi.badge}`;
+        } else {
+          bText = `${curTithi.name}`;
+        }
+
         schedule[key] = {
           title: curBs.devanagariGateFormatted || curBs.devanagariFormatted,
-          body: fName ? `🌸 ${fName}` : '',
+          body: bText,
           day: curBs.day
         };
       }
@@ -5292,9 +6214,10 @@ function updateAllTranslations() {
   const bsDate = getBikramSambatDate();
   const headerDateEl = document.getElementById('headerDateDual');
   if (headerDateEl) {
+    const dayDev = toDevanagariDigits(bsDate.day);
     headerDateEl.innerHTML = currentLang === 'ne' 
-      ? `<span>${bsDate.devanagariFormatted}</span> <span class="text-[9px] opacity-75">📅</span>`
-      : `<span>${bsDate.englishFormatted} • ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span> <span class="text-[9px] opacity-75">📅</span>`;
+      ? `<span>${bsDate.devanagariFormatted}</span> <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-400 dark:border-emerald-600/80 text-[10px] font-black text-emerald-800 dark:text-emerald-200 shadow-2xs">${dayDev}</span>`
+      : `<span>${bsDate.englishFormatted} • ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span> <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-400 dark:border-emerald-600/80 text-[10px] font-black text-emerald-800 dark:text-emerald-200 shadow-2xs">${bsDate.day}</span>`;
   }
 
   const langBtn = document.getElementById('langToggleBtn');
@@ -5356,11 +6279,261 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+
+// ---------------------------------------------------------------------
+// UPCOMING PUBLIC HOLIDAYS & FESTIVAL COUNTDOWN ENGINE
+// ---------------------------------------------------------------------
+function renderUpcomingHolidays() {
+  const container = document.getElementById('holidaysQuickStrip');
+  if (!container) return;
+
+  const todayAd = new Date();
+  todayAd.setHours(0, 0, 0, 0);
+
+  const holidays = [];
+  const curBs = getBikramSambatDate(todayAd);
+
+  // Scan next 120 days for festivals
+  for (let i = 0; i <= 120; i++) {
+    const scanAd = new Date(todayAd);
+    scanAd.setDate(scanAd.getDate() + i);
+    const scanBs = getBikramSambatDate(scanAd);
+    const festName = getFestival(scanBs.year, scanBs.month, scanBs.day);
+
+    if (festName) {
+      const daysLeft = i;
+      const mName = currentLang === 'ne' ? nepaliMonths[scanBs.month - 1] : nepaliMonthsEn[scanBs.month - 1];
+      const dStr = currentLang === 'ne' ? toDevanagariDigits(scanBs.day) : scanBs.day;
+      const dateText = `${mName} ${dStr}`;
+
+      holidays.push({
+        name: festName,
+        dateText,
+        daysLeft,
+        dayNum: scanBs.day,
+        year: scanBs.year,
+        month: scanBs.month
+      });
+      if (holidays.length >= 6) break;
+    }
+  }
+
+  if (holidays.length === 0) {
+    container.innerHTML = `<div class="col-span-full text-center text-[11px] text-slate-400 py-2">हाल कुनै आगामी बिदा छैन</div>`;
+    return;
+  }
+
+  let html = '';
+  holidays.forEach(h => {
+    let countdownBadge = '';
+    if (h.daysLeft === 0) {
+      countdownBadge = `<span class="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold text-[9px]">आज (Today)</span>`;
+    } else if (h.daysLeft === 1) {
+      countdownBadge = `<span class="px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold text-[9px]">भोलि (Tomorrow)</span>`;
+    } else {
+      const dLeftStr = currentLang === 'ne' ? `${toDevanagariDigits(h.daysLeft)} दिन बाँकी` : `${h.daysLeft} days left`;
+      countdownBadge = `<span class="px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 font-bold text-[9px] font-mono">${dLeftStr}</span>`;
+    }
+
+    html += `
+      <div onclick="jumpToCalendarFestival(${h.year}, ${h.month}, ${h.dayNum})" class="p-2 bg-slate-50 dark:bg-[#111722] hover:bg-slate-100 dark:hover:bg-[#161d2b] border border-slate-200 dark:border-[#283347] rounded-xl flex flex-col justify-between cursor-pointer transition select-none group">
+        <div class="flex justify-between items-start gap-1 mb-1">
+          <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 font-mono">${h.dateText}</span>
+          ${countdownBadge}
+        </div>
+        <div class="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-emerald-600 transition" title="${escapeHtml(h.name)}">
+          ${escapeHtml(h.name)}
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function jumpToCalendarFestival(year, month, day) {
+  calendarState.currentBsYear = year;
+  calendarState.currentBsMonth = month;
+  renderFullCalendarGrid();
+  setTab('calendar');
+  const dateKey = `${year}-${month}-${day}`;
+  openDateDetails(dateKey, day, `${month}-${day}`);
+}
+
+
+// ---------------------------------------------------------------------
+// NEA DOMESTIC ELECTRICITY TARIFF CALCULATOR ENGINE
+// ---------------------------------------------------------------------
+function openNeaTariffModal() {
+  const modal = document.getElementById('neaTariffModal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    calculateNeaBill();
+  }
+}
+
+function closeNeaTariffModal() {
+  const modal = document.getElementById('neaTariffModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function calculateNeaBill() {
+  const amp = parseInt(document.getElementById('neaAmpSelect')?.value) || 5;
+  const units = parseFloat(document.getElementById('neaUnitsInput')?.value) || 0;
+
+  let serviceCharge = 0;
+  let energyCharge = 0;
+
+  if (amp === 5) {
+    if (units <= 20) {
+      serviceCharge = 30;
+      energyCharge = 0; // Free energy for lifeline 5A
+    } else if (units <= 30) {
+      serviceCharge = 50;
+      energyCharge = (20 * 3.0) + ((units - 20) * 7.0);
+    } else if (units <= 50) {
+      serviceCharge = 75;
+      energyCharge = (20 * 3.0) + (10 * 7.0) + ((units - 30) * 8.0);
+    } else if (units <= 100) {
+      serviceCharge = 100;
+      energyCharge = (20 * 3.0) + (10 * 7.0) + (20 * 8.0) + ((units - 50) * 9.5);
+    } else if (units <= 250) {
+      serviceCharge = 125;
+      energyCharge = (20 * 3.0) + (10 * 7.0) + (20 * 8.0) + (50 * 9.5) + ((units - 100) * 10.0);
+    } else {
+      serviceCharge = 150;
+      energyCharge = (20 * 3.0) + (10 * 7.0) + (20 * 8.0) + (50 * 9.5) + (150 * 10.0) + ((units - 250) * 11.0);
+    }
+  } else if (amp === 15) {
+    serviceCharge = units <= 20 ? 50 : (units <= 30 ? 75 : (units <= 50 ? 100 : (units <= 100 ? 125 : (units <= 250 ? 150 : 175))));
+    if (units <= 20) energyCharge = units * 4.0;
+    else if (units <= 30) energyCharge = (20 * 4.0) + ((units - 20) * 7.0);
+    else if (units <= 50) energyCharge = (20 * 4.0) + (10 * 7.0) + ((units - 30) * 8.0);
+    else if (units <= 100) energyCharge = (20 * 4.0) + (10 * 7.0) + (20 * 8.0) + ((units - 50) * 9.5);
+    else if (units <= 250) energyCharge = (20 * 4.0) + (10 * 7.0) + (20 * 8.0) + (50 * 9.5) + ((units - 100) * 10.0);
+    else energyCharge = (20 * 4.0) + (10 * 7.0) + (20 * 8.0) + (50 * 9.5) + (150 * 10.0) + ((units - 250) * 11.0);
+  } else if (amp === 30) {
+    serviceCharge = units <= 50 ? 125 : (units <= 100 ? 150 : (units <= 250 ? 175 : 200));
+    energyCharge = units * 10.0;
+  } else {
+    // 60A
+    serviceCharge = 250;
+    energyCharge = units * 11.5;
+  }
+
+  const total = serviceCharge + energyCharge;
+  
+  const scEl = document.getElementById('neaServiceCharge');
+  const ecEl = document.getElementById('neaEnergyCharge');
+  const totEl = document.getElementById('neaTotalBill');
+
+  if (scEl) scEl.innerText = currentLang === 'ne' ? `रू ${toDevanagariDigits(serviceCharge.toFixed(2))}` : `Rs. ${serviceCharge.toFixed(2)}`;
+  if (ecEl) ecEl.innerText = currentLang === 'ne' ? `रू ${toDevanagariDigits(energyCharge.toFixed(2))}` : `Rs. ${energyCharge.toFixed(2)}`;
+  if (totEl) totEl.innerText = currentLang === 'ne' ? `रू ${toDevanagariDigits(total.toFixed(2))}` : `Rs. ${total.toFixed(2)}`;
+}
+
+
+// ---------------------------------------------------------------------
+// FIRST-TIME INTERACTIVE ONBOARDING TOUR (PUKU HELPER)
+// ---------------------------------------------------------------------
+const tourStepsData = [
+  {
+    title: "दैनिक पात्रो र तिथि",
+    badge: "चरण १ / ४ • पुकु गाइड",
+    desc: "सँगालोमा स्वागत छ! यहाँ तपाईंले आजको नेपाली मिति (वि.सं.), चन्द्र तिथि, चाडपर्व र घरायसी सम्झनाहरू तुरुन्त हेर्न सक्नुहुन्छ। कुनै पनि गतेमा ट्याप गरेर विवरण हेर्न र नयाँ सम्झना थप्न सकिन्छ।"
+  },
+  {
+    title: "मौसम, वायु गुणस्तर र पञ्चाङ्ग",
+    badge: "चरण २ / ४ • पुकु गाइड",
+    desc: "माथिको मौसम बारमा ट्याप गर्नुहोस्! त्यहाँबाट काठमाडौँको प्रत्यक्ष तापक्रम, वायु प्रदूषण (AQI), सूर्योदय, सूर्यास्त, दिनमान र दैनिक राहु काल (अशुभ समय) १००% अफलाइन हेर्न सकिन्छ।"
+  },
+  {
+    title: "दैनिक उपयोगी सेवाहरू",
+    badge: "चरण ३ / ४ • पुकु गाइड",
+    desc: "नेपाल राष्ट्र बैंकको विदेशी विनिमय दर (डलर, रियाल आदि) र रेमिट्यान्स हिसाब, जग्गा (रोपनी, बिघा) र सुन (तोला, लाल) नाप, वि.सं. ⇄ ई.सं. मिति रूपान्तरण, र विद्युत प्राधिकरणको बिजुली बिल हिसाब १-ट्यापमा उपलब्ध छ।"
+  },
+  {
+    title: "परिवार, किनमेल र सुरक्षा",
+    badge: "चरण ४ / ४ • पुकु गाइड",
+    desc: "घरको किनमेल सूची, खर्च बाँडफाँड, जेष्ठ नागरिकका लागि दैनिक औषधि अलार्म, र आपतकालीन स्वास्थ्य कार्ड (ICE) सबै इन्टरनेट नभए पनि सुरक्षित रूपमा चल्छन्। आवश्यकता परे पुकुसँग खेल्न वा बाघचाल खेल्न चौतारीमा जानुहोस्!"
+  }
+];
+
+let curTourStepIdx = 0;
+
+function startOnboardingTour() {
+  curTourStepIdx = 0;
+  const modal = document.getElementById('onboardingTourModal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    renderTourStep();
+  }
+}
+
+function dismissOnboardingTour() {
+  const modal = document.getElementById('onboardingTourModal');
+  if (modal) modal.classList.add('hidden');
+  localStorage.setItem('sangalo_onboarded_v1', 'true');
+}
+
+function nextTourStep() {
+  if (curTourStepIdx < tourStepsData.length - 1) {
+    curTourStepIdx++;
+    renderTourStep();
+  } else {
+    dismissOnboardingTour();
+    showToast('सँगालोमा स्वागत छ! 🎉');
+  }
+}
+
+function prevTourStep() {
+  if (curTourStepIdx > 0) {
+    curTourStepIdx--;
+    renderTourStep();
+  }
+}
+
+function renderTourStep() {
+  const step = tourStepsData[curTourStepIdx];
+  const tTitle = document.getElementById('tourStepTitle');
+  const tBadge = document.getElementById('tourStepBadge');
+  const tContent = document.getElementById('tourStepContent');
+  const prevBtn = document.getElementById('tourPrevBtn');
+  const nextBtn = document.getElementById('tourNextBtn');
+  const dotsCont = document.getElementById('tourDotsContainer');
+
+  if (tTitle) tTitle.innerText = step.title;
+  if (tBadge) tBadge.innerText = step.badge;
+  if (tContent) tContent.innerHTML = `<p>${step.desc}</p>`;
+
+  if (prevBtn) {
+    if (curTourStepIdx === 0) prevBtn.classList.add('hidden');
+    else prevBtn.classList.remove('hidden');
+  }
+
+  if (nextBtn) {
+    if (curTourStepIdx === tourStepsData.length - 1) {
+      nextBtn.innerText = 'सुरु गर्नुहोस् (Get Started)';
+    } else {
+      nextBtn.innerText = 'अगाडि बढ्नुहोस् →';
+    }
+  }
+
+  if (dotsCont) {
+    let dotsHtml = '';
+    for (let i = 0; i < tourStepsData.length; i++) {
+      const active = i === curTourStepIdx ? 'bg-emerald-600 w-4' : 'bg-slate-300 dark:bg-slate-700 w-2';
+      dotsHtml += `<span class="h-2 rounded-full ${active} transition-all duration-200"></span>`;
+    }
+    dotsCont.innerHTML = dotsHtml;
+  }
+}
+
 // ---------------------------------------------------------------------
 // 14. TAB SWITCHING & ROUTING
 // ---------------------------------------------------------------------
 function setTab(tabName) {
-  const tabs = ['shopping', 'budget', 'calendar', 'chautari', 'vault'];
+  const tabs = ['calendar', 'shopping', 'budget', 'chautari', 'vault'];
   tabs.forEach(t => {
     const view = document.getElementById('view-' + t);
     const navBtn = document.getElementById('navBtn-' + t);
@@ -5390,6 +6563,7 @@ function setTab(tabName) {
   }
   if (tabName === 'calendar') {
     renderFullCalendarGrid();
+    renderUpcomingHolidays();
     renderHealthSection();
     renderMedicineRoutine();
   }
@@ -5408,10 +6582,10 @@ function setTab(tabName) {
 
 function handleHashChange() {
   const hash = window.location.hash.replace('#', '').trim();
-  if (['shopping', 'budget', 'calendar', 'chautari', 'vault'].includes(hash)) {
+  if (['calendar', 'shopping', 'budget', 'chautari', 'vault'].includes(hash)) {
     setTab(hash);
   } else {
-    setTab('shopping');
+    setTab('calendar');
   }
 }
 
@@ -5464,6 +6638,17 @@ function initApp() {
 
   // Initialize Automated Reminders & Medicine Alarms
   initAlarmEngine();
+
+  // Initialize Dynamic Weather, Solar (Sunrise/Sunset) & Tithi
+  fetchWeatherAndSun();
+
+  // Initialize NRB Official Forex Rates
+  fetchForexRates();
+
+  // Check first-time visitor onboarding tour
+  if (!localStorage.getItem('sangalo_onboarded_v1')) {
+    setTimeout(startOnboardingTour, 600);
+  }
 
   // Register offline Service Worker only on HTTP/HTTPS
   if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {

@@ -613,6 +613,15 @@ public class CalendarReceiver extends BroadcastReceiver {
                 Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bitmap);
 
+                // Draw crisp circular border ring (badge outline)
+                Paint ringPaint = new Paint();
+                ringPaint.setAntiAlias(true);
+                ringPaint.setColor(Color.WHITE);
+                ringPaint.setStyle(Paint.Style.STROKE);
+                ringPaint.setStrokeWidth(5f);
+                canvas.drawCircle(size / 2f, size / 2f, (size / 2f) - 6f, ringPaint);
+
+                // Draw centered bold date number
                 Paint paint = new Paint();
                 paint.setAntiAlias(true);
                 paint.setColor(Color.WHITE);
@@ -620,7 +629,7 @@ public class CalendarReceiver extends BroadcastReceiver {
                 paint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
 
                 String text = String.valueOf(dayNumber);
-                paint.setTextSize(text.length() > 2 ? 46f : 60f);
+                paint.setTextSize(text.length() > 2 ? 38f : 50f);
 
                 Paint.FontMetrics fm = paint.getFontMetrics();
                 float y = (size / 2f) - ((fm.descent + fm.ascent) / 2f);

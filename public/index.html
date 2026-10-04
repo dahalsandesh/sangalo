@@ -76,9 +76,8 @@
         </div>
         <div onclick="setTab('calendar')" class="cursor-pointer group">
           <h1 class="text-sm font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight group-hover:text-emerald-600 transition" data-i18n="appTitle">सँगालो</h1>
-          <p id="headerDateDual" class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 group-hover:underline flex items-center gap-1">
+          <p id="headerDateDual" class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 group-hover:underline flex items-center gap-1.5">
             <span>Loading date...</span>
-            <span class="text-[9px] opacity-75">📅</span>
           </p>
         </div>
       </div>
@@ -105,9 +104,314 @@
   <main class="max-w-xl mx-auto px-4 sm:px-6 py-4 space-y-4 sm:space-y-5">
 
     <!-- ============================================================= -->
-    <!-- TAB 1: SHOPPING & GROCERY (किनमेल) -->
+    <!-- TAB 1: CALENDAR & DAILY UTILITIES (पात्रो, सम्झना र दैनिक सेवाहरू) -->
     <!-- ============================================================= -->
-    <section id="view-shopping" class="space-y-4">
+    <section id="view-calendar" class="space-y-4">
+      
+      <!-- Full Monthly Bikram Sambat Calendar Card -->
+      <div class="p-4 sm:p-5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl shadow-xs space-y-3">
+        
+        <!-- Dynamic Weather, Solar & Tithi Hero Bar (Tap for Detailed Weather, AQI & Panchanga) -->
+        <div id="weatherSunBar" onclick="openWeatherDetailsModal()" class="flex items-center justify-between px-3 py-2 bg-slate-50 dark:bg-[#111722] hover:bg-slate-100/90 dark:hover:bg-[#161d2b] border border-slate-200 dark:border-[#283347] rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 cursor-pointer transition select-none group shadow-2xs">
+          <div class="flex items-center space-x-2">
+            <span id="calendarTodayTithi" class="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 text-[11px] font-bold border border-amber-300 dark:border-amber-700/60">
+              आजको तिथि...
+            </span>
+            <span id="weatherTemp" class="inline-flex items-center gap-1 font-bold text-slate-800 dark:text-slate-200 text-xs">
+              <span id="weatherIconSymbol">☀️</span> <span id="weatherTempVal">--°C</span>
+            </span>
+          </div>
+          <div class="flex items-center space-x-2 text-[11px] font-mono">
+            <span title="सूर्योदय (Sunrise)" class="flex items-center gap-1 text-amber-700 dark:text-amber-400 font-bold">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v4m0 0l-2-2m2 2l2-2M4.93 10.93l2.83-2.83M19.07 10.93l-2.83-2.83M2 18h20M7 18a5 5 0 0110 0" /></svg>
+              <span id="sunSunriseTime">०६:०१</span>
+            </span>
+            <span title="सूर्यास्त (Sunset)" class="flex items-center gap-1 text-rose-600 dark:text-rose-400 font-bold">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7v4m0 0l-2-2m2 2l2-2M4.93 10.93l2.83-2.83M19.07 10.93l-2.83-2.83M2 18h20M7 18a5 5 0 0110 0" /></svg>
+              <span id="sunSunsetTime">१७:४५</span>
+            </span>
+            <span class="text-slate-400 group-hover:text-emerald-500 transition text-[10px] pl-0.5 font-bold">→</span>
+          </div>
+        </div>
+
+        <!-- Month & Year Cultural Hero Header with Quick Navigation -->
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <button onclick="prevCalendarMonth()" class="p-2 sm:p-2.5 rounded-xl bg-slate-100 dark:bg-[#111722] hover:bg-slate-200 dark:hover:bg-[#1a2130] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#334158] transition active:scale-95" title="अघिल्लो महिना">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+            </button>
+            
+            <div class="text-center px-2">
+              <h2 id="calendarMonthTitle" class="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                असोज २०८१
+              </h2>
+              <p id="calendarMonthSubtitle" class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold leading-tight mt-0.5">
+                नेपाली पात्रो (वि.सं.) • Sep/Oct 2024
+              </p>
+            </div>
+
+            <button onclick="nextCalendarMonth()" class="p-2 sm:p-2.5 rounded-xl bg-slate-100 dark:bg-[#111722] hover:bg-slate-200 dark:hover:bg-[#1a2130] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#334158] transition active:scale-95" title="पछिल्लो महिना">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            </button>
+          </div>
+
+          <!-- Compact Jump Dropdowns & Actions Row -->
+          <div class="flex items-center justify-between pt-1 gap-1.5 border-t border-slate-100 dark:border-[#283347]/60">
+            <div class="flex items-center space-x-1.5 min-w-0">
+              <!-- Month Select -->
+              <select id="calendarMonthSelect" onchange="jumpCalendarMonth(this.value)" class="bg-slate-50 dark:bg-[#111722] text-slate-900 dark:text-slate-100 font-bold text-xs rounded-xl px-2 py-1 border border-slate-200 dark:border-[#334158] focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+                <option value="1">बैशाख (Baisakh)</option>
+                <option value="2">जेठ (Jestha)</option>
+                <option value="3">असार (Ashadh)</option>
+                <option value="4">साउन (Shrawan)</option>
+                <option value="5">भदौ (Bhadra)</option>
+                <option value="6">असोज (Asoj)</option>
+                <option value="7">कात्तिक (Kartik)</option>
+                <option value="8">मंसिर (Mangsir)</option>
+                <option value="9">पुस (Poush)</option>
+                <option value="10">माघ (Magh)</option>
+                <option value="11">फागुन (Falgun)</option>
+                <option value="12">चैत (Chaitra)</option>
+              </select>
+
+              <!-- Year Select -->
+              <select id="calendarYearSelect" onchange="jumpCalendarYear(this.value)" class="bg-slate-50 dark:bg-[#111722] text-slate-900 dark:text-slate-100 font-bold text-xs rounded-xl px-2 py-1 border border-slate-200 dark:border-[#334158] focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+                <option value="2080">२०८०</option>
+                <option value="2081">२०८१</option>
+                <option value="2082">२०८२</option>
+                <option value="2083">२०८३</option>
+                <option value="2084">२०८४</option>
+                <option value="2085">२०८५</option>
+              </select>
+
+              <!-- Today Quick Jump Button -->
+              <button onclick="jumpToTodayCalendar()" class="px-2 py-1 bg-emerald-50 dark:bg-emerald-950/80 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 font-bold text-[11px] rounded-xl transition shadow-2xs whitespace-nowrap active:scale-95" title="आजको मितिमा फर्कनुहोस्">
+                आज
+              </button>
+            </div>
+
+            <!-- Add Event / Reminder Quick Trigger Button -->
+            <button onclick="openAddEventModalQuick()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-2xs whitespace-nowrap flex-shrink-0 active:scale-95">
+              <span>+</span>
+              <span data-i18n="addEventQuickBtn">नयाँ सम्झना</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Weekday Headers (7 Columns, Saturday Holiday in Red) -->
+        <div id="calendarWeekdayHeaders" class="grid grid-cols-7 gap-1 text-center font-bold text-[11px] pt-1">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- 30-32 Day Cells Grid Container -->
+        <div id="calendarMonthGrid" class="grid grid-cols-7 gap-1">
+          <!-- Rendered dynamically by renderFullCalendarGrid() -->
+        </div>
+
+        <!-- Today Dual Date Banner -->
+        <div id="calendarDualDisplay" class="pt-2 border-t border-slate-100 dark:border-[#283347]">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Daily Nepali Essential Utilities Tray (Forex, Unit Converters, Date Converter, NEA Tariff) -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <button type="button" onclick="openForexModal()" class="p-2.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] hover:border-emerald-500/50 rounded-xl text-left transition active:scale-95 group shadow-2xs">
+          <div class="flex items-center justify-between mb-1">
+            <div class="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2" /><circle cx="12" cy="12" r="3" /></svg>
+            </div>
+            <span class="text-[9px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1 py-0.2 rounded border border-emerald-200 dark:border-emerald-800/50">NRB</span>
+          </div>
+          <span class="text-xs font-bold text-slate-900 dark:text-white block group-hover:text-emerald-600 transition" data-i18n="forexBtn">विदेशी विनिमय</span>
+          <span class="text-[10px] text-slate-500 dark:text-slate-400 block truncate" id="forexQuickSummary">USD, QAR, AED...</span>
+        </button>
+
+        <button type="button" onclick="openUnitConverterModal()" class="p-2.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] hover:border-emerald-500/50 rounded-xl text-left transition active:scale-95 group shadow-2xs">
+          <div class="flex items-center justify-between mb-1">
+            <div class="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h11.25M3.75 3h11.25A2.25 2.25 0 0117.25 5.25v11.25M3.75 3L16.5 15.75M7.5 7.5l2.25-2.25M11.25 11.25l2.25-2.25M15 15l2.25-2.25" /></svg>
+            </div>
+            <span class="text-[9px] font-mono font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-1 py-0.2 rounded border border-amber-200 dark:border-amber-800/50">नाप</span>
+          </div>
+          <span class="text-xs font-bold text-slate-900 dark:text-white block group-hover:text-emerald-600 transition" data-i18n="unitConverterBtn">जग्गा र सुन नाप</span>
+          <span class="text-[10px] text-slate-500 dark:text-slate-400 block truncate">रोपनी, आना, तोला...</span>
+        </button>
+
+        <button type="button" onclick="openDateConverterModal()" class="p-2.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] hover:border-emerald-500/50 rounded-xl text-left transition active:scale-95 group shadow-2xs">
+          <div class="flex items-center justify-between mb-1">
+            <div class="w-6 h-6 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+            </div>
+            <span class="text-[9px] font-mono font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/60 px-1 py-0.2 rounded border border-sky-200 dark:border-sky-800/50">वि.सं.⇄AD</span>
+          </div>
+          <span class="text-xs font-bold text-slate-900 dark:text-white block group-hover:text-emerald-600 transition" data-i18n="dateConverterBtn">मिति रूपान्तरण</span>
+          <span class="text-[10px] text-slate-500 dark:text-slate-400 block truncate">BS ⇄ AD Converter</span>
+        </button>
+
+        <button type="button" onclick="openNeaTariffModal()" class="p-2.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] hover:border-emerald-500/50 rounded-xl text-left transition active:scale-95 group shadow-2xs">
+          <div class="flex items-center justify-between mb-1">
+            <div class="w-6 h-6 rounded-lg bg-yellow-50 dark:bg-yellow-950/60 text-yellow-600 dark:text-yellow-400 flex items-center justify-center">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
+            </div>
+            <span class="text-[9px] font-mono font-bold text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950/60 px-1 py-0.2 rounded border border-yellow-200 dark:border-yellow-800/50">NEA</span>
+          </div>
+          <span class="text-xs font-bold text-slate-900 dark:text-white block group-hover:text-emerald-600 transition">विद्युत महसुल</span>
+          <span class="text-[10px] text-slate-500 dark:text-slate-400 block truncate">बिजुली बिल हिसाब</span>
+        </button>
+      </div>
+
+      <!-- Upcoming Public Holidays Filter & Countdown Banner -->
+      <div class="p-3.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl shadow-xs space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">आगामी सार्वजनिक बिदाहरू (Public Holidays)</h3>
+          </div>
+          <span class="text-[10px] text-slate-400 font-mono" id="holidaysCountBadge">नेपाल सरकार क्यालेन्डर</span>
+        </div>
+        <div id="holidaysQuickStrip" class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pt-0.5">
+          <!-- Rendered dynamically by renderUpcomingHolidays() -->
+        </div>
+      </div>
+
+      <!-- Upcoming Reminders & Festivals Card -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between px-1">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300" data-i18n="upcomingReminders">
+            आगामी सम्झना तथा चाडपर्व
+          </h3>
+          <span class="text-[10px] text-slate-400 dark:text-slate-400 font-medium" data-i18n="top5Notes">आगामी सम्झनाहरू</span>
+        </div>
+        <div id="upcomingRemindersList" class="space-y-2">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- ELDER-FRIENDLY DAILY MEDICINE ROUTINE & REMINDERS (औषधि तालिका) -->
+      <div class="p-4 sm:p-5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl space-y-3 shadow-xs">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">💊</span>
+            <div>
+              <h3 class="text-xs font-extrabold text-slate-900 dark:text-white" data-i18n="medRoutineTitle">दैनिक औषधि तालिका (Medicine Routine)</h3>
+              <p class="text-[10px] text-slate-500 dark:text-slate-300 font-medium" data-i18n="medRoutineSub">घरका ज्येष्ठ नागरिक तथा परिवारका लागि दैनिक औषधि र समय</p>
+            </div>
+          </div>
+          <button onclick="openMedicineModal()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-2xs transition whitespace-nowrap">
+            + औषधि
+          </button>
+        </div>
+
+        <!-- Medicine Routine Lists (Morning, Afternoon, Night) -->
+        <div id="medicineRoutineList" class="space-y-2.5 pt-1">
+          <!-- Rendered dynamically by renderMedicineRoutine() -->
+        </div>
+      </div>
+
+      <!-- In Case of Emergency (ICE) Card -->
+      <div class="p-4 sm:p-5 bg-rose-50 dark:bg-[#201518] border border-rose-200 dark:border-rose-900/60 rounded-2xl space-y-3 shadow-xs">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-1.5">
+            <div class="w-5 h-5 rounded-md bg-rose-200 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300 flex items-center justify-center">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
+            </div>
+            <span class="text-xs font-bold text-rose-800 dark:text-rose-300 uppercase tracking-wider" data-i18n="iceTitle">आपतकालीन स्वास्थ्य कार्ड (ICE)</span>
+          </div>
+          <button onclick="copyEmergencySummary()" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-lg shadow-2xs transition" data-i18n="copyCardBtn">
+            कार्ड कपी
+          </button>
+        </div>
+
+        <!-- Medical Profile Form -->
+        <div class="grid grid-cols-2 gap-2.5 pt-1">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-1" data-i18n="bloodType">रक्त समूह (Blood Group)</label>
+            <input id="iceBloodType" type="text" placeholder="e.g. O+, A+, B+" onchange="saveHealthField('bloodType', this.value)" class="w-full bg-white dark:bg-[#111722] border border-rose-200 dark:border-[#334158] rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-1" data-i18n="allergies">एलर्जी (Allergies)</label>
+            <input id="iceAllergies" type="text" placeholder="e.g. Penicillin, Peanuts" onchange="saveHealthField('allergies', this.value)" class="w-full bg-white dark:bg-[#111722] border border-rose-200 dark:border-[#334158] rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-1" data-i18n="conditions">दीर्घरोग / स्वास्थ्य अवस्था</label>
+          <input id="iceConditions" type="text" placeholder="e.g. Asthma, सामान्य" onchange="saveHealthField('conditions', this.value)" class="w-full bg-white dark:bg-[#111722] border border-rose-200 dark:border-[#334158] rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-1" data-i18n="medications">दैनिक खाने औषधिहरू (नोट)</label>
+          <input id="iceMeds" type="text" placeholder="e.g. दैनिक भिटामिन, प्रेसरको औषधि" onchange="saveHealthField('medications', this.value)" class="w-full bg-white dark:bg-[#111722] border border-rose-200 dark:border-[#334158] rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-1" data-i18n="insurance">स्वास्थ्य बीमा #</label>
+            <input id="iceInsurance" type="text" placeholder="बीमा नम्बर" onchange="saveHealthField('insurance', this.value)" class="w-full bg-white dark:bg-[#111722] border border-rose-200 dark:border-[#334158] rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-1" data-i18n="hospital">आकस्मिक अस्पताल</label>
+            <input id="iceHospital" type="text" placeholder="अस्पतालको नाम" onchange="saveHealthField('hospital', this.value)" class="w-full bg-white dark:bg-[#111722] border border-rose-200 dark:border-[#334158] rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500">
+          </div>
+        </div>
+        <!-- 1-Tap National Emergency Hotlines -->
+        <div class="space-y-1.5 pt-2 border-t border-rose-200/80 dark:border-rose-900/40">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-rose-800 dark:text-rose-300 block">१-ट्याप राष्ट्रिय आपतकालीन सम्पर्कहरू:</span>
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 text-xs font-mono font-bold">
+            <a href="tel:100" class="p-2 bg-white dark:bg-[#111722] hover:bg-rose-100 rounded-xl border border-rose-200 dark:border-rose-900/50 text-center text-rose-700 dark:text-rose-300 transition">
+              <span class="text-[9px] block font-sans text-slate-500 dark:text-slate-400 font-medium">प्रहरी</span>
+              १००
+            </a>
+            <a href="tel:102" class="p-2 bg-white dark:bg-[#111722] hover:bg-rose-100 rounded-xl border border-rose-200 dark:border-rose-900/50 text-center text-rose-700 dark:text-rose-300 transition">
+              <span class="text-[9px] block font-sans text-slate-500 dark:text-slate-400 font-medium">एम्बुलेन्स</span>
+              १०२
+            </a>
+            <a href="tel:101" class="p-2 bg-white dark:bg-[#111722] hover:bg-rose-100 rounded-xl border border-rose-200 dark:border-rose-900/50 text-center text-rose-700 dark:text-rose-300 transition">
+              <span class="text-[9px] block font-sans text-slate-500 dark:text-slate-400 font-medium">दमकल</span>
+              १०१
+            </a>
+            <a href="tel:103" class="p-2 bg-white dark:bg-[#111722] hover:bg-rose-100 rounded-xl border border-rose-200 dark:border-rose-900/50 text-center text-rose-700 dark:text-rose-300 transition">
+              <span class="text-[9px] block font-sans text-slate-500 dark:text-slate-400 font-medium">ट्राफिक</span>
+              १०३
+            </a>
+            <a href="tel:1145" class="p-2 bg-white dark:bg-[#111722] hover:bg-rose-100 rounded-xl border border-rose-200 dark:border-rose-900/50 text-center text-rose-700 dark:text-rose-300 transition">
+              <span class="text-[9px] block font-sans text-slate-500 dark:text-slate-400 font-medium">महिला हेल्प</span>
+              ११४५
+            </a>
+            <a href="tel:1098" class="p-2 bg-white dark:bg-[#111722] hover:bg-rose-100 rounded-xl border border-rose-200 dark:border-rose-900/50 text-center text-rose-700 dark:text-rose-300 transition">
+              <span class="text-[9px] block font-sans text-slate-500 dark:text-slate-400 font-medium">बालबालिका</span>
+              १०९८
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Contacts (100 Police, 102 Ambulance, 101 Fire + Family) -->
+      <div class="space-y-2">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300 px-1" data-i18n="emergencyContacts">आपतकालीन नम्बरहरू</span>
+        
+        <form onsubmit="addEmergencyContact(event)" class="p-4 sm:p-5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl space-y-2.5 shadow-xs">
+          <div class="grid grid-cols-2 gap-2">
+            <input id="contactName" type="text" placeholder="नाम" data-i18n-placeholder="contactNamePlaceholder" required class="bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none">
+            <input id="contactRelation" type="text" placeholder="सम्बन्ध (e.g. बुबा)" data-i18n-placeholder="contactRelPlaceholder" class="bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none">
+          </div>
+          <div class="flex gap-2">
+            <input id="contactPhone" type="tel" placeholder="फोन नम्बर" data-i18n-placeholder="contactPhonePlaceholder" required class="flex-1 min-w-0 bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl px-3 py-2 text-xs font-mono font-bold text-slate-900 dark:text-slate-100 focus:outline-none">
+            <button type="submit" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition whitespace-nowrap" data-i18n="addContactBtn">थप्नुहोस्</button>
+          </div>
+        </form>
+
+        <div id="iceContactsList" class="space-y-2">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 2: SHOPPING & GROCERY (किनमेल) -->
+    <!-- ============================================================= -->
+    <section id="view-shopping" class="hidden space-y-4">
       
       <!-- Top Actions Banner: Structured Clipboard Copy -->
       <div class="flex justify-between items-center">
@@ -160,7 +464,7 @@
     </section>
 
     <!-- ============================================================= -->
-    <!-- TAB 2: BUDGET & BORROW/LEND (खर्च र हिसाब) -->
+    <!-- TAB 3: BUDGET & BORROW/LEND (खर्च र हिसाब) -->
     <!-- ============================================================= -->
     <section id="view-budget" class="hidden space-y-4">
       
@@ -285,195 +589,6 @@
       <div class="space-y-1.5">
         <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300 px-1" data-i18n="recentExpenses">हालैका खर्चहरू</span>
         <div id="expenseListContainer" class="space-y-2">
-          <!-- Rendered dynamically -->
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================================================= -->
-    <!-- TAB 3: CALENDAR & HEALTH (पात्रो, सम्झना र औषधि) -->
-    <!-- ============================================================= -->
-    <section id="view-calendar" class="hidden space-y-4">
-      
-      <!-- Full Monthly Bikram Sambat Calendar Card -->
-      <div class="p-4 sm:p-5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl shadow-xs space-y-3">
-        
-        <!-- Month & Year Cultural Hero Header with Quick Navigation -->
-        <div class="space-y-2.5">
-          <div class="flex items-center justify-between">
-            <button onclick="prevCalendarMonth()" class="p-2 sm:p-2.5 rounded-xl bg-slate-100 dark:bg-[#111722] hover:bg-slate-200 dark:hover:bg-[#1a2130] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#334158] transition active:scale-95" title="अघिल्लो महिना">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
-            </button>
-            
-            <div class="text-center px-2">
-              <h2 id="calendarMonthTitle" class="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-                असोज २०८१
-              </h2>
-              <p id="calendarMonthSubtitle" class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold leading-tight mt-0.5">
-                नेपाली पात्रो (वि.सं.) • Sep/Oct 2024
-              </p>
-            </div>
-
-            <button onclick="nextCalendarMonth()" class="p-2 sm:p-2.5 rounded-xl bg-slate-100 dark:bg-[#111722] hover:bg-slate-200 dark:hover:bg-[#1a2130] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#334158] transition active:scale-95" title="पछिल्लो महिना">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
-            </button>
-          </div>
-
-          <!-- Compact Jump Dropdowns & Actions Row -->
-          <div class="flex items-center justify-between pt-1 gap-1.5 border-t border-slate-100 dark:border-[#283347]/60">
-            <div class="flex items-center space-x-1.5 min-w-0">
-              <!-- Month Select -->
-              <select id="calendarMonthSelect" onchange="jumpCalendarMonth(this.value)" class="bg-slate-50 dark:bg-[#111722] text-slate-900 dark:text-slate-100 font-bold text-xs rounded-xl px-2 py-1 border border-slate-200 dark:border-[#334158] focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
-                <option value="1">बैशाख (Baisakh)</option>
-                <option value="2">जेठ (Jestha)</option>
-                <option value="3">असार (Ashadh)</option>
-                <option value="4">साउन (Shrawan)</option>
-                <option value="5">भदौ (Bhadra)</option>
-                <option value="6">असोज (Asoj)</option>
-                <option value="7">कात्तिक (Kartik)</option>
-                <option value="8">मंसिर (Mangsir)</option>
-                <option value="9">पुस (Poush)</option>
-                <option value="10">माघ (Magh)</option>
-                <option value="11">फागुन (Falgun)</option>
-                <option value="12">चैत (Chaitra)</option>
-              </select>
-
-              <!-- Year Select -->
-              <select id="calendarYearSelect" onchange="jumpCalendarYear(this.value)" class="bg-slate-50 dark:bg-[#111722] text-slate-900 dark:text-slate-100 font-bold text-xs rounded-xl px-2 py-1 border border-slate-200 dark:border-[#334158] focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
-                <option value="2080">२०८०</option>
-                <option value="2081">२०८१</option>
-                <option value="2082">२०८२</option>
-                <option value="2083">२०८३</option>
-                <option value="2084">२०८४</option>
-                <option value="2085">२०८५</option>
-              </select>
-
-              <!-- Today Quick Jump Button -->
-              <button onclick="jumpToTodayCalendar()" class="px-2 py-1 bg-emerald-50 dark:bg-emerald-950/80 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 font-bold text-[11px] rounded-xl transition shadow-2xs whitespace-nowrap active:scale-95" title="आजको मितिमा फर्कनुहोस्">
-                आज
-              </button>
-            </div>
-
-            <!-- Add Event / Reminder Quick Trigger Button -->
-            <button onclick="openAddEventModalQuick()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-2xs whitespace-nowrap flex-shrink-0 active:scale-95">
-              <span>+</span>
-              <span data-i18n="addEventQuickBtn">नयाँ सम्झना</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Weekday Headers (7 Columns, Saturday Holiday in Red) -->
-        <div id="calendarWeekdayHeaders" class="grid grid-cols-7 gap-1 text-center font-bold text-[11px] pt-1">
-          <!-- Rendered dynamically -->
-        </div>
-
-        <!-- 30-32 Day Cells Grid Container -->
-        <div id="calendarMonthGrid" class="grid grid-cols-7 gap-1">
-          <!-- Rendered dynamically by renderFullCalendarGrid() -->
-        </div>
-
-        <!-- Today Dual Date Banner -->
-        <div id="calendarDualDisplay" class="pt-2 border-t border-slate-100 dark:border-[#283347]">
-          <!-- Rendered dynamically -->
-        </div>
-      </div>
-
-      <!-- Upcoming Reminders & Festivals Card -->
-      <div class="space-y-2">
-        <div class="flex items-center justify-between px-1">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300" data-i18n="upcomingReminders">
-            आगामी सम्झना तथा चाडपर्व
-          </h3>
-          <span class="text-[10px] text-slate-400 dark:text-slate-400 font-medium" data-i18n="top5Notes">आगामी सम्झनाहरू</span>
-        </div>
-        <div id="upcomingRemindersList" class="space-y-2">
-          <!-- Rendered dynamically -->
-        </div>
-      </div>
-
-      <!-- ELDER-FRIENDLY DAILY MEDICINE ROUTINE & REMINDERS (औषधि तालिका) -->
-      <div class="p-4 sm:p-5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl space-y-3 shadow-xs">
-        <div class="flex justify-between items-center">
-          <div class="flex items-center space-x-2">
-            <span class="text-xl">💊</span>
-            <div>
-              <h3 class="text-xs font-extrabold text-slate-900 dark:text-white" data-i18n="medRoutineTitle">दैनिक औषधि तालिका (Medicine Routine)</h3>
-              <p class="text-[10px] text-slate-500 dark:text-slate-300 font-medium" data-i18n="medRoutineSub">घरका ज्येष्ठ नागरिक तथा परिवारका लागि दैनिक औषधि र समय</p>
-            </div>
-          </div>
-          <button onclick="openMedicineModal()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-2xs transition whitespace-nowrap">
-            + औषधि
-          </button>
-        </div>
-
-        <!-- Medicine Routine Lists (Morning, Afternoon, Night) -->
-        <div id="medicineRoutineList" class="space-y-2.5 pt-1">
-          <!-- Rendered dynamically by renderMedicineRoutine() -->
-        </div>
-      </div>
-
-      <!-- In Case of Emergency (ICE) Card -->
-      <div class="p-4 sm:p-5 bg-rose-50 dark:bg-[#201518] border border-rose-200 dark:border-rose-900/60 rounded-2xl space-y-3 shadow-xs">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-1.5">
-            <span class="text-base">🚨</span>
-            <span class="text-xs font-bold text-rose-800 dark:text-rose-300 uppercase tracking-wider" data-i18n="iceTitle">आपतकालीन स्वास्थ्य कार्ड (ICE)</span>
-          </div>
-          <button onclick="copyEmergencySummary()" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-lg shadow-2xs transition" data-i18n="copyCardBtn">
-            कार्ड कपी
-          </button>
-        </div>
-
-        <!-- Medical Profile Form -->
-        <div class="grid grid-cols-2 gap-2.5 pt-1">
-          <div>
-            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-1" data-i18n="bloodType">रक्त समूह (Blood Group)</label>
-            <input id="iceBloodType" type="text" placeholder="e.g. O+, A+, B+" onchange="saveHealthField('bloodType', this.value)" class="w-full bg-white dark:bg-[#111722] border border-rose-200 dark:border-[#334158] rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500">
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-1" data-i18n="allergies">एलर्जी (Allergies)</label>
-            <input id="iceAllergies" type="text" placeholder="e.g. Penicillin, Peanuts" onchange="saveHealthField('allergies', this.value)" class="w-full bg-white dark:bg-[#111722] border border-rose-200 dark:border-[#334158] rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-1" data-i18n="conditions">दीर्घरोग / स्वास्थ्य अवस्था</label>
-          <input id="iceConditions" type="text" placeholder="e.g. Asthma, सामान्य" onchange="saveHealthField('conditions', this.value)" class="w-full bg-white dark:bg-[#111722] border border-rose-200 dark:border-[#334158] rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500">
-        </div>
-
-        <div>
-          <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-1" data-i18n="medications">दैनिक खाने औषधिहरू (नोट)</label>
-          <input id="iceMeds" type="text" placeholder="e.g. दैनिक भिटामिन, प्रेसरको औषधि" onchange="saveHealthField('medications', this.value)" class="w-full bg-white dark:bg-[#111722] border border-rose-200 dark:border-[#334158] rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500">
-        </div>
-
-        <div class="grid grid-cols-2 gap-2.5">
-          <div>
-            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-1" data-i18n="insurance">स्वास्थ्य बीमा #</label>
-            <input id="iceInsurance" type="text" placeholder="बीमा नम्बर" onchange="saveHealthField('insurance', this.value)" class="w-full bg-white dark:bg-[#111722] border border-rose-200 dark:border-[#334158] rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500">
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-1" data-i18n="hospital">आकस्मिक अस्पताल</label>
-            <input id="iceHospital" type="text" placeholder="अस्पतालको नाम" onchange="saveHealthField('hospital', this.value)" class="w-full bg-white dark:bg-[#111722] border border-rose-200 dark:border-[#334158] rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500">
-          </div>
-        </div>
-      </div>
-
-      <!-- Emergency Contacts (100 Police, 102 Ambulance, 101 Fire + Family) -->
-      <div class="space-y-2">
-        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300 px-1" data-i18n="emergencyContacts">आपतकालीन नम्बरहरू</span>
-        
-        <form onsubmit="addEmergencyContact(event)" class="p-4 sm:p-5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl space-y-2.5 shadow-xs">
-          <div class="grid grid-cols-2 gap-2">
-            <input id="contactName" type="text" placeholder="नाम" data-i18n-placeholder="contactNamePlaceholder" required class="bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none">
-            <input id="contactRelation" type="text" placeholder="सम्बन्ध (e.g. बुबा)" data-i18n-placeholder="contactRelPlaceholder" class="bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none">
-          </div>
-          <div class="flex gap-2">
-            <input id="contactPhone" type="tel" placeholder="फोन नम्बर" data-i18n-placeholder="contactPhonePlaceholder" required class="flex-1 min-w-0 bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl px-3 py-2 text-xs font-mono font-bold text-slate-900 dark:text-slate-100 focus:outline-none">
-            <button type="submit" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition whitespace-nowrap" data-i18n="addContactBtn">थप्नुहोस्</button>
-          </div>
-        </form>
-
-        <div id="iceContactsList" class="space-y-2">
           <!-- Rendered dynamically -->
         </div>
       </div>
@@ -637,6 +752,19 @@
         </div>
       </div>
 
+      <!-- App Tour & Interactive Guide Button -->
+      <div class="p-4 sm:p-5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl shadow-xs space-y-2.5">
+        <div class="flex items-center justify-between">
+          <div class="flex-1 pr-3">
+            <span class="text-xs font-bold text-slate-900 dark:text-slate-100 block">सँगालो परिचय तथा मद्दत (App Tour)</span>
+            <p class="text-[11px] text-slate-500 dark:text-slate-300 font-medium mt-0.5">एपका सम्पूर्ण मुख्य सुविधाहरू र चलाउने तरिका फेरि हेर्नुहोस्।</p>
+          </div>
+          <button type="button" onclick="startOnboardingTour()" class="px-3 py-1.5 bg-slate-100 dark:bg-[#111722] hover:bg-slate-200 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl transition border border-slate-200 dark:border-[#334158]">
+            टुर सुरु
+          </button>
+        </div>
+      </div>
+
       <!-- Document & Photo Vault (नागरिकता, लाइसेन्स, ब्लुबुक, स्वास्थ्य बीमा) -->
       <div class="p-4 sm:p-5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl space-y-3 shadow-xs">
         <div class="flex justify-between items-center">
@@ -789,9 +917,503 @@
     </div>
   </div>
 
-  <!-- ============================================================= -->
+    <!-- ============================================================= -->
   <!-- MODALS -->
   <!-- ============================================================= -->
+
+  <!-- Weather, Air Quality & Astronomical Panchanga Modal -->
+  <div id="weatherDetailsModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="w-full max-w-md bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-[#283347] pb-3">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl" id="modalWeatherIcon">☀️</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white" data-i18n="weatherModalTitle">मौसम, वायु गुणस्तर र पञ्चाङ्ग</h3>
+            <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium" id="modalWeatherLocation">काठमाडौँ उपत्यका (Kathmandu Valley)</p>
+          </div>
+        </div>
+        <button onclick="closeWeatherDetailsModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Current Temperature & Weather Grid -->
+      <div class="grid grid-cols-2 gap-2.5">
+        <div class="p-3 bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#283347] rounded-xl text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block" data-i18n="currentTemp">तापक्रम</span>
+          <span class="text-2xl font-black text-slate-900 dark:text-white font-mono" id="modalCurrentTemp">--°C</span>
+          <span class="text-[10px] text-slate-500 dark:text-slate-400 block font-medium" id="modalWeatherCondition">सफा (Clear)</span>
+        </div>
+        <div class="p-3 bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#283347] rounded-xl text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block" data-i18n="humidityWind">आर्द्रता र हावा</span>
+          <div class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1 font-mono">
+            💧 <span id="modalHumidity">--%</span>
+          </div>
+          <div class="text-xs text-slate-600 dark:text-slate-300 font-mono mt-0.5">
+            💨 <span id="modalWind">-- km/h</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Air Quality Index (AQI) Banner -->
+      <div class="p-3 bg-emerald-50 dark:bg-[#102921] border border-emerald-200 dark:border-emerald-800/60 rounded-xl space-y-1.5" id="modalAqiCard">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5">
+            <span>🍃</span> <span data-i18n="aqiTitle">वायु गुणस्तर (Air Quality / AQI)</span>
+          </span>
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-900 text-emerald-950 dark:text-emerald-200" id="modalAqiLevelBadge">
+            राम्रो (Good)
+          </span>
+        </div>
+        <div class="flex items-center justify-between text-xs font-mono font-bold text-emerald-800 dark:text-emerald-300 pt-0.5">
+          <span>PM2.5: <span id="modalPm25">--</span> μg/m³</span>
+          <span>PM10: <span id="modalPm10">--</span> μg/m³</span>
+          <span>AQI: <span id="modalAqiVal">--</span></span>
+        </div>
+        <p class="text-[10px] text-emerald-700/90 dark:text-emerald-400 font-medium" id="modalAqiAdvice">
+          काठमाडौँको हावा हाल सामान्य र श्वासप्रश्वासका लागि उपयुक्त छ।
+        </p>
+      </div>
+
+      <!-- Vedic Panchanga & Astronomical Timings (100% Offline Math) -->
+      <div class="p-3.5 bg-amber-50/70 dark:bg-[#201815] border border-amber-200 dark:border-amber-800/50 rounded-xl space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+            <span>🕉️</span> <span data-i18n="panchangaTitle">दैनिक पञ्चाङ्ग तथा मुहूर्तः</span>
+          </span>
+          <span class="text-[10px] font-medium text-amber-700 dark:text-amber-400">१००% अफलाइन गणना</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="p-2 bg-white/80 dark:bg-[#18202d] rounded-lg border border-amber-200/60 dark:border-amber-800/40">
+            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 block" data-i18n="sunrise">सूर्योदय (Sunrise)</span>
+            <span class="font-mono font-bold text-amber-700 dark:text-amber-300 text-sm" id="modalSunriseTime">०६:०१</span>
+          </div>
+          <div class="p-2 bg-white/80 dark:bg-[#18202d] rounded-lg border border-amber-200/60 dark:border-amber-800/40">
+            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 block" data-i18n="sunset">सूर्यास्त (Sunset)</span>
+            <span class="font-mono font-bold text-rose-600 dark:text-rose-400 text-sm" id="modalSunsetTime">१७:४५</span>
+          </div>
+          <div class="p-2 bg-white/80 dark:bg-[#18202d] rounded-lg border border-amber-200/60 dark:border-amber-800/40">
+            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 block" data-i18n="dayLength">दिनमान (Day Length)</span>
+            <span class="font-bold text-slate-800 dark:text-slate-200" id="modalDayLength">११ घन्टा ४४ मिनेट</span>
+          </div>
+          <div class="p-2 bg-white/80 dark:bg-[#18202d] rounded-lg border border-amber-200/60 dark:border-amber-800/40">
+            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 block" data-i18n="tithi">आजको तिथि (Tithi)</span>
+            <span class="font-bold text-amber-800 dark:text-amber-300" id="modalTithiText">शुक्ल द्वितीया</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-amber-200/60 dark:border-amber-800/40">
+          <div>
+            <span class="text-[10px] font-bold text-rose-600 dark:text-rose-400 block" data-i18n="rahuKaal">राहु काल (अशुभ समय)</span>
+            <span class="font-mono font-bold text-rose-700 dark:text-rose-300" id="modalRahuKaal">१०:३० – १२:००</span>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 block" data-i18n="abhijitMuhurat">शुभ मुहूर्त (अभिजीत)</span>
+            <span class="font-mono font-bold text-emerald-800 dark:text-emerald-300" id="modalAbhijitMuhurat">११:४२ – १२:३०</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Close Button -->
+      <button type="button" onclick="closeWeatherDetailsModal()" class="w-full py-2.5 bg-slate-900 dark:bg-zinc-100 hover:bg-slate-800 text-white dark:text-slate-900 font-bold text-xs rounded-xl transition" data-i18n="closeBtn">
+        बन्द गर्नुहोस् (Close)
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Nepal Rastra Bank (NRB) Official Forex Rates & Remittance Calculator Modal -->
+  <div id="forexRatesModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="w-full max-w-md bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-[#283347] pb-3">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">💵</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white" data-i18n="forexModalTitle">विदेशी विनिमय दर (Forex Rates)</h3>
+            <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium" id="forexDateBadge">नेपाल राष्ट्र बैंक आधिकारिक दर</p>
+          </div>
+        </div>
+        <button onclick="closeForexModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Quick Remittance Calculator -->
+      <div class="p-3 bg-emerald-50 dark:bg-[#102921] border border-emerald-200 dark:border-emerald-800/60 rounded-xl space-y-2">
+        <span class="text-[11px] font-bold text-emerald-900 dark:text-emerald-200 block" data-i18n="remittanceCalcTitle">
+          रेमिट्यान्स / रकम हिसाब (Calculator)
+        </span>
+        <div class="flex gap-2">
+          <input id="remitAmountInput" type="number" step="any" value="1000" oninput="calculateRemittance()" class="flex-1 min-w-0 bg-white dark:bg-[#111722] border border-emerald-300 dark:border-emerald-700/60 rounded-xl px-3 py-2 text-xs font-bold font-mono text-slate-900 dark:text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="रकम">
+          <select id="remitCurrencySelect" onchange="calculateRemittance()" class="w-36 bg-white dark:bg-[#111722] border border-emerald-300 dark:border-emerald-700/60 rounded-xl px-2 py-2 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer">
+            <option value="QAR">QAR (कतार)</option>
+            <option value="AED">AED (यूएई)</option>
+            <option value="SAR">SAR (साउदी)</option>
+            <option value="MYR">MYR (मलेसिया)</option>
+            <option value="USD" selected>USD (डलर)</option>
+            <option value="AUD">AUD (अस्ट्रेलियन)</option>
+            <option value="EUR">EUR (युरो)</option>
+            <option value="GBP">GBP (पाउन्ड)</option>
+            <option value="KWD">KWD (कुवेत)</option>
+            <option value="KRW">KRW (कोरिया)</option>
+            <option value="JPY">JPY (जापान)</option>
+            <option value="INR">INR (भारत १००)</option>
+          </select>
+        </div>
+        <div class="p-2.5 bg-white dark:bg-[#18202d] rounded-lg border border-emerald-200 dark:border-emerald-800/50 flex justify-between items-center text-xs">
+          <span class="text-slate-500 dark:text-slate-400 font-medium" data-i18n="remitEquivalent">नेपाली रुपैयाँमा:</span>
+          <span class="text-sm font-extrabold text-emerald-700 dark:text-emerald-300 font-mono" id="remitResultText">रू ०</span>
+        </div>
+      </div>
+
+      <!-- Live Exchange Rates Table -->
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between px-1">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400" data-i18n="majorCurrencies">प्रमुख विदेशी मुद्राहरू:</span>
+          <button type="button" onclick="fetchForexRates(true)" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
+            <span>🔄</span> <span data-i18n="refreshBtn">ताजा गर्नुहोस्</span>
+          </button>
+        </div>
+        <div class="border border-slate-200 dark:border-[#283347] rounded-xl overflow-hidden max-h-60 overflow-y-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 dark:bg-[#111722] text-slate-500 dark:text-slate-400 text-[10px] font-bold border-b border-slate-200 dark:border-[#283347] sticky top-0">
+              <tr>
+                <th class="px-3 py-2">मुद्रा (Currency)</th>
+                <th class="px-2 py-2 text-center">इकाई</th>
+                <th class="px-2 py-2 text-right">खरिद (Buy)</th>
+                <th class="px-3 py-2 text-right">बिक्री (Sell)</th>
+              </tr>
+            </thead>
+            <tbody id="forexTableBody" class="divide-y divide-slate-100 dark:divide-[#283347] font-mono">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer Notes -->
+      <div class="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 pt-1">
+        <span>स्रोत: नेपाल राष्ट्र बैंक (NRB Open API)</span>
+        <button type="button" onclick="closeForexModal()" class="px-3 py-1.5 bg-slate-100 dark:bg-[#111722] hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg font-bold text-xs">
+          बन्द
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Nepali Unit Converter Modal (Land: Ropani/Bigha & Gold: Tola/Lal/Gram) -->
+  <div id="unitConverterModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="w-full max-w-md bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-[#283347] pb-3">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">📐</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white" data-i18n="unitModalTitle">नेपाली नाप रूपान्तरण (Unit Converter)</h3>
+            <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">जग्गा (रोपनी, बिघा) र सुन (तोला, लाल)</p>
+          </div>
+        </div>
+        <button onclick="closeUnitConverterModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Segmented Tabs for Converter Types -->
+      <div class="flex p-1 bg-slate-100 dark:bg-[#111722] rounded-xl text-xs font-bold">
+        <button type="button" id="tabBtn-conv-hill" onclick="switchConverterTab('hill')" class="flex-1 py-1.5 rounded-lg bg-white dark:bg-[#18202d] text-emerald-700 dark:text-emerald-300 shadow-2xs transition">
+          रोपनी-आना (पहाड)
+        </button>
+        <button type="button" id="tabBtn-conv-terai" onclick="switchConverterTab('terai')" class="flex-1 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 transition">
+          बिघा-कट्ठा (तराई)
+        </button>
+        <button type="button" id="tabBtn-conv-gold" onclick="switchConverterTab('gold')" class="flex-1 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 transition">
+          सुन-चाँदी (तोला)
+        </button>
+      </div>
+
+      <!-- Sub-View 1: Hill Land System (Ropani, Aana, Paisa, Daam) -->
+      <div id="convView-hill" class="space-y-3">
+        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+          रोपनी, आना, पैसा, दाम हाल्नुहोस् (वा वर्ग फिट):
+        </div>
+        <div class="grid grid-cols-4 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">रोपनी</label>
+            <input type="number" id="ropaniInput" value="0" min="0" oninput="convertFromRopani()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-center">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">आना</label>
+            <input type="number" id="aanaInput" value="4" min="0" max="15" oninput="convertFromRopani()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-center">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">पैसा</label>
+            <input type="number" id="paisaInput" value="0" min="0" max="3" oninput="convertFromRopani()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-center">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">दाम</label>
+            <input type="number" id="daamInput" value="0" min="0" max="3" oninput="convertFromRopani()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-center">
+          </div>
+        </div>
+        <div class="p-3 bg-slate-50 dark:bg-[#111722] rounded-xl border border-slate-200 dark:border-[#283347] space-y-1.5 font-mono text-xs">
+          <div class="flex justify-between">
+            <span class="text-slate-500 dark:text-slate-400 font-sans">कुल वर्ग फिट (Sq. Ft):</span>
+            <span class="font-bold text-slate-900 dark:text-white" id="hillResultSqFt">१३६९ Sq. Ft</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500 dark:text-slate-400 font-sans">कुल वर्ग मिटर (Sq. M):</span>
+            <span class="font-bold text-slate-900 dark:text-white" id="hillResultSqM">१२७.१८ Sq. M</span>
+          </div>
+          <div class="flex justify-between text-[11px] text-emerald-600 dark:text-emerald-400 font-sans">
+            <span>तराईमा समकक्षी:</span>
+            <span class="font-mono font-bold" id="hillResultTerai">० बिघा २ कट्ठा ० धुर</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-View 2: Terai Land System (Bigha, Kattha, Dhur) -->
+      <div id="convView-terai" class="hidden space-y-3">
+        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+          बिघा, कट्ठा, धुर हाल्नुहोस्:
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">बिघा</label>
+            <input type="number" id="bighaInput" value="0" min="0" oninput="convertFromBigha()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-center">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">कट्ठा</label>
+            <input type="number" id="katthaInput" value="10" min="0" max="19" oninput="convertFromBigha()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-center">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">धुर</label>
+            <input type="number" id="dhurInput" value="0" min="0" max="19" oninput="convertFromBigha()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-center">
+          </div>
+        </div>
+        <div class="p-3 bg-slate-50 dark:bg-[#111722] rounded-xl border border-slate-200 dark:border-[#283347] space-y-1.5 font-mono text-xs">
+          <div class="flex justify-between">
+            <span class="text-slate-500 dark:text-slate-400 font-sans">कुल वर्ग फिट (Sq. Ft):</span>
+            <span class="font-bold text-slate-900 dark:text-white" id="teraiResultSqFt">३६४५० Sq. Ft</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500 dark:text-slate-400 font-sans">कुल वर्ग मिटर (Sq. M):</span>
+            <span class="font-bold text-slate-900 dark:text-white" id="teraiResultSqM">३३८६.३ Sq. M</span>
+          </div>
+          <div class="flex justify-between text-[11px] text-emerald-600 dark:text-emerald-400 font-sans">
+            <span>पहाडमा समकक्षी:</span>
+            <span class="font-mono font-bold" id="teraiResultHill">६ रोपनी १० आना</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-View 3: Gold & Silver System (Tola, Lal, Gram) -->
+      <div id="convView-gold" class="hidden space-y-3">
+        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+          सुन तथा चाँदीको तौल हिसाब (१ तोला = ११.६६४ ग्राम = १०० लाल):
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">तोला (Tola)</label>
+            <input type="number" id="goldTolaInput" value="1" min="0" step="any" oninput="convertFromGoldTola()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-center">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">लाल (Lal)</label>
+            <input type="number" id="goldLalInput" value="0" min="0" step="any" oninput="convertFromGoldLal()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-center">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">ग्राम (Grams)</label>
+            <input type="number" id="goldGramInput" value="11.664" min="0" step="any" oninput="convertFromGoldGram()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-center">
+          </div>
+        </div>
+        <div class="p-3 bg-amber-50 dark:bg-[#201815] rounded-xl border border-amber-200 dark:border-amber-800/50 space-y-1 text-xs">
+          <div class="font-bold text-amber-900 dark:text-amber-200 flex items-center justify-between">
+            <span>कुल तौल:</span>
+            <span class="font-mono" id="goldWeightSummary">१ तोला (११.६६४ ग्राम)</span>
+          </div>
+          <p class="text-[10px] text-amber-800/80 dark:text-amber-300 font-medium">
+            नेपाली गरगहना बनाउँदा वा किन्दा १० लाल = १ आना (सुनको हिसाब), र १०० लाल = १ तोला हुन्छ।
+          </p>
+        </div>
+      </div>
+
+      <!-- Close Button -->
+      <button type="button" onclick="closeUnitConverterModal()" class="w-full py-2.5 bg-slate-900 dark:bg-zinc-100 hover:bg-slate-800 text-white dark:text-slate-900 font-bold text-xs rounded-xl transition">
+        सकियो (Done)
+      </button>
+
+    </div>
+  </div>
+
+  <!-- BS ⇄ AD Date Converter Modal -->
+  <div id="dateConverterModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="w-full max-w-md bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-[#283347] pb-3">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🔄</span>
+          <div>
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white" data-i18n="dateConverterModalTitle">मिति रूपान्तरण (Date Converter)</h3>
+            <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">वि.सं. ⇄ ई.सं. (BS to AD & AD to BS)</p>
+          </div>
+        </div>
+        <button onclick="closeDateConverterModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Conversion Mode Toggle -->
+      <div class="flex p-1 bg-slate-100 dark:bg-[#111722] rounded-xl text-xs font-bold">
+        <button type="button" id="tabBtn-conv-bsToAd" onclick="switchDateConvMode('bsToAd')" class="flex-1 py-1.5 rounded-lg bg-white dark:bg-[#18202d] text-emerald-700 dark:text-emerald-300 shadow-2xs transition">
+          वि.सं. बाट ई.सं. (BS → AD)
+        </button>
+        <button type="button" id="tabBtn-conv-adToBs" onclick="switchDateConvMode('adToBs')" class="flex-1 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 transition">
+          ई.सं. बाट वि.सं. (AD → BS)
+        </button>
+      </div>
+
+      <!-- Inputs Container -->
+      <div class="grid grid-cols-3 gap-2" id="dateConvInputsContainer">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Converted Result Card -->
+      <div class="p-3.5 bg-emerald-50 dark:bg-[#102921] border border-emerald-200 dark:border-emerald-800/60 rounded-xl space-y-1 text-center">
+        <span class="text-[10px] uppercase font-bold text-emerald-800 dark:text-emerald-300 block">रूपान्तरित मिति (Converted Date):</span>
+        <div class="text-base font-black text-emerald-950 dark:text-emerald-100 font-mono" id="dateConvResultMain">--</div>
+        <div class="text-xs font-bold text-emerald-700 dark:text-emerald-400" id="dateConvResultSub">--</div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-2">
+        <button type="button" onclick="jumpCalendarToConvertedDate()" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition shadow-xs">
+          पात्रोमा हेर्नुहोस् (Open in Calendar)
+        </button>
+        <button type="button" onclick="closeDateConverterModal()" class="px-4 py-2 bg-slate-100 dark:bg-[#111722] text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition">
+          बन्द
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================= -->
+
+  <!-- 0. Interactive Puku Onboarding Tour Modal -->
+  <div id="onboardingTourModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white dark:bg-[#18202d] border border-emerald-300 dark:border-[#283347] rounded-3xl p-5 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Mascot Header -->
+      <div class="flex items-center space-x-3 pb-2 border-b border-slate-100 dark:border-[#283347]">
+        <div class="w-11 h-11 rounded-2xl bg-emerald-50 dark:bg-[#111722] border border-emerald-300 dark:border-emerald-700/60 p-2 flex items-center justify-center flex-shrink-0">
+          <img src="icon.svg?v=7" class="w-7 h-7 object-contain" alt="सँगालो">
+        </div>
+        <div class="flex-1 min-w-0">
+          <h3 class="text-sm font-extrabold text-slate-900 dark:text-white" id="tourStepTitle">सँगालोमा स्वागत छ!</h3>
+          <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold" id="tourStepBadge">चरण १ / ४ • पुकु गाइड</p>
+        </div>
+        <button onclick="dismissOnboardingTour()" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Step Content Body -->
+      <div id="tourStepContent" class="space-y-2 text-xs text-slate-600 dark:text-slate-300 leading-relaxed min-h-[105px]">
+        <!-- Populated dynamically by renderTourStep() -->
+      </div>
+
+      <!-- Tour Navigation Dots & Buttons -->
+      <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-[#283347]">
+        <button type="button" id="tourPrevBtn" onclick="prevTourStep()" class="hidden px-3 py-1.5 bg-slate-100 dark:bg-[#111722] hover:bg-slate-200 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl transition">
+          पछाडि
+        </button>
+        <div class="flex space-x-1.5" id="tourDotsContainer">
+          <!-- Rendered dynamically -->
+        </div>
+        <button type="button" id="tourNextBtn" onclick="nextTourStep()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-xs transition active:scale-95">
+          अगाडि बढ्नुहोस्
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 0.1 NEA Domestic Electricity Tariff Calculator Modal -->
+  <div id="neaTariffModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="w-full max-w-md bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-[#283347] pb-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-xl bg-yellow-50 dark:bg-yellow-950/40 border border-yellow-300 dark:border-yellow-700/60 flex items-center justify-center text-yellow-600 dark:text-yellow-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">विद्युत महसुल हिसाब (NEA Tariff)</h3>
+            <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">नेपाल विद्युत प्राधिकरण गार्हस्थ्य महसुल दर</p>
+          </div>
+        </div>
+        <button onclick="closeNeaTariffModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Meter Capacity & Consumption Inputs -->
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">मिटर क्षमता (Ampere)</label>
+            <select id="neaAmpSelect" onchange="calculateNeaBill()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2.5 text-xs font-bold text-slate-900 dark:text-slate-100">
+              <option value="5" selected>५ एम्पियर (5A)</option>
+              <option value="15">१५ एम्पियर (15A)</option>
+              <option value="30">३० एम्पियर (30A)</option>
+              <option value="60">६० एम्पियर (60A)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">खपत युनिट (Units Consumed)</label>
+            <input type="number" id="neaUnitsInput" value="75" min="0" oninput="calculateNeaBill()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2.5 text-xs font-bold text-center font-mono text-slate-900 dark:text-slate-100 focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+
+        <!-- Bill Calculation Summary Breakdown -->
+        <div class="p-4 bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#283347] rounded-xl space-y-2 text-xs">
+          <div class="flex justify-between text-slate-600 dark:text-slate-300">
+            <span>न्यूनतम सेवा शुल्क (Service Charge):</span>
+            <span class="font-mono font-bold" id="neaServiceCharge">रू १००</span>
+          </div>
+          <div class="flex justify-between text-slate-600 dark:text-slate-300">
+            <span>ऊर्जा शुल्क (Energy Charge):</span>
+            <span class="font-mono font-bold" id="neaEnergyCharge">रू ६००</span>
+          </div>
+          <div class="flex justify-between text-slate-900 dark:text-white font-extrabold text-sm pt-2 border-t border-slate-200 dark:border-[#283347]">
+            <span>कुल तिर्नुपर्ने रकम (Total):</span>
+            <span class="font-mono text-emerald-600 dark:text-emerald-400 text-base" id="neaTotalBill">रू ७००.००</span>
+          </div>
+        </div>
+
+        <!-- Rebate / Penalty Guidelines -->
+        <div class="p-3 bg-amber-50 dark:bg-[#201815] rounded-xl border border-amber-200 dark:border-amber-800/50 space-y-1 text-[11px] text-amber-900 dark:text-amber-200">
+          <span class="font-bold block">💡 छुट तथा जरिवाना नियम (NEA Rebate):</span>
+          <p>• मिटर रिडिङ भएको ७ दिनभित्र तिरेमा: २% छुट पाइन्छ।</p>
+          <p>• ८ देखि १५ दिनभित्र: पूरै रकम (कुनै जरिवाना छैन)।</p>
+          <p>• १६ देखि ३० दिनपछि: ५% देखि २५% सम्म थप दस्तुर लाग्छ।</p>
+        </div>
+      </div>
+
+      <!-- Close Button -->
+      <button type="button" onclick="closeNeaTariffModal()" class="w-full py-2.5 bg-slate-900 dark:bg-zinc-100 hover:bg-slate-800 text-white dark:text-slate-900 font-bold text-xs rounded-xl transition">
+        सकियो (Done)
+      </button>
+
+    </div>
+  </div>
 
   <!-- 1. Universal Delete Confirmation Modal -->
   <div id="confirmActionModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
@@ -1322,19 +1944,27 @@
     </div>
   </div>
 
-  <!-- Bottom Navigation Bar (5 Touch-Optimized Tabs) -->
+    <!-- Bottom Navigation Bar (5 Touch-Optimized Tabs) -->
   <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#151b26]/95 backdrop-blur-md border-t border-slate-200 dark:border-[#263042] px-2 py-1.5 shadow-lg">
     <div class="max-w-xl mx-auto px-1 sm:px-4 grid grid-cols-5 gap-0.5">
       
-      <!-- 1. Shopping (किनमेल) -->
-      <button id="navBtn-shopping" onclick="setTab('shopping')" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-emerald-600 dark:text-emerald-400 transition">
+      <!-- 1. Calendar (पात्रो) - Default Active Home -->
+      <button id="navBtn-calendar" onclick="setTab('calendar')" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-emerald-600 dark:text-emerald-400 transition">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5" />
+        </svg>
+        <span class="text-[10px] font-bold tracking-tight" data-i18n="calendarTab">पात्रो</span>
+      </button>
+
+      <!-- 2. Shopping (किनमेल) -->
+      <button id="navBtn-shopping" onclick="setTab('shopping')" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 dark:text-slate-400 hover:dark:text-slate-200 transition">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25c-.669 0-1.189-.578-1.119-1.243l1.263-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
         </svg>
         <span class="text-[10px] font-bold tracking-tight" data-i18n="shoppingTab">किनमेल</span>
       </button>
 
-      <!-- 2. Budget (खर्च) -->
+      <!-- 3. Budget (खर्च) -->
       <button id="navBtn-budget" onclick="setTab('budget')" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 dark:text-slate-400 hover:dark:text-slate-200 transition">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
@@ -1342,17 +1972,15 @@
         <span class="text-[10px] font-bold tracking-tight" data-i18n="budgetTab">खर्च</span>
       </button>
 
-      <!-- 3. Calendar (पात्रो) -->
-      <button id="navBtn-calendar" onclick="setTab('calendar')" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 dark:text-slate-400 hover:dark:text-slate-200 transition">
-        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5" />
-        </svg>
-        <span class="text-[10px] font-bold tracking-tight" data-i18n="calendarTab">पात्रो</span>
-      </button>
-
       <!-- 4. Chautari (चौतारी) -->
       <button id="navBtn-chautari" onclick="setTab('chautari')" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 dark:text-slate-400 hover:dark:text-slate-200 transition">
-        <span class="text-base mb-0.5">🐯</span>
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="12" y1="3" x2="12" y2="21" />
+          <line x1="3" y1="3" x2="21" y2="21" />
+          <line x1="21" y1="3" x2="3" y2="21" />
+        </svg>
         <span class="text-[10px] font-bold tracking-tight" data-i18n="chautariTab">चौतारी</span>
       </button>
 

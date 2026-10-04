@@ -1,66 +1,70 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <!-- Background Gradient: Deep Emerald Pine to Vibrant Jade -->
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#064e3b" />
-      <stop offset="50%" stop-color="#059669" />
-      <stop offset="100%" stop-color="#047857" />
+    <!-- Nepal National Crimson Gradient -->
+    <linearGradient id="nepalCrimson" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#991b1b" />
+      <stop offset="50%" stop-color="#c8102e" />
+      <stop offset="100%" stop-color="#7f1d1d" />
     </linearGradient>
 
-    <!-- Warm Golden Morning Sun -->
-    <linearGradient id="sunGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+    <!-- Auspicious Sacred Gold Gradient -->
+    <linearGradient id="sacredGold" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#fde047" />
-      <stop offset="100%" stop-color="#f59e0b" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
     </linearGradient>
 
-    <!-- Himalayan Mountain Snow Peak -->
-    <linearGradient id="peakLight" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="100%" stop-color="#f1f5f9" />
-    </linearGradient>
-    <linearGradient id="peakShadow" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#cbd5e1" />
-      <stop offset="100%" stop-color="#94a3b8" />
-    </linearGradient>
-
-    <!-- Subtle Elevation Shadow -->
-    <filter id="elev" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#022c22" flood-opacity="0.45" />
+    <!-- Subtle Elevation Filter -->
+    <filter id="patroElev" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#450a0a" flood-opacity="0.55" />
     </filter>
   </defs>
 
-  <!-- Modern Squircle Body -->
-  <rect width="512" height="512" rx="120" fill="url(#bgGrad)" />
-  <rect x="8" y="8" width="496" height="496" rx="112" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="3" />
+  <!-- Squircle Canvas in Nepal Crimson -->
+  <rect width="512" height="512" rx="120" fill="url(#nepalCrimson)" />
+  <!-- Hairline Golden Outer Inset -->
+  <rect x="10" y="10" width="492" height="492" rx="110" fill="none" stroke="url(#sacredGold)" stroke-width="3" opacity="0.4" />
 
-  <!-- Harmonious Golden Sun -->
-  <circle cx="256" cy="180" r="72" fill="url(#sunGrad)" opacity="0.95" />
+  <!-- Modern Geometric Patro Sheet -->
+  <g filter="url(#patroElev)">
+    <!-- Main Sheet Body -->
+    <rect x="88" y="96" width="336" height="336" rx="40" fill="#ffffff" />
+    
+    <!-- Top Binding Header in Crimson -->
+    <path d="M 88 140 A 40 40 0 0 1 128 96 L 384 96 A 40 40 0 0 1 424 140 L 424 168 L 88 168 Z" fill="#991b1b" />
+    <!-- Golden Binding Line -->
+    <line x1="88" y1="168" x2="424" y2="168" stroke="url(#sacredGold)" stroke-width="3" />
 
-  <!-- Himalayan Mountain Silhouette (Faceted Modern Low-Poly Geometry) -->
-  <!-- Left Side Wing Peak -->
-  <polygon points="56,350 170,210 270,350" fill="#e2e8f0" opacity="0.9" />
-  <polygon points="170,210 130,260 180,280 170,210" fill="#94a3b8" opacity="0.45" />
+    <!-- Two Polished Brass Hanging Rings -->
+    <rect x="160" y="78" width="28" height="42" rx="10" fill="url(#sacredGold)" stroke="#78350f" stroke-width="2" />
+    <rect x="324" y="78" width="28" height="42" rx="10" fill="url(#sacredGold)" stroke="#78350f" stroke-width="2" />
+    <circle cx="174" cy="99" r="6" fill="#ffffff" opacity="0.6" />
+    <circle cx="338" cy="99" r="6" fill="#ffffff" opacity="0.6" />
 
-  <!-- Right Side Wing Peak -->
-  <polygon points="240,350 340,210 456,350" fill="#e2e8f0" opacity="0.9" />
-  <polygon points="340,210 390,265 345,285 340,210" fill="#94a3b8" opacity="0.45" />
+    <!-- Sacred Celestial Emblems (चन्द्र र सूर्य) Inside Patro Sheet -->
+    
+    <!-- 1. Chandra (Crescent Moon with Aura) -->
+    <!-- Center x=256, y=232 -->
+    <g transform="translate(256, 230)">
+      <!-- Crescent Body -->
+      <path d="M -54 -10 A 56 56 0 0 0 54 -10 A 46 46 0 0 1 -54 -10 Z" fill="url(#sacredGold)" />
+      <!-- Moon Star Disc -->
+      <circle cx="0" cy="-22" r="13" fill="url(#sacredGold)" />
+      <circle cx="0" cy="-22" r="6" fill="#ffffff" opacity="0.9" />
+    </g>
 
-  <!-- Majestic Central Himalayan Crest -->
-  <polygon points="120,360 256,128 392,360" fill="url(#peakLight)" filter="url(#elev)" />
-  <polygon points="256,128 200,215 264,250 256,128" fill="url(#peakShadow)" />
-  <polygon points="256,128 264,250 230,310 256,360 392,360 256,128" fill="#cbd5e1" opacity="0.35" />
+    <!-- 2. Surya (Radiant 12-Ray Sun) -->
+    <!-- Center x=256, y=326 -->
+    <g transform="translate(256, 326)">
+      <!-- Outer 12 Rays -->
+      <path d="M 0 -46 L 7 -32 L 23 -40 L 20 -23 L 38 -20 L 27 -7 L 46 0 L 27 7 L 38 20 L 20 23 L 23 40 L 7 32 L 0 46 L -7 32 L -23 40 L -20 23 L -38 20 L -27 7 L -46 0 L -27 -7 L -38 -20 L -20 -23 L -23 -40 L -7 -32 Z" fill="url(#sacredGold)" />
+      <!-- Inner Sun Core -->
+      <circle cx="0" cy="0" r="22" fill="url(#nepalCrimson)" />
+      <circle cx="0" cy="0" r="16" fill="url(#sacredGold)" />
+      <circle cx="0" cy="0" r="7" fill="#ffffff" opacity="0.95" />
+    </g>
 
-  <!-- Authentic Pagoda Home Silhouette (Base of Household Security) -->
-  <!-- Upper Eaves -->
-  <path d="M176 350 L256 280 L336 350 Z" fill="#b45309" filter="url(#elev)" />
-  <path d="M160 352 L256 268 L352 352 L340 358 L256 284 L172 358 Z" fill="#78350f" />
-
-  <!-- Home Sanctuary Sanctuary Base -->
-  <rect x="194" y="352" width="124" height="76" rx="8" fill="#fffbeb" />
-  <!-- Authentic Arched Doorway -->
-  <path d="M236 428 L236 384 A 20 20 0 0 1 276 384 L276 428 Z" fill="#b45309" />
-  <circle cx="270" cy="406" r="2.5" fill="#fde047" />
-
-  <!-- Minimalist Star-Burst Sparkle in Sun Crest -->
-  <circle cx="256" cy="180" r="3" fill="#ffffff" opacity="0.8" />
+    <!-- Devanagari "सँ" (Sangalo) Brand Monogram Base -->
+    <text x="256" y="414" text-anchor="middle" font-family="-apple-system, Mukta, sans-serif" font-size="20" font-weight="900" fill="#991b1b" letter-spacing="4">सँगालो</text>
+  </g>
 </svg>
