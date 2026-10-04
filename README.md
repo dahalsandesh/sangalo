@@ -2,7 +2,7 @@
 
 > **The Lightweight, Privacy-First Everyday Digital Companion for Nepali Households.**
 
-[![Download APK](https://img.shields.io/badge/Download_APK-v1.0.0_(216_KB)-10b981?style=for-the-badge&logo=android&logoColor=white)](https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk)
+[![Download APK](https://img.shields.io/badge/Download_APK-v1.3.0_(1.4_MB)-10b981?style=for-the-badge&logo=android&logoColor=white)](https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk)
 [![Latest Release](https://img.shields.io/github/v/release/dahalsandesh/sangalo?style=for-the-badge&color=2563eb)](https://github.com/dahalsandesh/sangalo/releases/latest)
 [![Built on Mobile](https://img.shields.io/badge/Built%20100%25%20On-Redmi%20Note%2015%20Pro%20(Phone)-e11d48?style=for-the-badge&logo=android&logoColor=white)](#-built-entirely-on-mobile-pair-programmed-with-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)

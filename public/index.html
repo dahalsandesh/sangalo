@@ -213,6 +213,20 @@
     <!-- ============================================================= -->
     <section id="view-calendar" class="space-y-4">
       
+      <!-- Persistent Live Update Alert Ribbon (Shown when GitHub has newer version) -->
+      <div id="updateAvailableBanner" class="hidden p-3 sm:p-3.5 bg-gradient-to-r from-emerald-500/15 via-teal-500/15 to-emerald-500/10 border border-emerald-500/40 rounded-2xl flex items-center justify-between shadow-xs">
+        <div class="flex items-center space-x-2.5">
+          <span class="text-base animate-bounce">🚀</span>
+          <div>
+            <span id="updateBannerText" class="text-xs font-bold text-emerald-950 dark:text-emerald-200 block">सँगालोको नयाँ संस्करण उपलब्ध छ!</span>
+            <span id="updateBannerSub" class="text-[10px] text-emerald-800 dark:text-emerald-400 font-medium">पछिल्लो सुधार तथा सुविधाहरूका लागि अपडेट गर्नुहोस्</span>
+          </div>
+        </div>
+        <button type="button" onclick="showAppUpdateModal(latestDetectedVersion, 'नयाँ अपडेट', '', latestDetectedApkUrl)" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-2xs transition whitespace-nowrap">
+          अपडेट 📲
+        </button>
+      </div>
+
       <!-- Full Monthly Bikram Sambat Calendar Card -->
       <div class="p-4 sm:p-5 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs space-y-3">
         
@@ -777,111 +791,281 @@
     </section>
 
     <!-- ============================================================= -->
-    <!-- TAB 4: CHAUTARI & BAGH-CHAL (चौतारी - बाघचाल) -->
+    <!-- TAB 4: CHAUTARI GAMES SUITE (चौतारी - परम्परागत तथा पारिवारिक खेलहरू) -->
     <!-- ============================================================= -->
     <section id="view-chautari" class="hidden space-y-4">
       
-      <!-- Chautari Header Banner -->
-      <div class="p-4 sm:p-5 bg-gradient-to-r from-amber-50 via-orange-50 to-white dark:from-[#121215] dark:via-[#121215] dark:to-[#18181b] border border-amber-200 dark:border-zinc-800 rounded-2xl shadow-xs">
-        <div class="flex items-center space-x-2">
-          <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 flex items-center justify-center text-amber-700 dark:text-amber-300 flex-shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="12" y1="3" x2="12" y2="21" /><line x1="3" y1="3" x2="21" y2="21" /><line x1="21" y1="3" x2="3" y2="21" /></svg></div>
-          <div>
-            <h2 class="text-sm font-extrabold text-amber-900 dark:text-amber-300" data-i18n="baghchalTitle">बाघचाल (Bagh-Chal)</h2>
-            <p class="text-xs text-amber-800/80 dark:text-amber-400 font-medium" data-i18n="baghchalDesc">नेपालको मौलिक परम्परागत खेल: ४ बाघ र २० बाख्रा</p>
+      <!-- Chautari Navigation Segmented Bar -->
+      <div class="flex overflow-x-auto scrollbar-none gap-1.5 p-1 bg-slate-100 dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl select-none">
+        <button id="chautariTabBtn-snakes" type="button" onclick="switchChautariGame('snakes')" class="flex-1 py-2 px-3 rounded-xl font-bold text-xs transition flex items-center justify-center space-x-1 whitespace-nowrap bg-emerald-600 text-white shadow-2xs">
+          <span>🐍</span>
+          <span data-i18n="gameSnakes">साँप र भर्‍याङ</span>
+        </button>
+        <button id="chautariTabBtn-baghchal" type="button" onclick="switchChautariGame('baghchal')" class="flex-1 py-2 px-3 rounded-xl font-bold text-xs transition flex items-center justify-center space-x-1 whitespace-nowrap text-slate-700 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200">
+          <span>🐅</span>
+          <span data-i18n="gameBaghchal">बाघचाल</span>
+        </button>
+        <button id="chautariTabBtn-tictactoe" type="button" onclick="switchChautariGame('tictactoe')" class="flex-1 py-2 px-3 rounded-xl font-bold text-xs transition flex items-center justify-center space-x-1 whitespace-nowrap text-slate-700 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200">
+          <span>❌</span>
+          <span data-i18n="gameTicTacToe">शून्य र काँटा</span>
+        </button>
+        <button id="chautariTabBtn-dice" type="button" onclick="switchChautariGame('dice')" class="flex-1 py-2 px-3 rounded-xl font-bold text-xs transition flex items-center justify-center space-x-1 whitespace-nowrap text-slate-700 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200">
+          <span>🎲</span>
+          <span data-i18n="gameDice">पासा</span>
+        </button>
+        <button id="chautariTabBtn-puku" type="button" onclick="switchChautariGame('puku')" class="flex-1 py-2 px-3 rounded-xl font-bold text-xs transition flex items-center justify-center space-x-1 whitespace-nowrap text-slate-700 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200">
+          <span>🐾</span>
+          <span data-i18n="gamePuku">पुकु साथी</span>
+        </button>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- GAME 1: SNAKES & LADDERS (साँप र भर्‍याङ / नागपाश) -->
+      <!-- ========================================================= -->
+      <div id="chautariGame-snakes" class="space-y-3">
+        <!-- Header Banner -->
+        <div class="p-4 sm:p-5 bg-gradient-to-r from-emerald-50 via-teal-50 to-white dark:from-[#121215] dark:via-[#121215] dark:to-[#18181b] border border-emerald-200 dark:border-zinc-800 rounded-2xl shadow-xs">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700/60 flex items-center justify-center text-emerald-700 dark:text-emerald-300 flex-shrink-0 text-base">
+              🐍
+            </div>
+            <div>
+              <h2 class="text-sm font-extrabold text-emerald-950 dark:text-emerald-300" data-i18n="snakesTitle">साँप र भर्‍याङ (Snakes & Ladders)</h2>
+              <p class="text-xs text-emerald-800/80 dark:text-emerald-400 font-medium" data-i18n="snakesSub">पासा फालेर ६४ को विजय कोठासम्म पुग्नुहोस्</p>
+            </div>
+          </div>
+
+          <!-- Mode Buttons -->
+          <div class="flex gap-2 mt-3">
+            <button id="snakesModeBtn-bot" type="button" onclick="setSnakesMode('vs_bot')" class="flex-1 py-1.5 px-2 bg-emerald-600 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center" data-i18n="snakesVsBot">
+              🤖 बोट विरुद्ध
+            </button>
+            <button id="snakesModeBtn-2p" type="button" onclick="setSnakesMode('two_player')" class="flex-1 py-1.5 px-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 active:scale-95 text-slate-700 dark:text-zinc-200 font-bold text-[11px] rounded-xl transition text-center" data-i18n="snakesTwoPlayer">
+              👥 २ खेलाडी (Pass & Play)
+            </button>
           </div>
         </div>
 
-        <!-- Mode Buttons -->
-        <div class="flex gap-1.5 mt-3">
-          <button onclick="initBaghChal('vs_tiger_bot')" class="flex-1 py-1.5 px-2 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center" data-i18n="playGoats">
-            बाख्रा खेल्ने
+        <!-- Status & Score Strip -->
+        <div class="p-3 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <div id="snakesTurnBadge" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+              🔴 तपाईंको पालो
+            </div>
+            <span id="snakesActionMsg" class="text-xs text-slate-600 dark:text-zinc-300 font-medium truncate max-w-[170px]">
+              पासा फाल्नुहोस्
+            </span>
+          </div>
+          <button type="button" onclick="resetSnakesGame()" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline" data-i18n="restartGame">
+            नयाँ खेल
           </button>
-          <button onclick="initBaghChal('vs_goat_bot')" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center" data-i18n="playTigers">
-            बाघ खेल्ने
+        </div>
+
+        <!-- 8x8 Board Grid (64 cells) -->
+        <div class="p-2 sm:p-3 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs flex justify-center">
+          <div id="snakesBoardGrid" class="w-full max-w-[340px] aspect-square grid grid-cols-8 gap-0.5 sm:gap-1 bg-slate-200 dark:bg-zinc-800 p-1 rounded-xl">
+            <!-- Dynamically populated 64 cells -->
+          </div>
+        </div>
+
+        <!-- Interactive Dice & Roll Area -->
+        <div class="p-4 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div id="snakesDiceFace" onclick="rollSnakesDice()" class="w-14 h-14 bg-gradient-to-br from-white to-slate-100 dark:from-zinc-800 dark:to-zinc-900 border-2 border-slate-300 dark:border-zinc-700 rounded-2xl flex items-center justify-center text-4xl shadow-md cursor-pointer select-none active:scale-90 transition-transform">
+              ⚀
+            </div>
+            <div>
+              <span id="snakesP1Pos" class="text-xs font-bold text-rose-600 dark:text-rose-400 block">🔴 खेलाडी १: कोठा १</span>
+              <span id="snakesP2Pos" class="text-xs font-bold text-sky-600 dark:text-sky-400 block">🔵 बोट: कोठा १</span>
+            </div>
+          </div>
+          <button id="snakesRollBtn" type="button" onclick="rollSnakesDice()" class="px-5 py-3 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-extrabold text-xs rounded-xl shadow-xs transition" data-i18n="rollDiceBtn">
+            पासा फाल्नुहोस् 🎲
           </button>
-          <button onclick="initBaghChal('two_player')" class="flex-1 py-1.5 px-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center" data-i18n="twoPlayer">
-            २ जना खेल्ने
-          </button>
+        </div>
+
+        <!-- Snakes & Ladders Legend -->
+        <div class="p-3 bg-slate-50 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 rounded-xl text-[11px] text-slate-600 dark:text-zinc-400 flex flex-wrap justify-between gap-1.5">
+          <span>🪜 <b>भर्‍याङहरू:</b> ५→१८, १४→३१, २२→४४, ३८→५७, ४२→६०</span>
+          <span>🐍 <b>साँपहरू:</b> २८→१०, ३६→१६, ४८→२६, ५५→३३, ६२→१९</span>
         </div>
       </div>
 
-      <!-- Live Scoreboard -->
-      <div class="p-3.5 sm:p-4 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs space-y-2.5">
-        <div class="grid grid-cols-3 gap-2 text-center text-xs font-bold">
-          <div class="p-2 bg-slate-50 dark:bg-[#18181b] rounded-xl border border-slate-100 dark:border-zinc-800">
-            <span class="text-[10px] text-slate-500 dark:text-slate-300 block font-medium" data-i18n="goatsInHand">बाँकी बाख्रा</span>
-            <span id="baghInHand" class="text-sm font-extrabold text-cyan-600 dark:text-cyan-400">२०</span>
+      <!-- ========================================================= -->
+      <!-- GAME 2: BAGH-CHAL (बाघचाल) -->
+      <!-- ========================================================= -->
+      <div id="chautariGame-baghchal" class="hidden space-y-4">
+        <!-- Chautari Header Banner -->
+        <div class="p-4 sm:p-5 bg-gradient-to-r from-amber-50 via-orange-50 to-white dark:from-[#121215] dark:via-[#121215] dark:to-[#18181b] border border-amber-200 dark:border-zinc-800 rounded-2xl shadow-xs">
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 flex items-center justify-center text-amber-700 dark:text-amber-300 flex-shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="12" y1="3" x2="12" y2="21" /><line x1="3" y1="3" x2="21" y2="21" /><line x1="21" y1="3" x2="3" y2="21" /></svg></div>
+            <div>
+              <h2 class="text-sm font-extrabold text-amber-900 dark:text-amber-300" data-i18n="baghchalTitle">बाघचाल (Bagh-Chal)</h2>
+              <p class="text-xs text-amber-800/80 dark:text-amber-400 font-medium" data-i18n="baghchalDesc">नेपालको मौलिक परम्परागत खेल: ४ बाघ र २० बाख्रा</p>
+            </div>
           </div>
-          <div class="p-2 bg-slate-50 dark:bg-[#18181b] rounded-xl border border-slate-100 dark:border-zinc-800">
-            <span class="text-[10px] text-slate-500 dark:text-slate-300 block font-medium" data-i18n="goatsCaptured">खाएको बाख्रा</span>
-            <span id="baghCaptured" class="text-sm font-extrabold text-orange-600 dark:text-orange-400">० / ५</span>
-          </div>
-          <div class="p-2 bg-slate-50 dark:bg-[#18181b] rounded-xl border border-slate-100 dark:border-zinc-800">
-            <span class="text-[10px] text-slate-500 dark:text-slate-300 block font-medium" data-i18n="tigersTrapped">थुनिएका बाघ</span>
-            <span id="baghTrapped" class="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">० / ४</span>
+
+          <!-- Mode Buttons -->
+          <div class="flex gap-1.5 mt-3">
+            <button onclick="initBaghChal('vs_tiger_bot')" class="flex-1 py-1.5 px-2 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center" data-i18n="playGoats">
+              बाख्रा खेल्ने
+            </button>
+            <button onclick="initBaghChal('vs_goat_bot')" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center" data-i18n="playTigers">
+              बाघ खेल्ने
+            </button>
+            <button onclick="initBaghChal('two_player')" class="flex-1 py-1.5 px-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center" data-i18n="twoPlayer">
+              २ जना खेल्ने
+            </button>
           </div>
         </div>
 
-        <div class="flex items-center justify-between px-2 pt-1 border-t border-slate-100 dark:border-zinc-800">
-          <div id="baghStatus" class="text-xs font-bold text-slate-800 dark:text-slate-200">
-            बाख्राको पालो (Goat's Turn)
+        <!-- Live Scoreboard -->
+        <div class="p-3.5 sm:p-4 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs space-y-2.5">
+          <div class="grid grid-cols-3 gap-2 text-center text-xs font-bold">
+            <div class="p-2 bg-slate-50 dark:bg-[#18181b] rounded-xl border border-slate-100 dark:border-zinc-800">
+              <span class="text-[10px] text-slate-500 dark:text-slate-300 block font-medium" data-i18n="goatsInHand">बाँकी बाख्रा</span>
+              <span id="baghInHand" class="text-sm font-extrabold text-cyan-600 dark:text-cyan-400">२०</span>
+            </div>
+            <div class="p-2 bg-slate-50 dark:bg-[#18181b] rounded-xl border border-slate-100 dark:border-zinc-800">
+              <span class="text-[10px] text-slate-500 dark:text-slate-300 block font-medium" data-i18n="goatsCaptured">खाएको बाख्रा</span>
+              <span id="baghCaptured" class="text-sm font-extrabold text-orange-600 dark:text-orange-400">० / ५</span>
+            </div>
+            <div class="p-2 bg-slate-50 dark:bg-[#18181b] rounded-xl border border-slate-100 dark:border-zinc-800">
+              <span class="text-[10px] text-slate-500 dark:text-slate-300 block font-medium" data-i18n="tigersTrapped">थुनिएका बाघ</span>
+              <span id="baghTrapped" class="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">० / ४</span>
+            </div>
           </div>
-          <div class="flex items-center space-x-2">
-            <button id="undoBaghBtn" onclick="undoBaghMove()" class="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline" data-i18n="undoMove">
-              १ चाल फिर्ता
+
+          <div class="flex items-center justify-between px-2 pt-1 border-t border-slate-100 dark:border-zinc-800">
+            <div id="baghStatus" class="text-xs font-bold text-slate-800 dark:text-slate-200">
+              बाख्राको पालो (Goat's Turn)
+            </div>
+            <div class="flex items-center space-x-2">
+              <button id="undoBaghBtn" onclick="undoBaghMove()" class="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline" data-i18n="undoMove">
+                १ चाल फिर्ता
+              </button>
+              <span class="text-slate-300 dark:text-slate-600">•</span>
+              <button onclick="initBaghChal(baghGame.mode)" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline" data-i18n="restartGame">
+                नयाँ खेल
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bagh-Chal 5x5 Board Canvas -->
+        <div class="p-3 sm:p-4 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs flex justify-center">
+          <canvas id="baghCanvas" class="w-full max-w-[340px] aspect-square block rounded-xl cursor-pointer"></canvas>
+        </div>
+
+        <!-- Traditional Rules Card -->
+        <div class="p-3.5 sm:p-4 bg-slate-100 dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl text-xs text-slate-600 dark:text-slate-300 space-y-1 leading-relaxed">
+          <div class="font-bold text-slate-800 dark:text-slate-100" data-i18n="rulesTitle">नियमहरू (Bagh-Chal Rules):</div>
+          <div data-i18n="rule1">• बाख्राले २० वटा बाख्रा बोर्डमा पालैपालो राख्छ। बाघले १ कदम हिँड्छ वा बाख्रामाथि फड्को मारेर खान्छ।</div>
+          <div data-i18n="rule2">• ५ वटा बाख्रा खाएमा **बाघको जीत** हुन्छ। चारै वटा बाघलाई चारैतिरबाट थुनेमा **बाख्राको जीत** हुन्छ!</div>
+        </div>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- GAME 3: TIC-TAC-TOE (शून्य र काँटा) -->
+      <!-- ========================================================= -->
+      <div id="chautariGame-tictactoe" class="hidden space-y-3">
+        <!-- Header Banner -->
+        <div class="p-4 sm:p-5 bg-gradient-to-r from-sky-50 via-indigo-50 to-white dark:from-[#121215] dark:via-[#121215] dark:to-[#18181b] border border-sky-200 dark:border-zinc-800 rounded-2xl shadow-xs">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-xl bg-sky-100 dark:bg-sky-950/60 border border-sky-300 dark:border-sky-700/60 flex items-center justify-center text-sky-700 dark:text-sky-300 flex-shrink-0 text-base">
+              ❌
+            </div>
+            <div>
+              <h2 class="text-sm font-extrabold text-sky-950 dark:text-sky-300" data-i18n="tictactoeTitle">शून्य र काँटा (Tic-Tac-Toe)</h2>
+              <p class="text-xs text-sky-800/80 dark:text-sky-400 font-medium" data-i18n="tictactoeSub">३x३ कोठामा ३ वटा मिलाउनुहोस्</p>
+            </div>
+          </div>
+
+          <!-- Mode Buttons -->
+          <div class="flex gap-2 mt-3">
+            <button id="tttModeBtn-bot" type="button" onclick="setTicTacToeMode('vs_bot')" class="flex-1 py-1.5 px-2 bg-sky-600 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center" data-i18n="tttVsBot">
+              🤖 बोट विरुद्ध
             </button>
-            <span class="text-slate-300 dark:text-slate-600">•</span>
-            <button onclick="initBaghChal(baghGame.mode)" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline" data-i18n="restartGame">
+            <button id="tttModeBtn-2p" type="button" onclick="setTicTacToeMode('two_player')" class="flex-1 py-1.5 px-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 active:scale-95 text-slate-700 dark:text-zinc-200 font-bold text-[11px] rounded-xl transition text-center" data-i18n="tttTwoPlayer">
+              👥 २ खेलाडी
+            </button>
+          </div>
+        </div>
+
+        <!-- Scoreboard Strip -->
+        <div class="p-3 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs">
+          <div class="grid grid-cols-3 gap-2 text-center text-xs font-bold">
+            <div class="p-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl border border-emerald-200 dark:border-emerald-800/40">
+              <span class="text-[10px] text-emerald-700 dark:text-emerald-400 block font-medium">खेलाडी १ (✕)</span>
+              <span id="tttScoreX" class="text-base font-extrabold text-emerald-800 dark:text-emerald-300">०</span>
+            </div>
+            <div class="p-2 bg-amber-50 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-800/40">
+              <span class="text-[10px] text-amber-700 dark:text-amber-400 block font-medium" id="tttScoreOPlayerLabel">बोट (◯)</span>
+              <span id="tttScoreO" class="text-base font-extrabold text-amber-800 dark:text-amber-300">०</span>
+            </div>
+            <div class="p-2 bg-slate-50 dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-zinc-800">
+              <span class="text-[10px] text-slate-500 dark:text-zinc-400 block font-medium">बराबरी (Draw)</span>
+              <span id="tttScoreDraw" class="text-base font-extrabold text-slate-700 dark:text-zinc-300">०</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between px-1 pt-2.5 mt-2 border-t border-slate-100 dark:border-zinc-800 text-xs">
+            <span id="tttStatusMsg" class="font-bold text-slate-800 dark:text-zinc-200">
+              खेलाडी १ (✕) को पालो
+            </span>
+            <button type="button" onclick="resetTicTacToeGame()" class="font-semibold text-sky-600 dark:text-sky-400 hover:underline" data-i18n="restartGame">
               नयाँ खेल
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- Bagh-Chal 5x5 Board Canvas -->
-      <div class="p-3 sm:p-4 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs flex justify-center">
-        <canvas id="baghCanvas" class="w-full max-w-[340px] aspect-square block rounded-xl cursor-pointer"></canvas>
-      </div>
-
-      <!-- Traditional Rules Card -->
-      <div class="p-3.5 sm:p-4 bg-slate-100 dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl text-xs text-slate-600 dark:text-slate-300 space-y-1 leading-relaxed">
-        <div class="font-bold text-slate-800 dark:text-slate-100" data-i18n="rulesTitle">नियमहरू (Bagh-Chal Rules):</div>
-        <div data-i18n="rule1">• बाख्राले २० वटा बाख्रा बोर्डमा पालैपालो राख्छ। बाघले १ कदम हिँड्छ वा बाख्रामाथि फड्को मारेर खान्छ।</div>
-        <div data-i18n="rule2">• ५ वटा बाख्रा खाएमा **बाघको जीत** हुन्छ। चारै वटा बाघलाई चारैतिरबाट थुनेमा **बाख्राको जीत** हुन्छ!</div>
-      </div>
-
-      <!-- Casual Game: Snakes & Ladders / Ludo Dice Roller -->
-      <div class="p-4 sm:p-5 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs space-y-3">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 flex items-center justify-center text-amber-700 dark:text-amber-300 flex-shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="8" cy="8" r="1.2" fill="currentColor"/><circle cx="16" cy="8" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="8" cy="16" r="1.2" fill="currentColor"/><circle cx="16" cy="16" r="1.2" fill="currentColor"/></svg></div>
-            <div>
-              <h3 class="text-xs font-bold text-slate-900 dark:text-slate-100" data-i18n="diceGameTitle">साँप र भर्‍याङ पासा (Dice Roll)</h3>
-              <p class="text-[10px] text-slate-500 dark:text-slate-300 font-medium" data-i18n="diceGameSub">लुडो वा साँप र भर्‍याङ खेल्दा पासा फाल्नुहोस्</p>
-            </div>
+        <!-- 3x3 Grid Buttons -->
+        <div class="p-4 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs flex justify-center">
+          <div id="tttGridContainer" class="w-full max-w-[280px] aspect-square grid grid-cols-3 gap-2.5">
+            <!-- 9 cells rendered dynamically -->
           </div>
-          <button onclick="rollDice()" class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-xs transition whitespace-nowrap" data-i18n="rollDiceBtn">
-            पासा फाल्नुहोस्
-          </button>
-        </div>
-        <div class="flex items-center justify-center py-4 bg-amber-50/50 dark:bg-[#18181b] rounded-xl border border-amber-100 dark:border-zinc-800">
-          <div id="diceFace" onclick="rollDice()" class="text-6xl cursor-pointer select-none transition-transform hover:scale-110 active:scale-90" title="Tap to roll">⚅</div>
         </div>
       </div>
 
-      <!-- Interactive Puppy Play Area Card -->
-      <div class="p-4 sm:p-5 bg-gradient-to-br from-amber-50/60 to-emerald-50/40 dark:from-[#121215] dark:to-[#18181b] border border-amber-200/60 dark:border-zinc-800 rounded-2xl shadow-xs space-y-3">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <span class="text-xl">🐾</span>
-            <div>
-              <h3 class="text-xs font-extrabold text-slate-900 dark:text-slate-100" data-i18n="pukuPlayTitle">पुकुसँग खेल्नुहोस् (Play with Puku)</h3>
-              <p class="text-[10px] text-slate-500 dark:text-slate-300 font-medium" data-i18n="pukuPlaySub">घरको साथीलाई मुसार्नुहोस् वा treat दिनुहोस्</p>
+      <!-- ========================================================= -->
+      <!-- GAME 4: CASUAL STANDALONE DICE ROLLER (पासा रोलर) -->
+      <!-- ========================================================= -->
+      <div id="chautariGame-dice" class="hidden space-y-3">
+        <div class="p-4 sm:p-5 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 flex items-center justify-center text-amber-700 dark:text-amber-300 flex-shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="8" cy="8" r="1.2" fill="currentColor"/><circle cx="16" cy="8" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="8" cy="16" r="1.2" fill="currentColor"/><circle cx="16" cy="16" r="1.2" fill="currentColor"/></svg></div>
+              <div>
+                <h3 class="text-xs font-bold text-slate-900 dark:text-slate-100" data-i18n="diceGameTitle">पासा रोलर (Dice Roll)</h3>
+                <p class="text-[10px] text-slate-500 dark:text-slate-300 font-medium" data-i18n="diceGameSub">घरमा लुडो वा अन्य खेल खेल्दा पासा फाल्नुहोस्</p>
+              </div>
             </div>
+            <button onclick="rollDice()" class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-xs transition whitespace-nowrap" data-i18n="rollDiceBtn">
+              पासा फाल्नुहोस्
+            </button>
           </div>
-          <button onclick="openPukuPlayModal()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-white font-bold text-xs rounded-xl shadow-2xs transition whitespace-nowrap">
-            खेल्ने कोठा 🏠
-          </button>
+          <div class="flex items-center justify-center py-6 bg-amber-50/50 dark:bg-[#18181b] rounded-xl border border-amber-100 dark:border-zinc-800">
+            <div id="diceFace" onclick="rollDice()" class="text-7xl cursor-pointer select-none transition-transform hover:scale-110 active:scale-90" title="Tap to roll">⚅</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- GAME 5: PUKU PLAYGROUND (पुकु साथी) -->
+      <!-- ========================================================= -->
+      <div id="chautariGame-puku" class="hidden space-y-3">
+        <div class="p-4 sm:p-5 bg-gradient-to-br from-amber-50/60 to-emerald-50/40 dark:from-[#121215] dark:to-[#18181b] border border-amber-200/60 dark:border-zinc-800 rounded-2xl shadow-xs space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="text-2xl">🐾</span>
+              <div>
+                <h3 class="text-xs font-extrabold text-slate-900 dark:text-slate-100" data-i18n="pukuPlayTitle">पुकुसँग खेल्नुहोस् (Play with Puku)</h3>
+                <p class="text-[10px] text-slate-500 dark:text-slate-300 font-medium" data-i18n="pukuPlaySub">घरको साथीलाई मुसार्नुहोस् वा treat दिनुहोस्</p>
+              </div>
+            </div>
+            <button onclick="openPukuPlayModal()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-white font-bold text-xs rounded-xl shadow-2xs transition whitespace-nowrap">
+              खेल्ने कोठा 🏠
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1027,7 +1211,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
-            <span data-i18n="downloadApkBtn">Sangalo.apk डाउनलोड (v1.2.0)</span>
+            <span data-i18n="downloadApkBtn">Sangalo.apk डाउनलोड (v1.3.0)</span>
           </button>
           <button type="button" onclick="shareSangaloApp()" class="w-full py-2 bg-slate-100 dark:bg-[#18181b] hover:bg-slate-200 dark:hover:bg-[#202024] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-zinc-800 text-xs font-semibold rounded-xl text-center transition flex items-center justify-center space-x-1.5 active:scale-95">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
@@ -1036,9 +1220,9 @@
         </div>
       </div>
 
-      <!-- App Version & GitHub Live Release Updater Card -->
+      <!-- App Version & GitHub Live Release Updater Card (Clear Dual Display) -->
       <div class="p-4 sm:p-5 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-3 shadow-xs">
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-start">
           <div class="flex items-center space-x-2.5">
             <div class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700/60 flex items-center justify-center text-slate-800 dark:text-zinc-200 text-sm">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
@@ -1048,8 +1232,23 @@
               <p class="text-[10px] text-slate-500 dark:text-zinc-400 font-medium">GitHub बाट सिधै ०-ब्याकेन्ड आधिकारिक अपडेट</p>
             </div>
           </div>
-          <span class="px-2 py-0.5 text-[10px] font-mono font-bold bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 rounded-lg border border-slate-200 dark:border-zinc-700">v1.2.0</span>
+          <div class="text-right">
+            <span class="text-[9px] text-slate-400 dark:text-zinc-500 block font-medium">तपाईंको संस्करण:</span>
+            <span id="installedAppVerBadge" class="px-2 py-0.5 text-[10px] font-mono font-bold bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 rounded-lg border border-slate-200 dark:border-zinc-700">v1.3.0</span>
+          </div>
         </div>
+
+        <!-- Live Version Comparison Indicator -->
+        <div class="p-2.5 bg-slate-50 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800/80 rounded-xl flex items-center justify-between text-xs">
+          <div class="flex items-center space-x-2">
+            <span class="text-[11px] text-slate-600 dark:text-zinc-400">GitHub मा पछिल्लो:</span>
+            <span id="latestGitHubVerBadge" class="font-mono font-bold text-slate-800 dark:text-zinc-200">v1.3.0</span>
+          </div>
+          <span id="updateStatusIndicator" class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/60">
+            नवीनतम ✓
+          </span>
+        </div>
+
         <div class="flex gap-2">
           <button type="button" onclick="checkForAppUpdates(true)" class="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 text-xs font-bold rounded-xl text-center shadow-xs transition flex items-center justify-center space-x-1.5 active:scale-95">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
@@ -1076,33 +1275,10 @@
         </div>
       </div>
 
-      <!-- Guest Wi-Fi QR Share (Repositioned as Clean Lower Utility) -->
-      <div class="p-4 sm:p-5 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-3 shadow-xs">
-        <div class="flex justify-between items-center">
-          <span class="text-xs font-bold text-slate-900 dark:text-slate-100" data-i18n="wifiTitle">पाहुना वाई-फाई QR कोड</span>
-          <span class="text-[10px] font-medium text-emerald-600 dark:text-emerald-400" data-i18n="scanQr">स्क्यान गर्नुहोस्</span>
-        </div>
-        
-        <div class="flex flex-col sm:flex-row items-center gap-4">
-          <div class="p-2 bg-white rounded-xl border border-slate-200 dark:border-zinc-800 shadow-inner flex-shrink-0">
-            <canvas id="wifiQrCanvas" class="w-36 h-36 block"></canvas>
-          </div>
-          <div class="space-y-2 w-full">
-            <div>
-              <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-0.5" data-i18n="wifiSsidLabel">वाई-फाईको नाम (SSID)</label>
-              <input id="wifiSsid" type="text" placeholder="Home_Fiber_5G" onchange="saveWifiConfig()" class="w-full bg-slate-50 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-slate-100 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase mb-0.5" data-i18n="wifiPassLabel">पासवर्ड (Password)</label>
-              <input id="wifiPass" type="text" placeholder="Password123" onchange="saveWifiConfig()" class="w-full bg-slate-50 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-slate-100 focus:outline-none">
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- Subtle Minimal Footer (Only visible when scrolling to bottom of Vault tab) -->
       <div class="pt-6 pb-2 text-center select-none text-[11px] text-slate-400 dark:text-slate-500 font-medium">
-        सँगालो v1.2.0 • by <a href="https://dahalsandesh.com.np" onclick="openExternalLink('https://dahalsandesh.com.np'); return false;" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition underline underline-offset-2">Sandesh Dahal</a> • <a href="https://github.com/dahalsandesh/sangalo" onclick="openExternalLink('https://github.com/dahalsandesh/sangalo'); return false;" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition underline underline-offset-2">GitHub</a>
+        सँगालो v1.3.0 • by <a href="https://dahalsandesh.com.np" onclick="openExternalLink('https://dahalsandesh.com.np'); return false;" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition underline underline-offset-2">Sandesh Dahal</a> • <a href="https://github.com/dahalsandesh/sangalo" onclick="openExternalLink('https://github.com/dahalsandesh/sangalo'); return false;" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition underline underline-offset-2">GitHub</a>
       </div>
     </section>
 

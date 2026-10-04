@@ -216,8 +216,21 @@ const i18n = {
     rulesTitle: "नियमहरू (Bagh-Chal Rules):",
     rule1: "• बाख्राले २० वटा बाख्रा बोर्डमा पालैपालो राख्छ। बाघले १ कदम हिँड्छ वा बाख्रामाथि फड्को मारेर खान्छ।",
     rule2: "• ५ वटा बाख्रा खाएमा बाघको जीत हुन्छ। चारै वटा बाघलाई चारैतिरबाट थुनेमा बाख्राको जीत हुन्छ!",
-    diceGameTitle: "साँप र भर्‍याङ पासा (Dice Roll)",
-    diceGameSub: "लुडो वा साँप र भर्‍याङ खेल्दा पासा फाल्नुहोस्",
+    gameSnakes: "साँप र भर्‍याङ",
+    gameBaghchal: "बाघचाल",
+    gameTicTacToe: "शून्य र काँटा",
+    gameDice: "पासा",
+    gamePuku: "पुकु साथी",
+    snakesTitle: "साँप र भर्‍याङ (Snakes & Ladders)",
+    snakesSub: "पासा फालेर ६४ को विजय कोठासम्म पुग्नुहोस्",
+    snakesVsBot: "🤖 बोट विरुद्ध",
+    snakesTwoPlayer: "👥 २ खेलाडी (Pass & Play)",
+    tictactoeTitle: "शून्य र काँटा (Tic-Tac-Toe)",
+    tictactoeSub: "३x३ कोठामा ३ वटा मिलाउनुहोस्",
+    tttVsBot: "🤖 बोट विरुद्ध",
+    tttTwoPlayer: "👥 २ खेलाडी",
+    diceGameTitle: "पासा रोलर (Dice Roll)",
+    diceGameSub: "घरमा लुडो वा अन्य खेल खेल्दा पासा फाल्नुहोस्",
     rollDiceBtn: "पासा फाल्नुहोस्",
     pukuPlayTitle: "पुकुसँग खेल्नुहोस् (Play with Puku)",
     pukuPlaySub: "घरको साथीलाई मुसार्नुहोस् वा treat दिनुहोस्",
@@ -495,8 +508,21 @@ const i18n = {
     rulesTitle: "Rules of Bagh-Chal:",
     rule1: "• Goats place 20 pieces first. Tigers move 1 step along grid lines or jump over goats to capture them.",
     rule2: "• Tigers win by capturing 5 goats. Goats win by surrounding and trapping all 4 tigers so they cannot move!",
-    diceGameTitle: "Ludo & Snakes Dice Roller",
-    diceGameSub: "Roll for Ludo or Snakes & Ladders family games",
+    gameSnakes: "Snakes & Ladders",
+    gameBaghchal: "Bagh-Chal",
+    gameTicTacToe: "Tic-Tac-Toe",
+    gameDice: "Dice",
+    gamePuku: "Play with Puku",
+    snakesTitle: "Snakes & Ladders",
+    snakesSub: "Roll dice and race to square 64",
+    snakesVsBot: "🤖 vs Bot",
+    snakesTwoPlayer: "👥 2 Players",
+    tictactoeTitle: "Tic-Tac-Toe",
+    tictactoeSub: "Align 3 in a row to win",
+    tttVsBot: "🤖 vs Bot",
+    tttTwoPlayer: "👥 2 Players",
+    diceGameTitle: "Dice Roller",
+    diceGameSub: "Roll for family board games at home",
     rollDiceBtn: "Roll Dice",
     pukuPlayTitle: "Play with Puku",
     pukuPlaySub: "Pet your puppy or feed delicious treats",
@@ -4197,8 +4223,539 @@ function drawBaghBoard() {
 }
 
 // ---------------------------------------------------------------------
-// 8. CASUAL GAME: SNAKES & LADDERS / LUDO DICE ROLLER
+// 8. CHAUTARI GAMES SUITE: SNAKES & LADDERS, BAGH-CHAL, TIC-TAC-TOE, DICE
 // ---------------------------------------------------------------------
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+let activeChautariGame = 'snakes';
+
+function switchChautariGame(gameName) {
+  activeChautariGame = gameName;
+  ['snakes', 'baghchal', 'tictactoe', 'dice', 'puku'].forEach(g => {
+    const section = document.getElementById(`chautariGame-${g}`);
+    const btn = document.getElementById(`chautariTabBtn-${g}`);
+    if (section) {
+      if (g === gameName) section.classList.remove('hidden');
+      else section.classList.add('hidden');
+    }
+    if (btn) {
+      if (g === gameName) {
+        btn.className = 'flex-1 py-2 px-3 rounded-xl font-bold text-xs transition flex items-center justify-center space-x-1 whitespace-nowrap bg-emerald-600 text-white shadow-2xs';
+      } else {
+        btn.className = 'flex-1 py-2 px-3 rounded-xl font-bold text-xs transition flex items-center justify-center space-x-1 whitespace-nowrap text-slate-700 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200';
+      }
+    }
+  });
+
+  if (gameName === 'snakes') {
+    renderSnakesBoard();
+    updateSnakesPositions();
+  } else if (gameName === 'baghchal') {
+    drawBaghBoard();
+  } else if (gameName === 'tictactoe') {
+    renderTicTacToe();
+  }
+}
+window.switchChautariGame = switchChautariGame;
+
+// --- SNAKES & LADDERS (साँप र भर्‍याङ / नागपाश) ---
+const snakesState = {
+  mode: 'vs_bot', // 'vs_bot' or 'two_player'
+  p1Pos: 1,
+  p2Pos: 1,
+  turn: 'p1', // 'p1' or 'p2'
+  isRolling: false,
+  gameOver: false,
+  ladders: {
+    5: 18,
+    14: 31,
+    22: 44,
+    38: 57,
+    42: 60
+  },
+  snakes: {
+    28: 10,
+    36: 16,
+    48: 26,
+    55: 33,
+    62: 19
+  }
+};
+
+function setSnakesMode(mode) {
+  snakesState.mode = mode;
+  const botBtn = document.getElementById('snakesModeBtn-bot');
+  const tpBtn = document.getElementById('snakesModeBtn-2p');
+  if (botBtn && tpBtn) {
+    if (mode === 'vs_bot') {
+      botBtn.className = 'flex-1 py-1.5 px-2 bg-emerald-600 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center';
+      tpBtn.className = 'flex-1 py-1.5 px-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 active:scale-95 text-slate-700 dark:text-zinc-200 font-bold text-[11px] rounded-xl transition text-center';
+    } else {
+      tpBtn.className = 'flex-1 py-1.5 px-2 bg-emerald-600 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center';
+      botBtn.className = 'flex-1 py-1.5 px-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 active:scale-95 text-slate-700 dark:text-zinc-200 font-bold text-[11px] rounded-xl transition text-center';
+    }
+  }
+  resetSnakesGame();
+}
+window.setSnakesMode = setSnakesMode;
+
+function resetSnakesGame() {
+  snakesState.p1Pos = 1;
+  snakesState.p2Pos = 1;
+  snakesState.turn = 'p1';
+  snakesState.isRolling = false;
+  snakesState.gameOver = false;
+  updateSnakesStatus(currentLang === 'ne' ? 'नयाँ खेल सुरु भयो। पासा फाल्नुहोस्!' : 'New game started. Roll dice!');
+  renderSnakesBoard();
+  updateSnakesPositions();
+}
+window.resetSnakesGame = resetSnakesGame;
+
+function renderSnakesBoard() {
+  const container = document.getElementById('snakesBoardGrid');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const gridCells = [];
+  for (let r = 0; r < 8; r++) {
+    const rowFromBottom = 7 - r;
+    const isEvenRowFromBottom = rowFromBottom % 2 === 0;
+    for (let c = 0; c < 8; c++) {
+      const colInRow = isEvenRowFromBottom ? c : (7 - c);
+      const cellNum = (rowFromBottom * 8) + colInRow + 1;
+      gridCells.push({ cellNum, r, c });
+    }
+  }
+
+  gridCells.forEach(cell => {
+    const { cellNum, r, c } = cell;
+    const isLadderStart = snakesState.ladders[cellNum];
+    const isSnakeStart = snakesState.snakes[cellNum];
+    const isWinCell = cellNum === 64;
+
+    const cellDiv = document.createElement('div');
+    const isAlt = (r + c) % 2 === 0;
+    cellDiv.className = `relative rounded-md flex flex-col justify-between p-0.5 sm:p-1 text-[9px] font-bold select-none transition-all ${
+      isWinCell 
+        ? 'bg-amber-100 dark:bg-amber-950/80 border border-amber-400 dark:border-amber-600 text-amber-900 dark:text-amber-200' 
+        : isLadderStart 
+          ? 'bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
+          : isSnakeStart 
+            ? 'bg-rose-50/90 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-300'
+            : isAlt 
+              ? 'bg-white dark:bg-[#18181b] text-slate-700 dark:text-zinc-400' 
+              : 'bg-slate-50 dark:bg-[#121215] text-slate-600 dark:text-zinc-500'
+    }`;
+
+    // Header inside cell: cell number and feature badge
+    const header = document.createElement('div');
+    header.className = 'flex justify-between items-center leading-none';
+    const numSpan = document.createElement('span');
+    numSpan.className = 'font-mono text-[8px] sm:text-[9px] opacity-80';
+    numSpan.innerText = currentLang === 'ne' ? toDevanagariDigits(cellNum) : cellNum;
+    header.appendChild(numSpan);
+
+    if (isWinCell) {
+      const badge = document.createElement('span');
+      badge.className = 'text-[9px] sm:text-[10px]';
+      badge.innerText = '🏆';
+      header.appendChild(badge);
+    } else if (isLadderStart) {
+      const badge = document.createElement('span');
+      badge.className = 'text-[8px] font-mono text-emerald-600 dark:text-emerald-400 font-bold';
+      badge.innerText = `🪜${currentLang === 'ne' ? toDevanagariDigits(isLadderStart) : isLadderStart}`;
+      header.appendChild(badge);
+    } else if (isSnakeStart) {
+      const badge = document.createElement('span');
+      badge.className = 'text-[8px] font-mono text-rose-600 dark:text-rose-400 font-bold';
+      badge.innerText = `🐍${currentLang === 'ne' ? toDevanagariDigits(isSnakeStart) : isSnakeStart}`;
+      header.appendChild(badge);
+    }
+    cellDiv.appendChild(header);
+
+    // Pawns container inside cell
+    const pawnsDiv = document.createElement('div');
+    pawnsDiv.className = 'flex items-center justify-center space-x-0.5 sm:space-x-1 my-auto';
+    
+    if (snakesState.p1Pos === cellNum) {
+      const p1Token = document.createElement('span');
+      p1Token.className = 'w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-rose-600 border border-white dark:border-zinc-900 shadow-xs flex items-center justify-center text-[7px] text-white font-extrabold animate-pulse';
+      p1Token.innerText = '१';
+      p1Token.title = 'Player 1';
+      pawnsDiv.appendChild(p1Token);
+    }
+    if (snakesState.p2Pos === cellNum) {
+      const p2Token = document.createElement('span');
+      p2Token.className = 'w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-sky-600 border border-white dark:border-zinc-900 shadow-xs flex items-center justify-center text-[7px] text-white font-extrabold animate-pulse';
+      p2Token.innerText = snakesState.mode === 'vs_bot' ? 'बोट' : '२';
+      p2Token.title = snakesState.mode === 'vs_bot' ? 'Bot' : 'Player 2';
+      pawnsDiv.appendChild(p2Token);
+    }
+
+    cellDiv.appendChild(pawnsDiv);
+    container.appendChild(cellDiv);
+  });
+}
+
+function updateSnakesPositions() {
+  const p1El = document.getElementById('snakesP1Pos');
+  const p2El = document.getElementById('snakesP2Pos');
+  if (p1El) {
+    p1El.innerText = currentLang === 'ne'
+      ? `🔴 तपाईं (खेलाडी १): कोठा ${toDevanagariDigits(snakesState.p1Pos)}`
+      : `🔴 Player 1: Square ${snakesState.p1Pos}`;
+  }
+  if (p2El) {
+    const p2Name = snakesState.mode === 'vs_bot' 
+      ? (currentLang === 'ne' ? 'बोट' : 'Sangalo Bot') 
+      : (currentLang === 'ne' ? 'खेलाडी २' : 'Player 2');
+    p2El.innerText = currentLang === 'ne'
+      ? `🔵 ${p2Name}: कोठा ${toDevanagariDigits(snakesState.p2Pos)}`
+      : `🔵 ${p2Name}: Square ${snakesState.p2Pos}`;
+  }
+}
+
+function updateSnakesStatus(msg) {
+  const badge = document.getElementById('snakesTurnBadge');
+  const msgEl = document.getElementById('snakesActionMsg');
+  if (badge) {
+    if (snakesState.turn === 'p1') {
+      badge.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800';
+      badge.innerText = currentLang === 'ne' ? '🔴 तपाईंको पालो' : '🔴 Player 1 Turn';
+    } else {
+      badge.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 dark:bg-sky-950/80 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-800';
+      badge.innerText = snakesState.mode === 'vs_bot' 
+        ? (currentLang === 'ne' ? '🔵 बोटको पालो' : '🔵 Bot Turn') 
+        : (currentLang === 'ne' ? '🔵 खेलाडी २ को पालो' : '🔵 Player 2 Turn');
+    }
+  }
+  if (msgEl && msg) {
+    msgEl.innerText = msg;
+  }
+}
+
+async function rollSnakesDice() {
+  if (snakesState.isRolling || snakesState.gameOver) return;
+  if (snakesState.mode === 'vs_bot' && snakesState.turn === 'p2') return;
+
+  snakesState.isRolling = true;
+  const diceEl = document.getElementById('snakesDiceFace');
+  if (diceEl) diceEl.classList.add('animate-bounce');
+  playSound('pop');
+
+  let rolls = 0;
+  const rollInterval = setInterval(() => {
+    rolls++;
+    const temp = Math.floor(Math.random() * 6) + 1;
+    if (diceEl) diceEl.innerText = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][temp - 1];
+    if (rolls > 8) {
+      clearInterval(rollInterval);
+      if (diceEl) diceEl.classList.remove('animate-bounce');
+      const roll = Math.floor(Math.random() * 6) + 1;
+      if (diceEl) diceEl.innerText = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][roll - 1];
+      playSound('coin');
+      executeSnakesMove(roll);
+    }
+  }, 60);
+}
+window.rollSnakesDice = rollSnakesDice;
+
+async function executeSnakesMove(roll) {
+  const isP1 = snakesState.turn === 'p1';
+  let curPos = isP1 ? snakesState.p1Pos : snakesState.p2Pos;
+  let target = curPos + roll;
+
+  if (target > 64) {
+    updateSnakesStatus(currentLang === 'ne' 
+      ? `पासा ${toDevanagariDigits(roll)} आयो तर ६४ नाघ्यो!` 
+      : `Rolled ${roll} but exceeds 64!`);
+    await sleep(600);
+    finishSnakesTurn(roll);
+    return;
+  }
+
+  for (let step = curPos + 1; step <= target; step++) {
+    if (isP1) snakesState.p1Pos = step;
+    else snakesState.p2Pos = step;
+    renderSnakesBoard();
+    updateSnakesPositions();
+    await sleep(70);
+  }
+
+  if (snakesState.ladders[target]) {
+    const newPos = snakesState.ladders[target];
+    playWellnessChime('bell');
+    updateSnakesStatus(currentLang === 'ne' 
+      ? `🪜 भर्‍याङ चढ्यो! (${toDevanagariDigits(target)} बाट ${toDevanagariDigits(newPos)})` 
+      : `🪜 Climbed ladder (${target} to ${newPos})!`);
+    await sleep(400);
+    if (isP1) snakesState.p1Pos = newPos;
+    else snakesState.p2Pos = newPos;
+    renderSnakesBoard();
+    updateSnakesPositions();
+    target = newPos;
+  } else if (snakesState.snakes[target]) {
+    const newPos = snakesState.snakes[target];
+    playSound('pop');
+    updateSnakesStatus(currentLang === 'ne' 
+      ? `🐍 साँपले टोक्यो! (${toDevanagariDigits(target)} बाट ${toDevanagariDigits(newPos)})` 
+      : `🐍 Snake bite (${target} to ${newPos})!`);
+    await sleep(400);
+    if (isP1) snakesState.p1Pos = newPos;
+    else snakesState.p2Pos = newPos;
+    renderSnakesBoard();
+    updateSnakesPositions();
+    target = newPos;
+  }
+
+  if (target === 64) {
+    snakesState.gameOver = true;
+    snakesState.isRolling = false;
+    playWellnessChime('bell');
+    const winnerName = isP1 
+      ? (currentLang === 'ne' ? 'तपाईं (खेलाडी १)' : 'Player 1') 
+      : (snakesState.mode === 'vs_bot' 
+          ? (currentLang === 'ne' ? 'सँगालो बोट' : 'Sangalo Bot') 
+          : (currentLang === 'ne' ? 'खेलाडी २' : 'Player 2'));
+    showToast(`🏆 ${winnerName} ले खेल जित्नुभयो! 🎉`);
+    updateSnakesStatus(`🏆 ${winnerName} विजयी!`);
+    return;
+  }
+
+  finishSnakesTurn(roll);
+}
+
+async function finishSnakesTurn(roll) {
+  snakesState.isRolling = false;
+  if (roll === 6) {
+    updateSnakesStatus(currentLang === 'ne' ? '🎉 छक्का आयो! फेरि पासा फाल्नुहोस्!' : '🎉 Rolled a 6! Roll again!');
+    if (snakesState.mode === 'vs_bot' && snakesState.turn === 'p2') {
+      await sleep(800);
+      botSnakesTurn();
+    }
+    return;
+  }
+
+  snakesState.turn = snakesState.turn === 'p1' ? 'p2' : 'p1';
+  updateSnakesStatus(currentLang === 'ne' ? 'पासा फाल्नुहोस्' : 'Roll the dice');
+
+  if (snakesState.mode === 'vs_bot' && snakesState.turn === 'p2') {
+    await sleep(800);
+    botSnakesTurn();
+  }
+}
+
+async function botSnakesTurn() {
+  if (snakesState.gameOver || snakesState.turn !== 'p2') return;
+  snakesState.isRolling = true;
+  const diceEl = document.getElementById('snakesDiceFace');
+  if (diceEl) diceEl.classList.add('animate-bounce');
+  playSound('pop');
+
+  let rolls = 0;
+  const rollInterval = setInterval(() => {
+    rolls++;
+    const temp = Math.floor(Math.random() * 6) + 1;
+    if (diceEl) diceEl.innerText = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][temp - 1];
+    if (rolls > 8) {
+      clearInterval(rollInterval);
+      if (diceEl) diceEl.classList.remove('animate-bounce');
+      const roll = Math.floor(Math.random() * 6) + 1;
+      if (diceEl) diceEl.innerText = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][roll - 1];
+      playSound('coin');
+      executeSnakesMove(roll);
+    }
+  }, 60);
+}
+
+// --- TIC-TAC-TOE (शून्य र काँटा) ---
+const tttState = {
+  mode: 'vs_bot', // 'vs_bot' or 'two_player'
+  board: Array(9).fill(null),
+  turn: 'X', // 'X' or 'O'
+  scoreX: 0,
+  scoreO: 0,
+  scoreDraw: 0,
+  gameOver: false
+};
+
+function setTicTacToeMode(mode) {
+  tttState.mode = mode;
+  const botBtn = document.getElementById('tttModeBtn-bot');
+  const tpBtn = document.getElementById('tttModeBtn-2p');
+  const oLabel = document.getElementById('tttScoreOPlayerLabel');
+  if (botBtn && tpBtn) {
+    if (mode === 'vs_bot') {
+      botBtn.className = 'flex-1 py-1.5 px-2 bg-sky-600 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center';
+      tpBtn.className = 'flex-1 py-1.5 px-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 active:scale-95 text-slate-700 dark:text-zinc-200 font-bold text-[11px] rounded-xl transition text-center';
+      if (oLabel) oLabel.innerText = currentLang === 'ne' ? 'बोट (◯)' : 'Bot (◯)';
+    } else {
+      tpBtn.className = 'flex-1 py-1.5 px-2 bg-sky-600 active:scale-95 text-white font-bold text-[11px] rounded-xl shadow-2xs transition text-center';
+      botBtn.className = 'flex-1 py-1.5 px-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 active:scale-95 text-slate-700 dark:text-zinc-200 font-bold text-[11px] rounded-xl transition text-center';
+      if (oLabel) oLabel.innerText = currentLang === 'ne' ? 'खेलाडी २ (◯)' : 'Player 2 (◯)';
+    }
+  }
+  resetTicTacToeGame();
+}
+window.setTicTacToeMode = setTicTacToeMode;
+
+function resetTicTacToeGame() {
+  tttState.board = Array(9).fill(null);
+  tttState.turn = 'X';
+  tttState.gameOver = false;
+  renderTicTacToe();
+  updateTicTacToeStatus();
+}
+window.resetTicTacToeGame = resetTicTacToeGame;
+
+function renderTicTacToe() {
+  const container = document.getElementById('tttGridContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  tttState.board.forEach((val, idx) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `w-full h-full aspect-square rounded-2xl flex items-center justify-center text-4xl sm:text-5xl font-extrabold transition-all border select-none active:scale-95 ${
+      val === 'X' 
+        ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700 shadow-sm' 
+        : val === 'O' 
+          ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border-amber-300 dark:border-amber-700 shadow-sm'
+          : 'bg-slate-50 dark:bg-[#18181b] border-slate-200 dark:border-zinc-800 text-transparent hover:border-slate-300 dark:hover:border-zinc-700'
+    }`;
+    btn.innerText = val || '';
+    btn.onclick = () => handleTicTacToeClick(idx);
+    container.appendChild(btn);
+  });
+
+  const sx = document.getElementById('tttScoreX');
+  const so = document.getElementById('tttScoreO');
+  const sd = document.getElementById('tttScoreDraw');
+  if (sx) sx.innerText = currentLang === 'ne' ? toDevanagariDigits(tttState.scoreX) : tttState.scoreX;
+  if (so) so.innerText = currentLang === 'ne' ? toDevanagariDigits(tttState.scoreO) : tttState.scoreO;
+  if (sd) sd.innerText = currentLang === 'ne' ? toDevanagariDigits(tttState.scoreDraw) : tttState.scoreDraw;
+}
+
+function handleTicTacToeClick(index) {
+  if (tttState.gameOver || tttState.board[index] !== null) return;
+  if (tttState.mode === 'vs_bot' && tttState.turn === 'O') return;
+
+  makeTicTacToeMove(index, tttState.turn);
+
+  if (!tttState.gameOver && tttState.mode === 'vs_bot' && tttState.turn === 'O') {
+    setTimeout(botTicTacToeMove, 400);
+  }
+}
+
+function makeTicTacToeMove(index, player) {
+  tttState.board[index] = player;
+  playSound(player === 'X' ? 'pop' : 'coin');
+  renderTicTacToe();
+
+  const winner = checkTicTacToeWinner(tttState.board);
+  if (winner) {
+    tttState.gameOver = true;
+    if (winner === 'X') tttState.scoreX++;
+    else tttState.scoreO++;
+    renderTicTacToe();
+    playWellnessChime('bell');
+    const winnerName = winner === 'X' 
+      ? (currentLang === 'ne' ? 'खेलाडी १ (✕)' : 'Player 1 (✕)')
+      : (tttState.mode === 'vs_bot' 
+          ? (currentLang === 'ne' ? 'सँगालो बोट (◯)' : 'Bot (◯)') 
+          : (currentLang === 'ne' ? 'खेलाडी २ (◯)' : 'Player 2 (◯)'));
+    showToast(`🎉 ${winnerName} विजयी!`);
+    updateTicTacToeStatus(`🎉 ${winnerName} ले जित्यो!`);
+    return;
+  }
+
+  if (tttState.board.every(cell => cell !== null)) {
+    tttState.gameOver = true;
+    tttState.scoreDraw++;
+    renderTicTacToe();
+    playSound('pop');
+    showToast(currentLang === 'ne' ? 'खेल बराबरी भयो!' : 'Game Draw!');
+    updateTicTacToeStatus(currentLang === 'ne' ? 'खेल बराबरी भयो!' : 'Game Draw!');
+    return;
+  }
+
+  tttState.turn = tttState.turn === 'X' ? 'O' : 'X';
+  updateTicTacToeStatus();
+}
+
+function updateTicTacToeStatus(customMsg) {
+  const msgEl = document.getElementById('tttStatusMsg');
+  if (!msgEl) return;
+  if (customMsg) {
+    msgEl.innerText = customMsg;
+    return;
+  }
+  if (tttState.turn === 'X') {
+    msgEl.innerText = currentLang === 'ne' ? 'खेलाडी १ (✕) को पालो' : 'Player 1 (✕) Turn';
+  } else {
+    msgEl.innerText = tttState.mode === 'vs_bot'
+      ? (currentLang === 'ne' ? 'बोट (◯) खेल्दैछ...' : 'Bot (◯) thinking...')
+      : (currentLang === 'ne' ? 'खेलाडी २ (◯) को पालो' : 'Player 2 (◯) Turn');
+  }
+}
+
+function checkTicTacToeWinner(b) {
+  const lines = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b1, c] = lines[i];
+    if (b[a] && b[a] === b[b1] && b[a] === b[c]) {
+      return b[a];
+    }
+  }
+  return null;
+}
+
+function botTicTacToeMove() {
+  if (tttState.gameOver || tttState.turn !== 'O') return;
+  const b = tttState.board;
+  const empty = b.map((val, idx) => val === null ? idx : null).filter(val => val !== null);
+  if (empty.length === 0) return;
+
+  // 1. Check if Bot can win
+  for (let i = 0; i < empty.length; i++) {
+    const idx = empty[i];
+    b[idx] = 'O';
+    if (checkTicTacToeWinner(b) === 'O') {
+      b[idx] = null;
+      makeTicTacToeMove(idx, 'O');
+      return;
+    }
+    b[idx] = null;
+  }
+
+  // 2. Check if Player can win and block
+  for (let i = 0; i < empty.length; i++) {
+    const idx = empty[i];
+    b[idx] = 'X';
+    if (checkTicTacToeWinner(b) === 'X') {
+      b[idx] = null;
+      makeTicTacToeMove(idx, 'O');
+      return;
+    }
+    b[idx] = null;
+  }
+
+  // 3. Take center if available
+  if (empty.includes(4)) {
+    makeTicTacToeMove(4, 'O');
+    return;
+  }
+
+  // 4. Random choice
+  const chosen = empty[Math.floor(Math.random() * empty.length)];
+  makeTicTacToeMove(chosen, 'O');
+}
+
+// --- CASUAL STANDALONE DICE ROLLER ---
 let diceScore = 6;
 function rollDice() {
   const cube = document.getElementById('diceFace') || document.getElementById('diceCubeDisplay');
@@ -4217,14 +4774,7 @@ function rollDice() {
       cube.classList.remove('animate-bounce');
       diceScore = Math.floor(Math.random() * 6) + 1;
       cube.innerText = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][diceScore - 1];
-      const resultText = document.getElementById('diceResultText');
-      if (resultText) {
-        resultText.innerText = currentLang === 'ne' 
-          ? `पासा पर्यो: ${toDevanagariDigits(diceScore)}!` 
-          : `Rolled: ${diceScore}!`;
-      } else {
-        showToast(currentLang === 'ne' ? `पासा पर्यो: ${toDevanagariDigits(diceScore)}! 🎲` : `Rolled: ${diceScore}! 🎲`);
-      }
+      showToast(currentLang === 'ne' ? `पासा पर्यो: ${toDevanagariDigits(diceScore)}! 🎲` : `Rolled: ${diceScore}! 🎲`);
       playSound('coin');
     }
   }, 75);
@@ -5213,12 +5763,6 @@ function deleteMedicine(id) {
 // 11.2 VAULT & MULTI-VEHICLE FLEET MANAGEMENT
 // ---------------------------------------------------------------------
 function renderVault() {
-  const v = state.vault || {};
-  const wifi = v.wifi || {};
-
-  document.getElementById('wifiSsid').value = wifi.ssid || '';
-  document.getElementById('wifiPass').value = wifi.pass || '';
-
   const notifToggle = document.getElementById('stickyNotifToggle');
   if (notifToggle) {
     notifToggle.checked = !!state.stickyNotifEnabled;
@@ -5229,62 +5773,8 @@ function renderVault() {
     petToggle.checked = !!state.petEnabled;
   }
 
-  renderWifiQRCode();
   renderVehicleList();
   renderHomeServices();
-}
-
-function saveWifiConfig() {
-  if (!state.vault) state.vault = {};
-  state.vault.wifi = {
-    ssid: document.getElementById('wifiSsid').value.trim(),
-    pass: document.getElementById('wifiPass').value.trim()
-  };
-  saveState();
-  renderWifiQRCode();
-  showToast(currentLang === 'ne' ? 'वाई-फाई विवरण सेभ भयो' : 'Wi-Fi saved');
-}
-
-function renderWifiQRCode() {
-  const canvas = document.getElementById('wifiQrCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const w = canvas.width = 144;
-  const h = canvas.height = 144;
-
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, w, h);
-
-  const wifi = (state.vault && state.vault.wifi) || {};
-  const text = `WIFI:T:WPA;S:${wifi.ssid || 'Sangalo_Fiber_5G'};P:${wifi.pass || 'Family123'};;`;
-
-  let hash = 0;
-  for (let i = 0; i < text.length; i++) hash = (hash << 5) - hash + text.charCodeAt(i);
-
-  const cols = 21;
-  const cellSize = Math.floor(w / cols);
-  const offset = Math.floor((w - cols * cellSize) / 2);
-
-  ctx.fillStyle = '#0f172a';
-
-  function drawCorner(r, c) {
-    ctx.fillRect(offset + c * cellSize, offset + r * cellSize, cellSize * 5, cellSize * 5);
-    ctx.clearRect(offset + (c + 1) * cellSize, offset + (r + 1) * cellSize, cellSize * 3, cellSize * 3);
-    ctx.fillRect(offset + (c + 2) * cellSize, offset + (r + 2) * cellSize, cellSize, cellSize);
-  }
-  drawCorner(1, 1);
-  drawCorner(1, 15);
-  drawCorner(15, 1);
-
-  for (let r = 0; r < cols; r++) {
-    for (let c = 0; c < cols; c++) {
-      if ((r < 7 && (c < 7 || c > 13)) || (r > 13 && c < 7)) continue;
-      const bit = Math.abs(Math.sin(hash + r * 17 + c * 31));
-      if (bit > 0.45) {
-        ctx.fillRect(offset + c * cellSize, offset + r * cellSize, cellSize - 0.5, cellSize - 0.5);
-      }
-    }
-  }
 }
 
 function setVehType(type) {
@@ -7475,7 +7965,7 @@ function setTab(tabName) {
     renderMedicineRoutine();
   }
   if (tabName === 'chautari') {
-    setTimeout(drawBaghBoard, 60);
+    switchChautariGame(activeChautariGame || 'snakes');
   }
   if (tabName === 'vault') {
     renderVault();
@@ -7503,8 +7993,11 @@ window.tapPuku = interactWithPet;
 // ---------------------------------------------------------------------
 // 14.5 GITHUB LIVE APP VERSION & UPDATE ENGINE (0-Backend REST API)
 // ---------------------------------------------------------------------
-const CURRENT_APP_VERSION = 'v1.2.0';
+const CURRENT_APP_VERSION = 'v1.3.0';
 const GITHUB_REPO_LATEST_RELEASE = 'https://api.github.com/repos/dahalsandesh/sangalo/releases/latest';
+
+let latestDetectedVersion = 'v1.3.0';
+let latestDetectedApkUrl = 'https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk';
 
 function compareSemVer(v1, v2) {
   const p1 = (v1 || '').replace(/^[^\d]*/, '').split('.').map(n => parseInt(n, 10) || 0);
@@ -7540,6 +8033,7 @@ async function checkForAppUpdates(isManual = false) {
     const data = await res.json();
     const latestTag = data.tag_name || CURRENT_APP_VERSION;
     const hasUpdate = compareSemVer(latestTag, CURRENT_APP_VERSION) > 0;
+    latestDetectedVersion = latestTag;
 
     if (hasUpdate) {
       let apkUrl = 'https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk';
@@ -7549,12 +8043,39 @@ async function checkForAppUpdates(isManual = false) {
           apkUrl = apkAsset.browser_download_url;
         }
       }
+      latestDetectedApkUrl = apkUrl;
       showAppUpdateModal(latestTag, data.name || latestTag, data.body || '', apkUrl);
+
+      // Unhide persistent top banner in Tab 1
+      const banner = document.getElementById('updateAvailableBanner');
+      const bannerSub = document.getElementById('updateBannerSub');
+      if (banner) {
+        banner.classList.remove('hidden');
+        if (bannerSub) {
+          bannerSub.innerText = `${CURRENT_APP_VERSION} → ${latestTag} (${currentLang === 'ne' ? 'नयाँ संस्करण उपलब्ध छ' : 'New version available'})`;
+        }
+      }
     } else {
       if (isManual) {
         showToast(currentLang === 'ne' 
           ? `तपाईंको एप पछिल्लो संस्करण (${CURRENT_APP_VERSION}) मा अद्यावधिक छ।` 
           : `Sangalo is up to date (${CURRENT_APP_VERSION}).`);
+      }
+    }
+
+    // Always update dual-version display in Tab 5 (Vault)
+    const instBadge = document.getElementById('installedAppVerBadge');
+    const latBadge = document.getElementById('latestGitHubVerBadge');
+    const statusInd = document.getElementById('updateStatusIndicator');
+    if (instBadge) instBadge.innerText = CURRENT_APP_VERSION;
+    if (latBadge) latBadge.innerText = latestTag;
+    if (statusInd) {
+      if (hasUpdate) {
+        statusInd.className = 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60 animate-pulse';
+        statusInd.innerText = currentLang === 'ne' ? '🚀 नयाँ अपडेट उपलब्ध' : '🚀 Update Available';
+      } else {
+        statusInd.className = 'px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/60';
+        statusInd.innerText = currentLang === 'ne' ? 'नवीनतम ✓' : 'Latest ✓';
       }
     }
   } catch (err) {
@@ -8097,21 +8618,29 @@ function initApp() {
   // Initialize Daily Wellness & Focus Suite (Pomodoro, Hydration, Eye Rest)
   initWellnessSuite();
 
+  // Initialize Chautari Games Suite (Snakes & Ladders, Baghchal, Tic-Tac-Toe)
+  renderSnakesBoard();
+  renderTicTacToe();
+
+  // Initialize Installed Version Badge in Tab 5
+  const instBadge = document.getElementById('installedAppVerBadge');
+  if (instBadge) instBadge.innerText = CURRENT_APP_VERSION;
+
   // Check first-time visitor onboarding tour
   if (!localStorage.getItem('sangalo_onboarded_v1')) {
     setTimeout(startOnboardingTour, 600);
   }
 
-  // Check for app updates silently in background (throttled to once every 6h on successful check)
+  // Check for app updates silently in background (lightweight 3-minute cooldown on startup)
   setTimeout(() => {
     if (navigator.onLine) {
       const lastCheck = parseInt(localStorage.getItem('sangalo_last_update_check') || '0', 10);
       const now = Date.now();
-      if (now - lastCheck > 6 * 60 * 60 * 1000) {
+      if (now - lastCheck > 3 * 60 * 1000) {
         checkForAppUpdates(false);
       }
     }
-  }, 4000);
+  }, 2500);
 
   // Register offline Service Worker only on HTTP/HTTPS
   if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {

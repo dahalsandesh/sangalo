@@ -74,8 +74,8 @@ cat << 'EOF' > "$BUILD_DIR/AndroidManifest.xml"
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sangalo.family"
-    android:versionCode="6"
-    android:versionName="1.2.0">
+    android:versionCode="7"
+    android:versionName="1.3.0">
 
     <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="34" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -576,6 +576,9 @@ public class MainActivity extends Activity {
         });
 
         webView.loadUrl("file:///android_asset/index.html");
+
+        // Immediately check for updates in background on app launch
+        CalendarReceiver.checkAppUpdateInBackground(this);
     }
 
     @Override
@@ -913,7 +916,7 @@ public class CalendarReceiver extends BroadcastReceiver {
                     SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
                     long lastCheck = prefs.getLong("last_update_check_bg", 0);
                     long now = System.currentTimeMillis();
-                    if (now - lastCheck < 12 * 3600 * 1000) return; // at most once every 12h
+                    if (now - lastCheck < 15 * 60 * 1000) return; // at most once every 15m
 
                     URL url = new URL("https://api.github.com/repos/dahalsandesh/sangalo/releases/latest");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -936,7 +939,7 @@ public class CalendarReceiver extends BroadcastReceiver {
                         Matcher m = p.matcher(json);
                         if (m.find()) {
                             String latestTag = m.group(1);
-                            if (isNewerVersion(latestTag, "1.2.0")) {
+                            if (isNewerVersion(latestTag, "1.3.0")) {
                                 postUpdateNotification(context, latestTag, "https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk");
                             }
                         }
