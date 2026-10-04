@@ -250,6 +250,8 @@ const i18n = {
     apkTitle: "मोबाइल एप (.apk) सेयर गर्नुहोस्",
     apkDesc: "इन्टरनेट नभए पनि चल्ने गरी परिवारका सदस्यहरूको एन्ड्रोइड फोनमा यो एप इन्स्टल गर्न सक्नुहुन्छ।",
     downloadApkBtn: "Sangalo.apk डाउनलोड",
+    appVersionTitle: "एप संस्करण तथा अपडेट",
+    checkUpdateBtn: "अपडेट जाँच गर्नुहोस्",
     backupTitle: "डाटा ब्याकअप र सुरक्षा",
     exportBackup: "ब्याकअप डाउनलोड (.json)",
     importBackup: "ब्याकअप रिस्टोर",
@@ -288,10 +290,88 @@ const i18n = {
     tithi: "आजको तिथि (Tithi)",
     rahuKaal: "राहु काल (अशुभ समय)",
     abhijitMuhurat: "शुभ मुहूर्त (अभिजीत)",
+    nakshatra: "आजको नक्षत्र (Nakshatra)",
+    moonPhaseTitle: "चन्द्रकला (Moon Phase)",
+    upcomingHolidaysTitle: "आगामी सार्वजनिक बिदाहरू",
+    upcomingSectionTitle: "आगामी चाडपर्व तथा सम्झनाहरू",
+    upcomingTabAll: "सबै",
+    upcomingTabHolidays: "सार्वजनिक बिदा",
+    upcomingTabReminders: "मेरा सम्झना",
+    govCalendarBadge: "नेपाल सरकार क्यालेन्डर",
+    goldSilverBtn: "सुनचाँदी भाउ",
+    goldModalTitle: "सुनचाँदी भाउ तथा हिसाब",
+    emergencyBtn: "आकस्मिक सेवा",
+    emergencyModalTitle: "नेपाल आकस्मिक तथा अत्यावश्यक सेवाहरू",
     closeBtn: "बन्द गर्नुहोस् (Close)",
     refreshBtn: "ताजा गर्नुहोस्",
     majorCurrencies: "प्रमुख विदेशी मुद्राहरू:",
-    remitEquivalent: "नेपाली रुपैयाँमा:"
+    remitEquivalent: "नेपाली रुपैयाँमा:",
+
+    // Daily Wellness & Focus
+    dailyWellnessTitle: "दैनिक स्वास्थ्य तथा कार्यदक्षता",
+    dailyWellnessSub: "पोमोडोरो एकाग्रता, पानी पिउने ट्र्याकर र आँखा आराम",
+    openWellnessBtn: "खोल्नुहोस्",
+    pomodoroMini: "पोमोडोरो",
+    waterMini: "पानी ट्र्याकर",
+    eyeMini: "आँखा आराम",
+    wellnessModalTitle: "दैनिक स्वास्थ्य तथा ध्यान (Wellness & Focus)",
+    wellnessModalSub: "पोमोडोरो, पानी पिउने सम्झना र आँखा आराम",
+    wellnessTabPomodoro: "🍅 पोमोडोरो",
+    wellnessTabWater: "💧 पानी ट्र्याकर",
+    wellnessTabEye: "👁️ आँखा आराम",
+    pomodoroFocusPreset: "२५ मि (फोकस)",
+    pomodoroShortPreset: "५ मि (विश्राम)",
+    pomodoroLongPreset: "१५ मि (लामो)",
+    pomodoroResetBtn: "रिसेट (Reset)",
+    pomodoroStart: "सुरु गर्नुहोस्",
+    pomodoroPause: "रोक्नुहोस्",
+    pomodoroResume: "पुनः सुरु",
+    waterGoalText: "आज पिएको पानी (दैनिक लक्ष्य: ८ गिलास / २ लिटर)",
+    waterAddOne: "💧 +१ गिलास थप्नुहोस्",
+    waterSubOne: "-१ घटाउनुहोस्",
+    waterHourlyTitle: "घन्टे पानी सम्झना (Hourly Chime)",
+    waterHourlySub: "हरेक १ घण्टामा पानी पिउन घन्टी बजाउने",
+    eyeRuleTitle: "२०-२०-२० नियम (20-20-20 Screen Rule)",
+    eyeRuleDesc: "हरेक २० मिनेट स्क्रिन हेरेपछि, कम्तीमा २० फिट टाढा कुनै वस्तुलाई २० सेकेन्ड हेर्नुहोस्। यसले आँखाको थकान र टाउको दुखाइ हटाउँछ।",
+    eyeNextBreakLabel: "अर्को आराम सम्झना:",
+    eyeStartBtn: "आँखा आराम सम्झना सुरु गर्नुहोस्",
+    eyeStopBtn: "आँखा आराम रोक्नुहोस्",
+
+    // Gold & Silver Rates & Calculator
+    goldLiveBadge: "प्रत्यक्ष FENEGOSIDA",
+    goldOfficialRate: "आधिकारिक बजार दर:",
+    goldTolaBtn: "तोला (Tola)",
+    gold10gBtn: "१० ग्राम (10g)",
+    gold24kLabel: "छापावाल सुन (24K)",
+    gold22kLabel: "तेजाबी सुन (22K)",
+    silverLabel: "चाँदी (Silver)",
+    goldPerTola: "प्रति तोला",
+    goldPer10g: "प्रति १० ग्राम",
+    jewelryCalcTitle: "💍 गहना मूल्य हिसाब (Jewelry Calculator)",
+    metalLabel: "धातु छनौट (Metal)",
+    unitLabel: "तौल एकाइ (Unit)",
+    weightLabel: "तौल (Weight)",
+    wastageLabel: "जर्ती % (Wastage)",
+    makingChargeLabel: "ज्याला (रू/Making)",
+    netMetalCost: "शुद्ध धातु मूल्य (Net Metal):",
+    wastageCost: "जर्ती बापत मूल्य (Wastage Cost):",
+    makingCost: "ज्याला (Making Charge):",
+    totalJewelryCost: "अनुमानित कुल रकम (Total):",
+
+    // NEA Tariff Calculator
+    neaModalTitle: "विद्युत महसुल हिसाब (NEA Tariff)",
+    neaModalSub: "नेपाल विद्युत प्राधिकरण गार्हस्थ्य महसुल दर",
+    meterCapacityLabel: "मिटर क्षमता (Ampere)",
+    consumedUnitsLabel: "खपत युनिट (Units Consumed)",
+    calcBillBtn: "महसुल हिसाब गर्नुहोस्",
+    minServiceCharge: "न्यूनतम सेवा शुल्क (Service Charge):",
+    energyCharge: "ऊर्जा शुल्क (Energy Charge):",
+    totalBillAmount: "कुल तिर्नुपर्ने रकम (Total):",
+    neaRebateTitle: "💡 छुट तथा जरिवाना नियम (NEA Rebate):",
+    
+    // Calendar & Dropdown
+    calendarTodayBtn: "आज",
+    nepaliCalendarBadge: "नेपाली पात्रो (वि.सं.)"
   },
   en: {
     appTitle: "Sangalo",
@@ -449,6 +529,8 @@ const i18n = {
     apkTitle: "Share Standalone App (.apk)",
     apkDesc: "Install and run 100% offline on any family member's Android device without internet.",
     downloadApkBtn: "Download Sangalo.apk",
+    appVersionTitle: "App Version & Updates",
+    checkUpdateBtn: "Check for Updates",
     backupTitle: "Data Backup & Recovery",
     exportBackup: "Export Backup (.json)",
     importBackup: "Import Backup",
@@ -487,10 +569,88 @@ const i18n = {
     tithi: "Today's Tithi",
     rahuKaal: "Rahu Kaal (Inauspicious)",
     abhijitMuhurat: "Abhijit Muhurat (Auspicious)",
+    nakshatra: "Today's Nakshatra",
+    moonPhaseTitle: "Moon Phase",
+    upcomingHolidaysTitle: "Upcoming Public Holidays",
+    upcomingSectionTitle: "Upcoming Events & Festivals",
+    upcomingTabAll: "All",
+    upcomingTabHolidays: "Public Holidays",
+    upcomingTabReminders: "My Reminders",
+    govCalendarBadge: "Nepal Govt Calendar",
+    goldSilverBtn: "Gold & Silver",
+    goldModalTitle: "Gold & Silver Rates & Calculator",
+    emergencyBtn: "Emergency Helplines",
+    emergencyModalTitle: "Nepal Emergency & Helpline Directory",
     closeBtn: "Close",
     refreshBtn: "Refresh",
     majorCurrencies: "Major Currencies:",
-    remitEquivalent: "Equivalent in NPR:"
+    remitEquivalent: "Equivalent in NPR:",
+
+    // Daily Wellness & Focus
+    dailyWellnessTitle: "Daily Wellness & Focus",
+    dailyWellnessSub: "Pomodoro focus timer, hydration tracker & eye rest",
+    openWellnessBtn: "Open",
+    pomodoroMini: "Pomodoro",
+    waterMini: "Water",
+    eyeMini: "Eye Rest",
+    wellnessModalTitle: "Daily Wellness & Focus",
+    wellnessModalSub: "Pomodoro timer, hydration tracker & 20-20-20 eye care",
+    wellnessTabPomodoro: "🍅 Pomodoro",
+    wellnessTabWater: "💧 Water Tracker",
+    wellnessTabEye: "👁️ Eye Rest",
+    pomodoroFocusPreset: "25m (Focus)",
+    pomodoroShortPreset: "5m (Break)",
+    pomodoroLongPreset: "15m (Long)",
+    pomodoroResetBtn: "Reset",
+    pomodoroStart: "Start Focus",
+    pomodoroPause: "Pause",
+    pomodoroResume: "Resume",
+    waterGoalText: "Water Drank Today (Goal: 8 Glasses / 2L)",
+    waterAddOne: "💧 +1 Glass",
+    waterSubOne: "-1 Glass",
+    waterHourlyTitle: "Hourly Water Chime",
+    waterHourlySub: "Gentle chime every hour during the day to stay hydrated",
+    eyeRuleTitle: "20-20-20 Screen Eye Rule",
+    eyeRuleDesc: "Every 20 minutes of screen time, look at an object 20 feet away for 20 seconds to prevent digital eye strain.",
+    eyeNextBreakLabel: "Next eye break in:",
+    eyeStartBtn: "Start Eye Rest Timer",
+    eyeStopBtn: "Stop Eye Rest Timer",
+
+    // Gold & Silver Rates & Calculator
+    goldLiveBadge: "Live FENEGOSIDA",
+    goldOfficialRate: "Official Market Rates:",
+    goldTolaBtn: "Tola",
+    gold10gBtn: "10 Grams",
+    gold24kLabel: "Fine Gold (24K)",
+    gold22kLabel: "Tejabi Gold (22K)",
+    silverLabel: "Silver",
+    goldPerTola: "per tola",
+    goldPer10g: "per 10g",
+    jewelryCalcTitle: "💍 Jewelry Price Calculator",
+    metalLabel: "Metal",
+    unitLabel: "Weight Unit",
+    weightLabel: "Weight",
+    wastageLabel: "Wastage % (Jarti)",
+    makingChargeLabel: "Making Charge (Rs.)",
+    netMetalCost: "Net Metal Value:",
+    wastageCost: "Wastage Cost:",
+    makingCost: "Making Charge:",
+    totalJewelryCost: "Estimated Total:",
+
+    // NEA Tariff Calculator
+    neaModalTitle: "Electricity Bill (NEA Tariff)",
+    neaModalSub: "Official Nepal Electricity Authority Domestic Tariff",
+    meterCapacityLabel: "Meter Capacity (Ampere)",
+    consumedUnitsLabel: "Units Consumed (kWh)",
+    calcBillBtn: "Calculate Bill",
+    minServiceCharge: "Minimum Service Charge:",
+    energyCharge: "Energy Charge:",
+    totalBillAmount: "Total Amount Payable:",
+    neaRebateTitle: "💡 Rebate & Penalty Guidelines:",
+    
+    // Calendar & Dropdown
+    calendarTodayBtn: "Today",
+    nepaliCalendarBadge: "Nepali Calendar (B.S.)"
   }
 };
 
@@ -515,6 +675,7 @@ function toggleLanguage() {
 // ---------------------------------------------------------------------
 let state = {
   theme: 'light',
+  fontSize: 'normal',
   petEnabled: true,
   petHappiness: 90,
   stickyNotifEnabled: false,
@@ -1412,13 +1573,79 @@ const nepaliFestivalsByYear = {
   }
 };
 
-function getFestival(year, month, day) {
+const FESTIVAL_EN_MAP = {
+  "बुद्ध जयन्ती": "Buddha Jayanti",
+  "बुद्ध जयन्ती / उभौली पर्व": "Buddha Jayanti / Ubhauli",
+  "बुद्ध जयन्ती / उभौली": "Buddha Jayanti / Ubhauli",
+  "जनैपूर्णिमा / रक्षाबन्धन": "Janai Purnima / Raksha Bandhan",
+  "गाईजात्रा": "Gai Jatra",
+  "श्रीकृष्ण जन्माष्टमी": "Krishna Janmashtami",
+  "हरितालिका तीज": "Haritalika Teej",
+  "ऋषि पञ्चमी": "Rishi Panchami",
+  "इन्द्रजात्रा": "Indra Jatra",
+  "घटस्थापना": "Ghatasthapana (Dashain Begins)",
+  "फूलपाती": "Phulpati",
+  "महाअष्टमी": "Maha Ashtami",
+  "महानवमी": "Maha Navami",
+  "विजया दशमी": "Vijaya Dashami (Dashain Tika)",
+  "कोजाग्रत पूर्णिमा": "Kojagrat Purnima",
+  "धनतेरस": "Dhanteras",
+  "काग तिहार": "Kaag Tihar",
+  "कुकुर तिहार": "Kukur Tihar",
+  "कुकुर तिहार र लक्ष्मीपूजा": "Kukur Tihar & Laxmi Puja",
+  "लक्ष्मीपूजा": "Laxmi Puja (Tihar)",
+  "गाई पूजा": "Gai Puja",
+  "गोवर्धन पूजा / म्हःपूजा": "Govardhan Puja / Mha Puja",
+  "भाइटीका": "Bhai Tika",
+  "छठ पर्व": "Chhath Parva",
+  "बाला चतुर्दशी": "Bala Chaturdashi",
+  "विवाह पञ्चमी": "Vivah Panchami",
+  "उधौली पर्व / योमरी पुन्ही": "Udhauli / Yomari Punhi",
+  "सोनाम ल्होसार": "Sonam Lhosar",
+  "सरस्वती पूजा (श्रीपञ्चमी)": "Saraswati Puja / Shree Panchami",
+  "सरस्वती पूजा / श्रीपञ्चमी": "Saraswati Puja / Shree Panchami",
+  "महाशिवरात्रि": "Maha Shivaratri",
+  "ग्याल्पो ल्होसार": "Gyalpo Lhosar",
+  "फागु पूर्णिमा - पहाड": "Holi (Hilly Region)",
+  "फागु पूर्णिमा - तराई": "Holi (Terai Region)",
+  "फागु पूर्णिमा (होली)": "Holi Festival of Colors",
+  "फागु पूर्णिमा": "Holi Festival",
+  "घोडेजात्रा": "Ghode Jatra",
+  "चैते दशैं": "Chaite Dashain",
+  "रामनवमी": "Ram Navami",
+  "नयाँ वर्ष": "Nepali New Year",
+  "अन्तर्राष्ट्रिय श्रमिक दिवस": "International Labour Day",
+  "राष्ट्रिय धान दिवस / असार १५": "National Paddy Day (Asar 15)",
+  "खीर खाने दिन": "Kheer Khane Din (Shrawan 15)",
+  "संविधान दिवस": "National Constitution Day",
+  "तमु ल्होसार": "Tamu Lhosar",
+  "माघे संक्रान्ति / माघी पर्व": "Maghe Sankranti",
+  "शहीद दिवस": "Martyrs Day",
+  "राष्ट्रिय प्रजातन्त्र दिवस": "National Democracy Day",
+  "अन्तर्राष्ट्रिय नारी दिवस": "International Women's Day"
+};
+
+function getFestival(year, month, day, lang = currentLang) {
   const yStr = String(year);
   const mDStr = month + "-" + day;
+  let raw = null;
   if (nepaliFestivalsByYear[yStr] && nepaliFestivalsByYear[yStr][mDStr]) {
-    return nepaliFestivalsByYear[yStr][mDStr];
+    raw = nepaliFestivalsByYear[yStr][mDStr];
+  } else if (nepaliSolarFestivals[mDStr]) {
+    raw = nepaliSolarFestivals[mDStr];
   }
-  return nepaliSolarFestivals[mDStr] || null;
+  if (!raw) return null;
+
+  // Extract pure parts if raw has parenthetical format "नेपाली (English)"
+  const match = raw.match(/^(.*?)\s*\((.*?)\)$/);
+  if (match) {
+    return lang === 'en' ? match[2].trim() : match[1].trim();
+  }
+
+  if (lang === 'en') {
+    return FESTIVAL_EN_MAP[raw] || raw;
+  }
+  return raw;
 }
 
 // Transparent Proxy fallback so legacy nepaliFestivals[key] lookup stays compatible
@@ -1459,33 +1686,110 @@ function getLunarTithi(date) {
   const year = d.getFullYear();
   const month = d.getMonth() + 1;
   const day = d.getDate();
-  const hour = 6.0; // standard dawn / sunrise observation
 
+  // Astronomical Julian Date at Kathmandu Sunrise (06:01 NPT = 00:16 UTC, approx 0.25 UTC hours)
+  // Udaya Tithi (सूर्योदय कालीन तिथि) determines the day's civil Tithi in authentic Vedic Panchanga
+  const utcHour = 0.25;
   const a = Math.floor((14 - month) / 12);
   const y = year + 4800 - a;
   const m = month + 12 * a - 3;
   const jdn = day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
-  const jd = jdn + (hour - 12.0) / 24.0;
+  const jd = jdn + (utcHour - 12.0) / 24.0;
+  const T = (jd - 2451545.0) / 36525.0; // Julian centuries since J2000.0
 
-  const knownNewMoon = 2451549.26;
-  const synodicMonth = 29.530588853;
-  const daysSince = jd - knownNewMoon;
-  const cycles = daysSince / synodicMonth;
-  const phase = cycles - Math.floor(cycles);
+  // 1. True Sun Longitude (Degrees)
+  const L0 = (280.46646 + 36000.76983 * T) % 360;
+  const M_sun = (357.52911 + 35999.05029 * T) % 360;
+  const toRad = Math.PI / 180;
+  const M_sun_rad = M_sun * toRad;
+  const C_sun = (1.914602 - 0.004817 * T) * Math.sin(M_sun_rad) + (0.019993 - 0.000101 * T) * Math.sin(2 * M_sun_rad);
+  const sun_true_lon = (L0 + C_sun + 360) % 360;
 
-  const index = Math.floor(phase * 30) % 30;
+  // 2. True Moon Longitude with Jean Meeus / Surya Siddhanta Perturbations (Degrees)
+  const L_moon = (218.3164477 + 481267.88123421 * T) % 360;
+  const D = (297.8501921 + 445267.1114034 * T) % 360;      // Moon's mean elongation
+  const M_moon = (134.9633964 + 477198.8675055 * T) % 360; // Moon's mean anomaly
+  const F = (93.2720950 + 483202.0175233 * T) % 360;       // Moon's argument of latitude
+
+  const moon_pert = 6.288774 * Math.sin(M_moon * toRad)
+                  + 1.274027 * Math.sin((2 * D - M_moon) * toRad)
+                  + 0.658314 * Math.sin(2 * D * toRad)
+                  + 0.213618 * Math.sin(2 * M_moon * toRad)
+                  - 0.185116 * Math.sin(M_sun * toRad)
+                  - 0.114332 * Math.sin(2 * F * toRad)
+                  + 0.058793 * Math.sin((2 * D - 2 * M_moon) * toRad)
+                  + 0.057066 * Math.sin((2 * D - M_sun - M_moon) * toRad)
+                  + 0.053322 * Math.sin((2 * D + M_moon) * toRad);
+
+  const moon_true_lon = (L_moon + moon_pert + 360) % 360;
+
+  // 3. True Elongation & Tithi Index (Each Tithi spans exactly 12 degrees)
+  let elongation = (moon_true_lon - sun_true_lon) % 360;
+  if (elongation < 0) elongation += 360;
+
+  const index = Math.floor(elongation / 12) % 30;
   const name = VEDIC_TITHIS[index];
   const isShukla = index < 15;
   const isEkadashi = (index === 10 || index === 25);
   const isPurnima = (index === 14);
   const isAunsi = (index === 29);
+  const phase = elongation / 360.0;
+
+  let moonEmoji = '🌕';
+  if (index === 29) moonEmoji = '🌑';
+  else if (index >= 0 && index <= 5) moonEmoji = '🌒';
+  else if (index >= 6 && index <= 8) moonEmoji = '🌓';
+  else if (index >= 9 && index <= 13) moonEmoji = '🌔';
+  else if (index === 14) moonEmoji = '🌕';
+  else if (index >= 15 && index <= 20) moonEmoji = '🌖';
+  else if (index >= 21 && index <= 23) moonEmoji = '🌗';
+  else if (index >= 24 && index <= 28) moonEmoji = '🌘';
 
   let badge = name;
   if (isEkadashi) badge = "🌟 " + name;
   else if (isPurnima) badge = "🌕 " + name;
   else if (isAunsi) badge = "🌑 " + name;
 
-  return { index, name, paksha: isShukla ? "शुक्ल" : "कृष्ण", isEkadashi, isPurnima, isAunsi, badge, phase };
+  return { 
+    index, 
+    name, 
+    paksha: isShukla ? "शुक्ल" : "कृष्ण", 
+    isEkadashi, 
+    isPurnima, 
+    isAunsi, 
+    badge, 
+    phase, 
+    elongation,
+    moonEmoji,
+    moonLon: moon_true_lon,
+    sunLon: sun_true_lon
+  };
+}
+
+const VEDIC_NAKSHATRAS_NE = [
+  'अश्विनी', 'भरणी', 'कृत्तिका', 'रोहिणी', 'मृगशिरा', 'आर्द्रा', 'पुनर्वसु', 'पुष्य',
+  'आश्लेषा', 'मघा', 'पूर्वाफाल्गुनी', 'उत्तराफाल्गुनी', 'हस्त', 'चित्रा', 'स्वाती', 'विशाखा',
+  'अनुराधा', 'ज्येष्ठा', 'मूल', 'पूर्वाषाढा', 'उत्तराषाढा', 'श्रवण', 'धनिष्ठा', 'शतभिषा',
+  'पूर्वाभाद्रपदा', 'उत्तराभाद्रपदा', 'रेवती'
+];
+const VEDIC_NAKSHATRAS_EN = [
+  'Ashwini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira', 'Ardra', 'Punarvasu', 'Pushya',
+  'Ashlesha', 'Magha', 'Purva Phalguni', 'Uttara Phalguni', 'Hasta', 'Chitra', 'Swati', 'Vishakha',
+  'Anuradha', 'Jyeshtha', 'Mula', 'Purva Ashadha', 'Uttara Ashadha', 'Shravana', 'Dhanishta', 'Shatabhisha',
+  'Purva Bhadrapada', 'Uttara Bhadrapada', 'Revati'
+];
+
+function getLunarNakshatra(date) {
+  const tInfo = getLunarTithi(date);
+  const ayanamsha = 24.23;
+  let siderealMoon = (tInfo.moonLon - ayanamsha + 360) % 360;
+  const index = Math.floor(siderealMoon / (360 / 27)) % 27;
+  return {
+    index,
+    nameNe: VEDIC_NAKSHATRAS_NE[index],
+    nameEn: VEDIC_NAKSHATRAS_EN[index],
+    name: currentLang === 'ne' ? VEDIC_NAKSHATRAS_NE[index] : VEDIC_NAKSHATRAS_EN[index]
+  };
 }
 
 // ---------------------------------------------------------------------
@@ -1593,6 +1897,7 @@ function calculateOfflinePanchanga(dateObj) {
     : `${abhijitStart} – ${abhijitEnd}`;
 
   const tithiInfo = getLunarTithi(d);
+  const nakshatraInfo = getLunarNakshatra(d);
 
   return {
     sunrise: sun.sunrise,
@@ -1600,7 +1905,9 @@ function calculateOfflinePanchanga(dateObj) {
     dayLengthText,
     rahuKaalText,
     abhijitText,
-    tithiText: tithiInfo.badge
+    tithiText: `${tithiInfo.moonEmoji || ''} ${tithiInfo.badge || tithiInfo.name}`.trim(),
+    nakshatraText: currentLang === 'ne' ? nakshatraInfo.nameNe : nakshatraInfo.nameEn,
+    moonEmoji: tithiInfo.moonEmoji
   };
 }
 
@@ -1631,23 +1938,32 @@ function updateWeatherSunUI() {
 
 async function fetchWeatherAndSun() {
   // 1. Initial 100% offline calculations immediately populate UI
-  const p = calculateOfflinePanchanga(new Date());
+  const now = new Date();
+  const currentHour = now.getHours();
+  const isNightOffline = currentHour < 6 || currentHour >= 18;
+  const p = calculateOfflinePanchanga(now);
   weatherState.sunrise = p.sunrise;
   weatherState.sunset = p.sunset;
   weatherState.dayLengthText = p.dayLengthText;
   weatherState.rahuKaalText = p.rahuKaalText;
   weatherState.abhijitText = p.abhijitText;
   weatherState.tithiText = p.tithiText;
+  weatherState.nakshatraText = p.nakshatraText;
+  weatherState.moonEmoji = p.moonEmoji;
+  weatherState.icon = isNightOffline ? '🌙' : '☀️';
+  weatherState.conditionText = isNightOffline
+    ? (currentLang === 'ne' ? 'सफा रात (Clear Night)' : 'Clear Night')
+    : (currentLang === 'ne' ? 'सफा घाम (Clear)' : 'Clear Sky');
   updateWeatherSunUI();
   if (state.stickyNotifEnabled) {
     showStickyCalendarNotification(true);
   }
 
-  // 2. Fetch Live Weather from Open-Meteo
+  // 2. Fetch Live Weather from Open-Meteo with is_day parameter
   try {
     const lat = 27.7172;
     const lng = 85.3240;
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=sunrise,sunset&timezone=Asia%2FKathmandu&forecast_days=1`;
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&daily=sunrise,sunset&timezone=Asia%2FKathmandu&forecast_days=1`;
     const res = await fetch(weatherUrl);
     if (res.ok) {
       const data = await res.json();
@@ -1658,14 +1974,22 @@ async function fetchWeatherAndSun() {
         weatherState.wind = data.current.wind_speed_10m;
         weatherState.weatherCode = data.current.weather_code;
 
-        // Interpret weather code
+        // Interpret day vs night
+        const isDay = data.current.is_day !== undefined 
+          ? (data.current.is_day === 1) 
+          : (new Date().getHours() >= 6 && new Date().getHours() < 18);
         const code = data.current.weather_code;
+
         if (code === 0) {
-          weatherState.icon = '☀️';
-          weatherState.conditionText = currentLang === 'ne' ? 'सफा (Clear)' : 'Clear Sky';
+          weatherState.icon = isDay ? '☀️' : '🌙';
+          weatherState.conditionText = isDay 
+            ? (currentLang === 'ne' ? 'सफा घाम (Clear)' : 'Clear Sky')
+            : (currentLang === 'ne' ? 'सफा रात (Clear Night)' : 'Clear Night');
         } else if (code <= 3) {
-          weatherState.icon = '🌤️';
-          weatherState.conditionText = currentLang === 'ne' ? 'आंशिक बदली (Partly Cloudy)' : 'Partly Cloudy';
+          weatherState.icon = isDay ? '🌤️' : '☁️';
+          weatherState.conditionText = isDay 
+            ? (currentLang === 'ne' ? 'आंशिक बदली (Partly Cloudy)' : 'Partly Cloudy')
+            : (currentLang === 'ne' ? 'रात्रिकालीन बदली (Partly Cloudy)' : 'Partly Cloudy Night');
         } else if (code <= 48) {
           weatherState.icon = '🌫️';
           weatherState.conditionText = currentLang === 'ne' ? 'कुहिरो / हुस्सु (Foggy)' : 'Foggy / Haze';
@@ -1673,7 +1997,7 @@ async function fetchWeatherAndSun() {
           weatherState.icon = '🌧️';
           weatherState.conditionText = currentLang === 'ne' ? 'पानी परेको (Rain)' : 'Rain';
         } else if (code <= 82) {
-          weatherState.icon = '🌦️';
+          weatherState.icon = isDay ? '🌦️' : '🌧️';
           weatherState.conditionText = currentLang === 'ne' ? 'क्षणिक वर्षा (Showers)' : 'Showers';
         } else {
           weatherState.icon = '⛈️';
@@ -1692,6 +2016,8 @@ async function fetchWeatherAndSun() {
         weatherState.dayLengthText = updatedP.dayLengthText;
         weatherState.rahuKaalText = updatedP.rahuKaalText;
         weatherState.abhijitText = updatedP.abhijitText;
+        weatherState.nakshatraText = updatedP.nakshatraText;
+        weatherState.moonEmoji = updatedP.moonEmoji;
         updateWeatherSunUI();
         if (state.stickyNotifEnabled) {
           showStickyCalendarNotification(true);
@@ -1750,6 +2076,15 @@ function openWeatherDetailsModal() {
   if (mSet) mSet.innerText = currentLang === 'ne' ? toDevanagariDigits(weatherState.sunset) : weatherState.sunset;
   if (mDl) mDl.innerText = weatherState.dayLengthText;
   if (mTithi) mTithi.innerText = weatherState.tithiText;
+  const mNak = document.getElementById('modalNakshatraText');
+  if (mNak) mNak.innerText = weatherState.nakshatraText || (currentLang === 'ne' ? 'पुनर्वसु' : 'Punarvasu');
+  const mMoon = document.getElementById('modalMoonPhaseText');
+  if (mMoon) {
+    const t = getLunarTithi(new Date());
+    const moonEmoji = t.moonEmoji || '🌓';
+    const moonName = currentLang === 'ne' ? t.name : (t.isShukla ? `Shukla ${t.name}` : `Krishna ${t.name}`);
+    mMoon.innerText = `${moonEmoji} ${moonName}`;
+  }
   if (mRahu) mRahu.innerText = weatherState.rahuKaalText;
   if (mAbhijit) mAbhijit.innerText = weatherState.abhijitText;
 
@@ -1961,7 +2296,14 @@ function renderWeekdayHeaders() {
 
   container.innerHTML = labels.map((l, i) => {
     const isSat = i === 6;
-    return `<div class="${isSat ? 'text-rose-600 dark:text-rose-400' : 'text-slate-500 dark:text-zinc-400'} font-bold">${l}</div>`;
+    const isSun = i === 0;
+    let colorClass = 'text-slate-500 dark:text-zinc-400 font-semibold';
+    if (isSat) {
+      colorClass = 'text-rose-600 dark:text-rose-400 font-extrabold';
+    } else if (isSun) {
+      colorClass = 'text-rose-500/85 dark:text-rose-400/85 font-bold';
+    }
+    return `<div class="${colorClass}">${l}</div>`;
   }).join('');
 }
 
@@ -2010,7 +2352,7 @@ function renderFullCalendarGrid() {
 
   // Empty leading cells
   for (let i = 0; i < startCol; i++) {
-    html += `<div class="h-12 rounded-xl bg-slate-50/40 dark:bg-zinc-900/10 border border-dashed border-slate-200/40 dark:border-zinc-800/40"></div>`;
+    html += `<div class="min-h-[58px] sm:min-h-[62px] rounded-xl bg-slate-50/40 dark:bg-zinc-900/10 border border-dashed border-slate-200/40 dark:border-zinc-800/40"></div>`;
   }
 
   // Active day cells
@@ -2018,10 +2360,11 @@ function renderFullCalendarGrid() {
     const adDate = bsToAdDate(year, month, day);
     const weekday = adDate.getDay();
     const isSaturday = weekday === 6;
+    const isSunday = weekday === 0;
     const isToday = isCurrentMonth && (todayBs.day === day);
 
     const festKey = `${month}-${day}`;
-    const festName = getFestival(year, month, day);
+    const festName = getFestival(year, month, day, currentLang);
 
     const dateKey = `${year}-${month}-${day}`;
     const userEvents = (state.events && state.events[dateKey]) || [];
@@ -2034,16 +2377,26 @@ function renderFullCalendarGrid() {
     let bgClass = 'bg-white dark:bg-[#121215]';
     let textClass = 'text-slate-900 dark:text-zinc-200 font-bold';
 
+    if (isSunday) {
+      borderClass = 'border-rose-200/60 dark:border-rose-900/30';
+      bgClass = 'bg-rose-50/30 dark:bg-rose-950/15';
+      textClass = 'text-slate-900 dark:text-zinc-100 font-bold';
+    }
+
     if (isSaturday) {
       borderClass = 'border-rose-200/80 dark:border-rose-900/40';
-      bgClass = 'bg-rose-50/70 dark:bg-rose-950/20';
+      bgClass = 'bg-rose-50/70 dark:bg-rose-950/25';
       textClass = 'text-rose-600 dark:text-rose-400 font-extrabold';
     }
 
     if (festName) {
       borderClass = 'border-amber-300/90 dark:border-amber-800/50';
-      bgClass = isSaturday ? 'bg-amber-50/80 dark:bg-amber-950/25' : 'bg-amber-50/75 dark:bg-amber-950/20';
-      textClass = isSaturday ? 'text-rose-600 dark:text-rose-400 font-extrabold' : 'text-amber-800 dark:text-amber-300 font-extrabold';
+      bgClass = isSaturday 
+        ? 'bg-amber-50/80 dark:bg-amber-950/25' 
+        : (isSunday ? 'bg-amber-50/75 dark:bg-amber-950/20' : 'bg-amber-50/70 dark:bg-amber-950/15');
+      textClass = isSaturday 
+        ? 'text-rose-600 dark:text-rose-400 font-extrabold' 
+        : 'text-amber-800 dark:text-amber-300 font-extrabold';
     }
 
     if (isToday) {
@@ -2053,24 +2406,63 @@ function renderFullCalendarGrid() {
     }
 
     const tInfo = getLunarTithi(adDate);
-    let tithiGlyph = '';
-    if (tInfo.isPurnima) tithiGlyph = '🌕';
-    else if (tInfo.isAunsi) tithiGlyph = '🌑';
-    else if (tInfo.isEkadashi) tithiGlyph = '🌟';
+
+    // Direct color-coded text lines (no bulky badge tags, fits more information cleanly)
+    let eventLinesHtml = '';
+    if (festName) {
+      const festColor = isSaturday 
+        ? 'text-rose-600 dark:text-rose-400 font-bold' 
+        : 'text-amber-700 dark:text-amber-300 font-bold';
+      eventLinesHtml += `<div class="text-[8.5px] ${festColor} truncate leading-tight select-none" title="${escapeHtml(festName)}">• ${escapeHtml(festName)}</div>`;
+    }
+
+    if (userEvents && userEvents.length > 0) {
+      const ev = userEvents[0];
+      const tLow = (ev.title || '').toLowerCase();
+      let evColor = 'text-emerald-600 dark:text-emerald-400 font-bold';
+      let evIcon = '• ';
+      
+      if (tLow.includes('जन्मदिन') || tLow.includes('birthday') || tLow.includes('bday') || tLow.includes('केक')) {
+        evColor = 'text-purple-600 dark:text-purple-400 font-bold';
+        evIcon = '🎂 ';
+      } else if (tLow.includes('औषधि') || tLow.includes('medicine') || tLow.includes('चक्की') || tLow.includes('doc')) {
+        evColor = 'text-sky-600 dark:text-sky-400 font-bold';
+        evIcon = '💊 ';
+      } else if (tLow.includes('पूजा') || tLow.includes('puja') || tLow.includes('व्रत') || tLow.includes('वर्तबन्ध')) {
+        evColor = 'text-amber-600 dark:text-amber-400 font-bold';
+        evIcon = '🪔 ';
+      } else if (tLow.includes('बैठक') || tLow.includes('meeting') || tLow.includes('काम') || tLow.includes('office')) {
+        evColor = 'text-indigo-600 dark:text-indigo-400 font-bold';
+        evIcon = '💼 ';
+      }
+
+      eventLinesHtml += `<div class="text-[8.5px] ${evColor} truncate leading-tight select-none" title="${escapeHtml(ev.title)}">${evIcon}${escapeHtml(ev.title)}</div>`;
+      
+      if (userEvents.length > 1) {
+        const extraCount = userEvents.length - 1;
+        const extraText = currentLang === 'ne' ? `+${toDevanagariDigits(extraCount)} थप` : `+${extraCount} more`;
+        eventLinesHtml += `<div class="text-[7.5px] text-slate-400 dark:text-zinc-500 font-mono leading-none select-none">${extraText}</div>`;
+      }
+    }
 
     html += `
       <div onclick="openDateDetails('${dateKey}', ${day}, '${festKey}')" 
-           class="h-12 p-1 rounded-xl border ${borderClass} ${bgClass} cursor-pointer hover:border-emerald-400 dark:hover:border-zinc-600 flex flex-col justify-between transition-all select-none relative group active:scale-95">
-        <div class="flex justify-between items-start leading-none">
-          <span class="text-xs ${textClass}">${dayDisplay}</span>
-          <div class="flex items-center space-x-0.5 leading-none">
-            ${tithiGlyph ? `<span class="text-[9px]" title="${escapeHtml(tInfo.name)}">${tithiGlyph}</span>` : ''}
-            <span class="text-[9px] ${isSaturday ? 'text-rose-400 dark:text-rose-500 font-bold' : 'text-slate-400 dark:text-zinc-500 font-mono'}">${adDayNum}</span>
-          </div>
+           class="min-h-[62px] sm:min-h-[66px] p-1 sm:p-1.5 rounded-xl border ${borderClass} ${bgClass} cursor-pointer hover:border-emerald-400 dark:hover:border-zinc-600 flex flex-col justify-between transition-all select-none relative group active:scale-95 shadow-2xs">
+        
+        <!-- Top Row: Dynamic Moon Phase Emoji on Left, Gregorian (AD) Date on Right -->
+        <div class="flex justify-between items-center leading-none">
+          <span class="text-[10px] select-none opacity-85" title="${escapeHtml(tInfo.name)}">${tInfo.moonEmoji || '🌕'}</span>
+          <span class="text-[9px] ${isSaturday ? 'text-rose-500 dark:text-rose-400 font-bold' : (isSunday ? 'text-rose-400 dark:text-rose-400/80 font-semibold' : 'text-slate-400 dark:text-zinc-500 font-mono')} ml-auto">${adDayNum}</span>
         </div>
-        <div class="flex items-center space-x-0.5 truncate leading-none">
-          ${festName ? `<span class="inline-block px-1 py-0.5 text-[8px] font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-200 border border-amber-200/50 dark:border-amber-800/40 rounded truncate max-w-full" title="${escapeHtml(festName)}">${festName.length > 5 ? escapeHtml(festName.substring(0, 4)) + '..' : escapeHtml(festName)}</span>` : ''}
-          ${userEvents.length > 0 ? `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" title="${userEvents.length} सम्झना"></span>` : ''}
+
+        <!-- Center: Large, Bold Bikram Sambat Day Number -->
+        <div class="flex items-center justify-center my-auto py-0.5 leading-none">
+          <span class="text-sm sm:text-base ${textClass} tracking-tight select-none">${dayDisplay}</span>
+        </div>
+
+        <!-- Bottom Row: Direct Text Lines (No bulky badge tags, color-coded by category) -->
+        <div class="space-y-0.5 overflow-hidden w-full leading-tight min-h-[14px]">
+          ${eventLinesHtml}
         </div>
       </div>
     `;
@@ -2096,38 +2488,81 @@ function openAddEventModalQuick() {
   openDateDetails(dateKey, todayBs.day, `${todayBs.month}-${todayBs.day}`);
 }
 
+function setQuickEventTitle(title) {
+  const input = document.getElementById('eventTitleInput');
+  if (input) {
+    input.value = title;
+    input.focus();
+  }
+}
+
 function openDateDetails(dateKey, dayNum, festKey) {
   calendarState.selectedDateKey = dateKey;
   const parts = dateKey.split('-');
-  const y = parts[0];
-  const m = parts[1];
-  const d = parts[2];
+  const y = parseInt(parts[0], 10);
+  const m = parseInt(parts[1], 10);
+  const d = parseInt(parts[2], 10);
 
   const modal = document.getElementById('calendarEventModal');
   const titleEl = document.getElementById('modalSelectedDate');
+  const adEl = document.getElementById('modalSelectedDateAd');
   const festEl = document.getElementById('modalFestivalDesc');
+  const input = document.getElementById('eventTitleInput');
+  if (input) input.value = '';
 
   const mName = currentLang === 'ne' ? nepaliMonths[m - 1] : nepaliMonthsEn[m - 1];
   const dDev = currentLang === 'ne' ? toDevanagariDigits(d) : d;
   const yDev = currentLang === 'ne' ? toDevanagariDigits(y) : y;
 
-  const adDate = bsToAdDate(parseInt(y), parseInt(m), parseInt(d));
-  const adFormatted = adDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+  const adDate = bsToAdDate(y, m, d);
+  const weekdayName = currentLang === 'ne' 
+    ? ["आइतबार", "सोमबार", "मङ्गलबार", "बुधबार", "बिहीबार", "शुक्रबार", "शनिबार"][adDate.getDay()]
+    : ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][adDate.getDay()];
 
-  titleEl.innerText = `${mName} ${dDev}, ${yDev} (${adFormatted})`;
+  if (titleEl) {
+    titleEl.innerText = `${mName} ${dDev}, ${yDev} (${weekdayName})`;
+  }
 
-  const festName = getFestival(parseInt(y), parseInt(m), parseInt(d));
+  if (adEl) {
+    const adFormatted = adDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    adEl.innerText = `${adFormatted} (A.D.)`;
+  }
+
+  // Calculate Astronomical Panchanga for this specific day
+  const p = calculateOfflinePanchanga(adDate);
   const tInfo = getLunarTithi(adDate);
-  if (festName) {
-    festEl.innerText = `🎉 ${festName} • ${tInfo.badge}`;
-    festEl.classList.remove('hidden');
-  } else {
-    festEl.innerText = `🌙 ${tInfo.badge}`;
-    festEl.classList.remove('hidden');
+
+  const tithiIcon = document.getElementById('modalTithiIcon');
+  const tithiText = document.getElementById('modalTithiText');
+  const nakshatraText = document.getElementById('modalNakshatraText');
+  const sunTimes = document.getElementById('modalSunTimes');
+  const rahuTime = document.getElementById('modalRahuTime');
+
+  if (tithiIcon) tithiIcon.innerText = tInfo.moonEmoji || '🌕';
+  if (tithiText) tithiText.innerText = tInfo.name || p.tithiText;
+  if (nakshatraText) nakshatraText.innerText = p.nakshatraText ? `${p.nakshatraText} नक्षत्र` : (currentLang === 'ne' ? 'शुभ नक्षत्र' : 'Auspicious Nakshatra');
+  if (sunTimes) {
+    const sR = currentLang === 'ne' ? toDevanagariDigits(p.sunrise) : p.sunrise;
+    const sS = currentLang === 'ne' ? toDevanagariDigits(p.sunset) : p.sunset;
+    sunTimes.innerText = `${sR} - ${sS}`;
+  }
+  if (rahuTime) {
+    const rTime = currentLang === 'ne' ? toDevanagariDigits(p.rahuKaalText) : p.rahuKaalText;
+    rahuTime.innerText = `${currentLang === 'ne' ? 'राहु' : 'Rahu'}: ${rTime}`;
+  }
+
+  const festName = getFestival(y, m, d, currentLang);
+  if (festEl) {
+    if (festName) {
+      festEl.innerHTML = `<span>🎉 ${escapeHtml(festName)}</span> <span class="text-[10px] px-2 py-0.5 ml-2 bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 rounded font-bold uppercase tracking-wider">${currentLang === 'ne' ? 'सार्वजनिक बिदा / चाडपर्व' : 'Public Holiday / Festival'}</span>`;
+      festEl.classList.remove('hidden');
+    } else {
+      festEl.classList.add('hidden');
+    }
   }
 
   renderModalEvents(dateKey);
-  modal.classList.remove('hidden');
+  if (modal) modal.classList.remove('hidden');
 }
 
 function closeDateDetails() {
@@ -2201,138 +2636,7 @@ function deleteEvent(dateKey, id) {
 }
 
 function renderRemindersList() {
-  const container = document.getElementById('upcomingRemindersList');
-  if (!container) return;
-
-  const todayAd = new Date();
-  todayAd.setHours(0, 0, 0, 0);
-
-  const currentYear = (calendarState && calendarState.currentBsYear) || 2081;
-  const currentMonth = (calendarState && calendarState.currentBsMonth) || 1;
-  const items = [];
-
-  // 1. Gather verified official festivals for current month and next 2 months
-  for (let mOffset = 0; mOffset <= 2; mOffset++) {
-    let y = currentYear;
-    let m = currentMonth + mOffset;
-    while (m > 12) {
-      m -= 12;
-      y++;
-    }
-    const days = getBsMonthDays(y, m);
-    for (let d = 1; d <= days; d++) {
-      const fest = getFestival(y, m, d);
-      if (fest) {
-        const evAd = bsToAdDate(y, m, d);
-        evAd.setHours(0, 0, 0, 0);
-        const diffDays = Math.round((evAd.getTime() - todayAd.getTime()) / (1000 * 60 * 60 * 24));
-        if (diffDays >= 0 && diffDays <= 40) {
-          items.push({
-            type: 'festival',
-            year: y,
-            month: m,
-            day: d,
-            title: fest,
-            dateKey: `${y}-${m}-${d}`,
-            diffDays: diffDays
-          });
-        }
-      }
-    }
-  }
-
-  // 2. Gather user personal events
-  if (state.events) {
-    Object.keys(state.events).forEach(key => {
-      const parts = key.split('-').map(Number);
-      if (parts.length === 3) {
-        const y = parts[0], m = parts[1], d = parts[2];
-        const evAd = bsToAdDate(y, m, d);
-        evAd.setHours(0, 0, 0, 0);
-        const diffDays = Math.round((evAd.getTime() - todayAd.getTime()) / (1000 * 60 * 60 * 24));
-        if (diffDays >= 0 && diffDays <= 40) {
-          state.events[key].forEach(ev => {
-            items.push({
-              type: 'user',
-              id: ev.id,
-              year: y,
-              month: m,
-              day: d,
-              title: ev.title,
-              time: ev.time,
-              dateKey: key,
-              diffDays: diffDays
-            });
-          });
-        }
-      }
-    });
-  }
-
-  // Sort by diffDays ascending (nearest first)
-  items.sort((a, b) => a.diffDays - b.diffDays);
-
-  if (items.length === 0) {
-    container.innerHTML = `<div class="text-xs text-slate-500 dark:text-slate-400 py-3 text-center">${currentLang === 'ne' ? 'आगामी कुनै सम्झना वा चाडपर्व छैन' : 'No upcoming reminders or festivals'}</div>`;
-    return;
-  }
-
-  // Nearest 4 items only to keep view clean and compact
-  const nearestItems = items.slice(0, 4);
-
-  container.innerHTML = nearestItems.map(it => {
-    const mName = currentLang === 'ne' ? nepaliMonths[it.month - 1] : nepaliMonthsEn[it.month - 1];
-    const dDev = currentLang === 'ne' ? toDevanagariDigits(it.day) : it.day;
-    const yDev = currentLang === 'ne' ? toDevanagariDigits(it.year) : it.year;
-    const dateFormatted = `${mName} ${dDev}, ${yDev}`;
-
-    let countdownBadge = '';
-    if (it.diffDays === 0) {
-      countdownBadge = `<span class="px-2 py-0.5 text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-300 rounded-md shadow-2xs whitespace-nowrap">${currentLang === 'ne' ? 'आज' : 'Today'}</span>`;
-    } else if (it.diffDays === 1) {
-      countdownBadge = `<span class="px-2 py-0.5 text-[10px] font-extrabold bg-sky-100 dark:bg-sky-950/90 text-sky-800 dark:text-sky-300 rounded-md shadow-2xs whitespace-nowrap">${currentLang === 'ne' ? 'भोलि' : 'Tomorrow'}</span>`;
-    } else {
-      const daysDev = currentLang === 'ne' ? toDevanagariDigits(it.diffDays) : it.diffDays;
-      countdownBadge = `<span class="px-2 py-0.5 text-[10px] font-bold bg-slate-100 dark:bg-[#18181b] text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-zinc-800 rounded-md font-mono whitespace-nowrap">${daysDev} ${currentLang === 'ne' ? 'दिन बाँकी' : 'days left'}</span>`;
-    }
-
-    if (it.type === 'festival') {
-      return `
-        <div onclick="openDateDetails('${it.dateKey}', ${it.day}, '${it.month}-${it.day}')" 
-             class="p-2.5 bg-white dark:bg-[#121215] border border-amber-200/80 dark:border-amber-900/40 rounded-xl flex items-center justify-between shadow-2xs cursor-pointer hover:border-amber-400 transition active:scale-95">
-          <div class="flex-1 min-w-0 pr-2">
-            <div class="flex items-center space-x-1.5 truncate">
-              <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 rounded-md flex-shrink-0">🎉 चाडपर्व</span>
-              <span class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">${escapeHtml(it.title)}</span>
-            </div>
-            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">${dateFormatted}</div>
-          </div>
-          <div class="flex items-center space-x-2 flex-shrink-0">
-            ${countdownBadge}
-            <span class="text-xs text-slate-400">→</span>
-          </div>
-        </div>
-      `;
-    } else {
-      return `
-        <div class="p-2.5 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between shadow-2xs">
-          <div class="flex-1 min-w-0 pr-2">
-            <div class="flex items-center space-x-1.5 truncate">
-              <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 rounded-md flex-shrink-0">📌 सम्झना</span>
-              <span class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">${escapeHtml(it.title)}</span>
-            </div>
-            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">${dateFormatted} ${it.time ? '• ' + it.time : ''}</div>
-          </div>
-          <div class="flex items-center space-x-1.5 flex-shrink-0">
-            ${countdownBadge}
-            <button onclick="deleteEvent('${it.dateKey}', ${it.id})" class="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg transition" title="Delete">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-          </div>
-        </div>
-      `;
-    }
-  }).join('');
+  renderUpcomingHolidays();
 }
 
 // ---------------------------------------------------------------------
@@ -3221,8 +3525,30 @@ function drawPukuPlayground() {
     ctx.arc(12, -2, 2.5, 0, Math.PI, false);
     ctx.stroke();
   } else if (pukuPlayDog.state === 'pet') {
-    // Rolling on back happily
-    ctx.rotate(Math.PI * 0.85);
+    // Joyfully loving the petting: gentle loving tilt, wagging tail & paws, smiling face with tongue & closed happy eyes
+    const petWiggle = Math.sin(Date.now() / 110) * 0.08;
+    ctx.rotate(petWiggle);
+
+    // Wagging Tail
+    ctx.save();
+    ctx.translate(-14, -2);
+    ctx.rotate(Math.sin(Date.now() / 50) * 0.7);
+    ctx.fillStyle = earColor;
+    ctx.beginPath();
+    ctx.ellipse(-6, -4, 4, 10, -0.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Wiggling paws of pure joy
+    const paw1 = Math.sin(Date.now() / 90) * 3;
+    const paw2 = Math.cos(Date.now() / 90) * 3;
+    ctx.fillStyle = earColor;
+    ctx.fillRect(-10, 8 + paw1, 4, 8);
+    ctx.fillRect(-6, 8 - paw1, 4, 8);
+    ctx.fillRect(8, 8 + paw2, 4, 8);
+    ctx.fillRect(12, 8 - paw2, 4, 8);
+
+    // Body & Soft Belly
     ctx.fillStyle = bodyColor;
     ctx.beginPath();
     ctx.ellipse(0, 4, 16, 11, 0, 0, Math.PI * 2);
@@ -3231,10 +3557,54 @@ function drawPukuPlayground() {
     ctx.beginPath();
     ctx.ellipse(1, 6, 10, 6, 0, 0, Math.PI * 2);
     ctx.fill();
-    // Paws in air
+
+    // Head (Clear, loving, visible!)
+    ctx.fillStyle = bodyColor;
+    ctx.beginPath();
+    ctx.arc(14, -6, 11, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Snout & Cute Button Nose
+    ctx.fillStyle = bellyColor;
+    ctx.beginPath();
+    ctx.ellipse(20, -4, 6, 4.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.arc(23, -5, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Happy Closed Arched Eyes (^ ^) of pure enjoyment
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.arc(15, -8, 2.8, Math.PI, 0, false);
+    ctx.stroke();
+
+    // Cute Blushing Cheeks
+    ctx.fillStyle = 'rgba(253, 164, 175, 0.85)';
+    ctx.beginPath();
+    ctx.arc(11, -3, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(19, -2, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Happy Panting Smile & Pink Tongue
+    ctx.fillStyle = '#f43f5e';
+    ctx.beginPath();
+    ctx.arc(18, -1.5, 2.5, 0, Math.PI);
+    ctx.fill();
+    ctx.fillStyle = '#f472b6';
+    ctx.beginPath();
+    ctx.ellipse(19, 0.5 + Math.sin(Date.now() / 80) * 0.8, 2.2, 3.2, 0.15, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Floppy Ear resting back in bliss
     ctx.fillStyle = earColor;
-    ctx.fillRect(-8, -12, 4, 8);
-    ctx.fillRect(4, -12, 4, 8);
+    ctx.beginPath();
+    ctx.ellipse(7, -7, 4.5, 9, 0.6 + Math.sin(Date.now() / 140) * 0.15, 0, Math.PI * 2);
+    ctx.fill();
   } else {
     // Standing / Running
     const legOffset1 = Math.sin(pukuPlayDog.frame) * 4;
@@ -5342,7 +5712,7 @@ function showStickyCalendarNotification(isQuiet = false) {
   // Real-time temperature & weather icon
   const tempVal = weatherState.temp !== null ? Math.round(weatherState.temp) : 22;
   const tempStr = `${weatherState.icon || '☀️'} ${currentLang === 'ne' ? toDevanagariDigits(tempVal) : tempVal}°C`;
-  const sunStr = `🌅 ${toDevanagariDigits(weatherState.sunrise || '०६:०१')}  🌇 ${toDevanagariDigits(weatherState.sunset || '१७:४५')}`;
+  const sunStr = `☼↑ ${toDevanagariDigits(weatherState.sunrise || '०६:०१')}  ☼↓ ${toDevanagariDigits(weatherState.sunset || '१७:४५')}`;
 
   // Format rich body with festival, Tithi, temperature & sunrise/sunset
   let body = '';
@@ -5370,7 +5740,7 @@ function showStickyCalendarNotification(isQuiet = false) {
         const dayNum = String(d.getDate()).padStart(2, '0');
         const key = `${y}-${m}-${dayNum}`;
 
-        const curSunStr = `🌅 ${toDevanagariDigits(curPanchanga.sunrise || '०६:०१')}  🌇 ${toDevanagariDigits(curPanchanga.sunset || '१७:४५')}`;
+        const curSunStr = `☼↑ ${toDevanagariDigits(curPanchanga.sunrise || '०६:०१')}  ☼↓ ${toDevanagariDigits(curPanchanga.sunset || '१७:४५')}`;
         let bText = '';
         if (fName) {
           bText = `🌸 ${fName} • ${curTithi.badge || curTithi.name} • ${curSunStr}`;
@@ -6222,6 +6592,49 @@ function toggleTheme() {
   drawBaghBoard();
 }
 
+function initFontSize() {
+  const fs = state.fontSize || 'normal';
+  document.documentElement.classList.remove('font-large', 'font-xl');
+  if (fs === 'large') {
+    document.documentElement.classList.add('font-large');
+  } else if (fs === 'xl') {
+    document.documentElement.classList.add('font-xl');
+  }
+  updateFontSizeBtnUI();
+}
+
+function updateFontSizeBtnUI() {
+  const btn = document.getElementById('fontSizeBtn');
+  if (!btn) return;
+  const fs = state.fontSize || 'normal';
+  if (fs === 'normal') {
+    btn.innerText = 'A';
+    btn.title = currentLang === 'ne' ? 'अक्षरको आकार: सामान्य (Normal)' : 'Font Size: Normal';
+  } else if (fs === 'large') {
+    btn.innerText = 'A+';
+    btn.title = currentLang === 'ne' ? 'अक्षरको आकार: ठूलो (Large)' : 'Font Size: Large';
+  } else if (fs === 'xl') {
+    btn.innerText = 'A++';
+    btn.title = currentLang === 'ne' ? 'अक्षरको आकार: धेरै ठूलो (Extra Large)' : 'Font Size: Extra Large';
+  }
+}
+
+function cycleFontSize() {
+  const current = state.fontSize || 'normal';
+  if (current === 'normal') {
+    state.fontSize = 'large';
+    showToast(currentLang === 'ne' ? 'अक्षरको आकार: ठूलो (Large)' : 'Font Size: Large (A+)');
+  } else if (current === 'large') {
+    state.fontSize = 'xl';
+    showToast(currentLang === 'ne' ? 'अक्षरको आकार: धेरै ठूलो (Extra Large)' : 'Font Size: Extra Large (A++)');
+  } else {
+    state.fontSize = 'normal';
+    showToast(currentLang === 'ne' ? 'अक्षरको आकार: सामान्य (Normal)' : 'Font Size: Normal (A)');
+  }
+  saveState();
+  initFontSize();
+}
+
 function updateAllTranslations() {
   const bsDate = getBikramSambatDate();
   const headerDateEl = document.getElementById('headerDateDual');
@@ -6236,6 +6649,54 @@ function updateAllTranslations() {
   if (langBtn) {
     langBtn.innerText = currentLang === 'ne' ? 'English' : 'नेपाली';
   }
+
+  const btnNe = document.getElementById('langBtn-ne');
+  const btnEn = document.getElementById('langBtn-en');
+  if (btnNe && btnEn) {
+    if (currentLang === 'ne') {
+      btnNe.className = 'px-2 py-0.5 rounded-md bg-white dark:bg-zinc-800 text-emerald-700 dark:text-emerald-400 font-bold shadow-xs transition';
+      btnEn.className = 'px-2 py-0.5 rounded-md text-slate-500 dark:text-zinc-400 font-medium hover:text-slate-900 dark:hover:text-zinc-200 transition';
+    } else {
+      btnEn.className = 'px-2 py-0.5 rounded-md bg-white dark:bg-zinc-800 text-emerald-700 dark:text-emerald-400 font-bold shadow-xs transition';
+      btnNe.className = 'px-2 py-0.5 rounded-md text-slate-500 dark:text-zinc-400 font-medium hover:text-slate-900 dark:hover:text-zinc-200 transition';
+    }
+  }
+
+  const upAll = document.getElementById('upcomingTab-all');
+  const upHol = document.getElementById('upcomingTab-holidays');
+  const upRem = document.getElementById('upcomingTab-reminders');
+  if (upAll) upAll.innerText = t('upcomingTabAll');
+  if (upHol) upHol.innerText = t('upcomingTabHolidays');
+  if (upRem) upRem.innerText = t('upcomingTabReminders');
+
+  // Update Year Select options formatting
+  const yearSelect = document.getElementById('calendarYearSelect');
+  if (yearSelect) {
+    const curVal = yearSelect.value;
+    for (let opt of yearSelect.options) {
+      const yNum = parseInt(opt.value, 10);
+      opt.text = currentLang === 'ne' ? toDevanagariDigits(yNum) : String(yNum);
+    }
+    if (curVal) yearSelect.value = curVal;
+  }
+
+  // Update Month Select options formatting
+  const monthSelect = document.getElementById('calendarMonthSelect');
+  if (monthSelect) {
+    const curMonth = monthSelect.value;
+    for (let opt of monthSelect.options) {
+      const mNum = parseInt(opt.value, 10);
+      if (mNum >= 1 && mNum <= 12) {
+        opt.text = currentLang === 'ne' 
+          ? `${nepaliMonths[mNum - 1]} (${nepaliMonthsEn[mNum - 1]})`
+          : `${nepaliMonthsEn[mNum - 1]} (${nepaliMonths[mNum - 1]})`;
+      }
+    }
+    if (curMonth) monthSelect.value = curMonth;
+  }
+
+  updateFontSizeBtnUI();
+  calculateJewelryPrice();
 
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
@@ -6257,9 +6718,21 @@ function updateAllTranslations() {
   renderVehicleList();
   renderHomeServices();
   renderVaultDocs();
+  renderUpcomingHolidays();
+  const p = calculateOfflinePanchanga(new Date());
+  weatherState.dayLengthText = p.dayLengthText;
+  weatherState.rahuKaalText = p.rahuKaalText;
+  weatherState.abhijitText = p.abhijitText;
+  weatherState.tithiText = p.tithiText;
+  weatherState.nakshatraText = p.nakshatraText;
+  weatherState.moonEmoji = p.moonEmoji;
+  updateWeatherSunUI();
   updateBaghStats();
   initPetEngine();
   updatePukuHappinessDisplay();
+  updateWaterDisplay();
+  updatePomodoroDisplay();
+  updateEyeDisplay();
 }
 
 function showToast(msg) {
@@ -6293,68 +6766,150 @@ function escapeHtml(str) {
 
 
 // ---------------------------------------------------------------------
-// UPCOMING PUBLIC HOLIDAYS & FESTIVAL COUNTDOWN ENGINE
+// UNIFIED UPCOMING EVENTS, HOLIDAYS & PERSONAL REMINDERS ENGINE
 // ---------------------------------------------------------------------
+let currentUpcomingFilter = 'all'; // 'all', 'holidays', 'reminders'
+
+function setUpcomingFilter(filter) {
+  currentUpcomingFilter = filter;
+  ['all', 'holidays', 'reminders'].forEach(tab => {
+    const el = document.getElementById(`upcomingTab-${tab}`);
+    if (el) {
+      if (tab === filter) {
+        el.className = 'px-2.5 py-1 rounded-lg bg-white dark:bg-zinc-800 text-emerald-700 dark:text-emerald-400 font-bold shadow-2xs transition';
+      } else {
+        el.className = 'px-2.5 py-1 rounded-lg text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 font-medium transition';
+      }
+    }
+  });
+  renderUpcomingHolidays();
+}
+
 function renderUpcomingHolidays() {
-  const container = document.getElementById('holidaysQuickStrip');
+  const container = document.getElementById('upcomingEventsContainer') || document.getElementById('holidaysQuickStrip');
   if (!container) return;
 
   const todayAd = new Date();
   todayAd.setHours(0, 0, 0, 0);
 
-  const holidays = [];
+  const items = [];
   const curBs = getBikramSambatDate(todayAd);
 
-  // Scan next 120 days for festivals
+  // 1. Gather verified official festivals for next 120 days
   for (let i = 0; i <= 120; i++) {
     const scanAd = new Date(todayAd);
     scanAd.setDate(scanAd.getDate() + i);
     const scanBs = getBikramSambatDate(scanAd);
-    const festName = getFestival(scanBs.year, scanBs.month, scanBs.day);
+    const festName = getFestival(scanBs.year, scanBs.month, scanBs.day, currentLang);
 
     if (festName) {
-      const daysLeft = i;
       const mName = currentLang === 'ne' ? nepaliMonths[scanBs.month - 1] : nepaliMonthsEn[scanBs.month - 1];
       const dStr = currentLang === 'ne' ? toDevanagariDigits(scanBs.day) : scanBs.day;
       const dateText = `${mName} ${dStr}`;
+      const adFormatted = scanAd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-      holidays.push({
+      items.push({
+        type: 'holiday',
         name: festName,
-        dateText,
-        daysLeft,
+        dateText: `${dateText} (${adFormatted})`,
+        daysLeft: i,
         dayNum: scanBs.day,
         year: scanBs.year,
-        month: scanBs.month
+        month: scanBs.month,
+        dateKey: `${scanBs.year}-${scanBs.month}-${scanBs.day}`
       });
-      if (holidays.length >= 6) break;
     }
   }
 
-  if (holidays.length === 0) {
-    container.innerHTML = `<div class="col-span-full text-center text-[11px] text-slate-400 py-2">हाल कुनै आगामी बिदा छैन</div>`;
+  // 2. Gather user personal reminders for next 120 days
+  if (state.events) {
+    Object.keys(state.events).forEach(key => {
+      const parts = key.split('-').map(Number);
+      if (parts.length === 3) {
+        const y = parts[0], m = parts[1], d = parts[2];
+        const evAd = bsToAdDate(y, m, d);
+        evAd.setHours(0, 0, 0, 0);
+        const diffDays = Math.round((evAd.getTime() - todayAd.getTime()) / (1000 * 60 * 60 * 24));
+        if (diffDays >= 0 && diffDays <= 120) {
+          const mName = currentLang === 'ne' ? nepaliMonths[m - 1] : nepaliMonthsEn[m - 1];
+          const dStr = currentLang === 'ne' ? toDevanagariDigits(d) : d;
+          const adFormatted = evAd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+          state.events[key].forEach(ev => {
+            items.push({
+              type: 'reminder',
+              id: ev.id,
+              name: ev.title,
+              time: ev.time,
+              dateText: `${mName} ${dStr} (${adFormatted})`,
+              daysLeft: diffDays,
+              dayNum: d,
+              year: y,
+              month: m,
+              dateKey: key
+            });
+          });
+        }
+      }
+    });
+  }
+
+  // Sort chronologically ascending
+  items.sort((a, b) => a.daysLeft - b.daysLeft);
+
+  // Filter based on active tab
+  let filtered = items;
+  if (currentUpcomingFilter === 'holidays') {
+    filtered = items.filter(it => it.type === 'holiday');
+  } else if (currentUpcomingFilter === 'reminders') {
+    filtered = items.filter(it => it.type === 'reminder');
+  }
+
+  const displayItems = filtered.slice(0, 6);
+
+  if (displayItems.length === 0) {
+    let emptyMsg = currentLang === 'ne' ? 'हाल कुनै आगामी चाडपर्व वा सम्झना छैन' : 'No upcoming events or reminders';
+    if (currentUpcomingFilter === 'holidays') {
+      emptyMsg = currentLang === 'ne' ? 'हाल कुनै आगामी सार्वजनिक बिदा छैन' : 'No upcoming public holidays';
+    } else if (currentUpcomingFilter === 'reminders') {
+      emptyMsg = currentLang === 'ne' ? 'तपाईंले कुनै सम्झना थप्नुभएको छैन (पात्रोको मितिमा छोएर थप्नुहोस्)' : 'No reminders registered. Tap any date to add!';
+    }
+    container.innerHTML = `<div class="w-full text-center text-xs text-slate-400 dark:text-zinc-500 py-3 bg-slate-50 dark:bg-[#18181b]/50 rounded-xl border border-dashed border-slate-200 dark:border-zinc-800">${emptyMsg}</div>`;
     return;
   }
 
   let html = '';
-  holidays.forEach(h => {
+  displayItems.forEach(item => {
     let countdownBadge = '';
-    if (h.daysLeft === 0) {
-      countdownBadge = `<span class="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold text-[9px]">आज (Today)</span>`;
-    } else if (h.daysLeft === 1) {
-      countdownBadge = `<span class="px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold text-[9px]">भोलि (Tomorrow)</span>`;
+    if (item.daysLeft === 0) {
+      countdownBadge = `<span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-extrabold text-[10px]">${currentLang === 'ne' ? 'आज' : 'Today'}</span>`;
+    } else if (item.daysLeft === 1) {
+      countdownBadge = `<span class="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-extrabold text-[10px]">${currentLang === 'ne' ? 'भोलि' : 'Tomorrow'}</span>`;
     } else {
-      const dLeftStr = currentLang === 'ne' ? `${toDevanagariDigits(h.daysLeft)} दिन बाँकी` : `${h.daysLeft} days left`;
-      countdownBadge = `<span class="px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 font-bold text-[9px] font-mono">${dLeftStr}</span>`;
+      const dLeftStr = currentLang === 'ne' ? `${toDevanagariDigits(item.daysLeft)} दिन बाँकी` : `${item.daysLeft} days left`;
+      countdownBadge = `<span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-bold text-[10px] font-mono">${dLeftStr}</span>`;
     }
 
+    const typeBadge = item.type === 'holiday'
+      ? `<span class="inline-flex items-center text-[10px] text-rose-600 dark:text-rose-400 font-bold">🏛️ ${currentLang === 'ne' ? 'सार्वजनिक बिदा' : 'Public Holiday'}</span>`
+      : `<span class="inline-flex items-center text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">📌 ${currentLang === 'ne' ? 'मेरो सम्झना' : 'My Reminder'}${item.time ? ' • ' + item.time : ''}</span>`;
+
+    const clickAction = item.type === 'holiday'
+      ? `jumpToCalendarFestival(${item.year}, ${item.month}, ${item.dayNum})`
+      : `openDateDetails('${item.dateKey}', ${item.dayNum}, '${item.month}-${item.dayNum}')`;
+
     html += `
-      <div onclick="jumpToCalendarFestival(${h.year}, ${h.month}, ${h.dayNum})" class="p-2 bg-slate-50 dark:bg-[#18181b] hover:bg-slate-100 dark:hover:bg-[#202024] border border-slate-200 dark:border-zinc-800 rounded-xl flex flex-col justify-between cursor-pointer transition select-none group">
-        <div class="flex justify-between items-start gap-1 mb-1">
-          <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 font-mono">${h.dateText}</span>
+      <div onclick="${clickAction}" class="min-w-[215px] sm:min-w-[235px] max-w-[255px] snap-start flex-shrink-0 p-3 bg-slate-50 dark:bg-[#15171c] hover:bg-slate-100 dark:hover:bg-[#1c1e24] border border-slate-200 dark:border-zinc-800/80 rounded-2xl flex flex-col justify-between cursor-pointer transition select-none group shadow-2xs">
+        <div class="flex justify-between items-center gap-1.5 mb-1.5">
+          <span class="text-[11px] font-bold text-slate-500 dark:text-zinc-400 font-mono">${item.dateText}</span>
           ${countdownBadge}
         </div>
-        <div class="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-emerald-600 transition" title="${escapeHtml(h.name)}">
-          ${escapeHtml(h.name)}
+        <div class="text-xs font-extrabold text-slate-900 dark:text-zinc-100 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition mb-1" title="${escapeHtml(item.name)}">
+          ${escapeHtml(item.name)}
+        </div>
+        <div class="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-zinc-800/60">
+          ${typeBadge}
+          <span class="text-[10px] text-slate-400 group-hover:translate-x-0.5 transition">→</span>
         </div>
       </div>
     `;
@@ -6371,6 +6926,22 @@ function jumpToCalendarFestival(year, month, day) {
   const dateKey = `${year}-${month}-${day}`;
   openDateDetails(dateKey, day, `${month}-${day}`);
 }
+
+function openEmergencyModal() {
+  const modal = document.getElementById('emergencyModal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    playSound('pop');
+  }
+}
+
+function closeEmergencyModal() {
+  const modal = document.getElementById('emergencyModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+window.openEmergencyModal = openEmergencyModal;
+window.closeEmergencyModal = closeEmergencyModal;
 
 
 // ---------------------------------------------------------------------
@@ -6442,6 +7013,330 @@ function calculateNeaBill() {
   if (scEl) scEl.innerText = currentLang === 'ne' ? `रू ${toDevanagariDigits(serviceCharge.toFixed(2))}` : `Rs. ${serviceCharge.toFixed(2)}`;
   if (ecEl) ecEl.innerText = currentLang === 'ne' ? `रू ${toDevanagariDigits(energyCharge.toFixed(2))}` : `Rs. ${energyCharge.toFixed(2)}`;
   if (totEl) totEl.innerText = currentLang === 'ne' ? `रू ${toDevanagariDigits(total.toFixed(2))}` : `Rs. ${total.toFixed(2)}`;
+}
+
+// ---------------------------------------------------------------------
+// DYNAMIC GOLD & SILVER BULLION RATES (FENEGOSIDA) & JEWELRY CALCULATOR
+// ---------------------------------------------------------------------
+const goldState = {
+  fine24k: 291900,         // NPR per 1 tola (Default today baseline)
+  tejabi22k: 290450,       // NPR per 1 tola
+  silver: 4390,            // NPR per 1 tola
+  fine24k10g: 250255,      // NPR per 10 grams
+  silver10g: 3764,         // NPR per 10 grams
+  yesterdayFine24k: 294800,
+  yesterdaySilver: 4450,
+  displayUnit: 'tola',     // 'tola' or '10g'
+  lastUpdated: null,
+  isLive: false,
+  isFetching: false
+};
+
+const goldRates = {
+  fine24k: goldState.fine24k,
+  tejabi22k: goldState.tejabi22k,
+  silver: goldState.silver
+};
+
+function setGoldDisplayUnit(unit) {
+  goldState.displayUnit = unit;
+  const tolaBtn = document.getElementById('goldDisplayTolaBtn');
+  const g10Btn = document.getElementById('goldDisplay10gBtn');
+  
+  if (unit === 'tola') {
+    if (tolaBtn) {
+      tolaBtn.className = 'px-2.5 py-0.5 rounded-md bg-white dark:bg-zinc-900 text-slate-900 dark:text-white shadow-xs transition';
+    }
+    if (g10Btn) {
+      g10Btn.className = 'px-2.5 py-0.5 rounded-md text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 transition';
+    }
+  } else {
+    if (tolaBtn) {
+      tolaBtn.className = 'px-2.5 py-0.5 rounded-md text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 transition';
+    }
+    if (g10Btn) {
+      g10Btn.className = 'px-2.5 py-0.5 rounded-md bg-white dark:bg-zinc-900 text-slate-900 dark:text-white shadow-xs transition';
+    }
+  }
+  updateGoldRatesDisplay();
+}
+
+function updateGoldRatesDisplay() {
+  const is10g = goldState.displayUnit === '10g';
+  const r24k = is10g ? (goldState.fine24k10g || Math.round(goldState.fine24k / 1.1664)) : goldState.fine24k;
+  const r22k = is10g ? (Math.round((goldState.fine24k10g || goldState.fine24k / 1.1664) * 0.995)) : goldState.tejabi22k;
+  const rSil = is10g ? (goldState.silver10g || Math.round(goldState.silver / 1.1664)) : goldState.silver;
+
+  const formatNpr = (val) => currentLang === 'ne'
+    ? 'रू ' + toDevanagariDigits(Number(val).toLocaleString('en-IN'))
+    : 'Rs. ' + Number(val).toLocaleString('en-IN');
+
+  const r24kEl = document.getElementById('goldRate24k');
+  const r22kEl = document.getElementById('goldRate22k');
+  const silEl = document.getElementById('silverRate');
+  if (r24kEl) r24kEl.innerText = formatNpr(r24k);
+  if (r22kEl) r22kEl.innerText = formatNpr(r22k);
+  if (silEl) silEl.innerText = formatNpr(rSil);
+
+  const u24kEl = document.getElementById('goldRate24kUnit');
+  const u22kEl = document.getElementById('goldRate22kUnit');
+  const uSilEl = document.getElementById('silverRateUnit');
+  const unitText = is10g 
+    ? (currentLang === 'ne' ? 'प्रति १० ग्राम' : 'per 10g')
+    : (currentLang === 'ne' ? 'प्रति तोला' : 'per tola');
+  if (u24kEl) u24kEl.innerText = unitText;
+  if (u22kEl) u22kEl.innerText = unitText;
+  if (uSilEl) uSilEl.innerText = unitText;
+
+  // Calculate and format daily difference (delta)
+  const d24kEl = document.getElementById('goldDelta24k');
+  const dSilEl = document.getElementById('silverDelta');
+  if (d24kEl && goldState.yesterdayFine24k) {
+    const diff = goldState.fine24k - goldState.yesterdayFine24k;
+    if (diff !== 0) {
+      const isDrop = diff < 0;
+      const absDiff = Math.abs(diff);
+      const diffFormatted = currentLang === 'ne'
+        ? (isDrop ? `▼ रू ${toDevanagariDigits(absDiff.toLocaleString('en-IN'))}` : `▲ रू ${toDevanagariDigits(absDiff.toLocaleString('en-IN'))}`)
+        : (isDrop ? `▼ Rs. ${absDiff.toLocaleString('en-IN')}` : `▲ Rs. ${absDiff.toLocaleString('en-IN')}`);
+      d24kEl.innerText = diffFormatted;
+      d24kEl.className = isDrop 
+        ? 'text-[9px] font-bold font-mono text-emerald-600 dark:text-emerald-400' 
+        : 'text-[9px] font-bold font-mono text-rose-600 dark:text-rose-400';
+    } else {
+      d24kEl.innerText = currentLang === 'ne' ? 'स्थिर' : 'Steady';
+      d24kEl.className = 'text-[9px] font-mono text-slate-400';
+    }
+  }
+
+  if (dSilEl && goldState.yesterdaySilver) {
+    const diff = goldState.silver - goldState.yesterdaySilver;
+    if (diff !== 0) {
+      const isDrop = diff < 0;
+      const absDiff = Math.abs(diff);
+      const diffFormatted = currentLang === 'ne'
+        ? (isDrop ? `▼ रू ${toDevanagariDigits(absDiff.toLocaleString('en-IN'))}` : `▲ रू ${toDevanagariDigits(absDiff.toLocaleString('en-IN'))}`)
+        : (isDrop ? `▼ Rs. ${absDiff.toLocaleString('en-IN')}` : `▲ Rs. ${absDiff.toLocaleString('en-IN')}`);
+      dSilEl.innerText = diffFormatted;
+      dSilEl.className = isDrop 
+        ? 'text-[9px] font-bold font-mono text-emerald-600 dark:text-emerald-400' 
+        : 'text-[9px] font-bold font-mono text-rose-600 dark:text-rose-400';
+    } else {
+      dSilEl.innerText = currentLang === 'ne' ? 'स्थिर' : 'Steady';
+      dSilEl.className = 'text-[9px] font-mono text-slate-400';
+    }
+  }
+
+  // Update live indicator & timestamp
+  const indEl = document.getElementById('goldLiveIndicator');
+  const upEl = document.getElementById('goldLastUpdated');
+  if (indEl) {
+    if (goldState.isLive) {
+      indEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1"></span>${currentLang === 'ne' ? 'प्रत्यक्ष FENEGOSIDA' : 'Live FENEGOSIDA'}`;
+      indEl.className = 'inline-flex items-center text-[10px] text-emerald-600 dark:text-emerald-400 font-bold';
+    } else {
+      indEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1"></span>${currentLang === 'ne' ? 'अफलाइन सुरक्षित दर' : 'Offline Cached'}`;
+      indEl.className = 'inline-flex items-center text-[10px] text-amber-600 dark:text-amber-400 font-bold';
+    }
+  }
+  if (upEl) {
+    if (goldState.lastUpdated) {
+      try {
+        const d = new Date(goldState.lastUpdated);
+        const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        upEl.innerText = currentLang === 'ne' ? `आज ${toDevanagariDigits(timeStr)}` : `Today ${timeStr}`;
+      } catch (e) {
+        upEl.innerText = currentLang === 'ne' ? 'आजको दर' : 'Today';
+      }
+    } else {
+      upEl.innerText = currentLang === 'ne' ? 'आजको दर' : 'Today';
+    }
+  }
+
+  // Sync to calculation rates object
+  goldRates.fine24k = goldState.fine24k;
+  goldRates.tejabi22k = goldState.tejabi22k;
+  goldRates.silver = goldState.silver;
+}
+
+async function fetchGoldSilverRates(isManual = false) {
+  if (goldState.isFetching) return;
+  goldState.isFetching = true;
+
+  const refreshIcon = document.getElementById('goldRefreshIcon');
+  if (refreshIcon) refreshIcon.classList.add('animate-spin');
+
+  if (isManual) {
+    showToast(currentLang === 'ne' ? 'सुनचाँदी दर खोजिँदैछ...' : 'Fetching live bullion rates...');
+  }
+
+  // Endpoints to attempt sequentially
+  const endpoints = [
+    '/api/gold',
+    'https://api.fenegosida.org/api/website/v1/Dashboard/today',
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.fenegosida.org/api/website/v1/Dashboard/today')
+  ];
+
+  let rawData = null;
+  for (const url of endpoints) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4500);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const json = await res.json();
+        if (Array.isArray(json) && json.length > 0) {
+          rawData = json;
+          break;
+        }
+      }
+    } catch (err) {
+      // Continue to next endpoint fallback
+    }
+  }
+
+  if (rawData) {
+    try {
+      const S = pred => rawData.find(item => pred(item.rateType || ''));
+      const fineTola = S(t => t.includes('सुन') && (t.includes('तोल') || t.includes('तोला')));
+      const silverTola = S(t => t.includes('चाँदी') && (t.includes('तोल') || t.includes('तोला')));
+      const fine10g = S(t => t.includes('सुन') && t.includes('ग्राम'));
+      const silver10g = S(t => t.includes('चाँदी') && t.includes('ग्राम'));
+
+      if (fineTola && fineTola.todayBaseRatePerGram > 0) {
+        goldState.fine24k = fineTola.todayBaseRatePerGram;
+        goldState.yesterdayFine24k = fineTola.yestardayBaseRatePerGram || fineTola.todayBaseRatePerGram;
+        goldState.tejabi22k = Math.round(goldState.fine24k * 0.995);
+        goldState.lastUpdated = fineTola.todayDate || new Date().toISOString();
+        goldState.isLive = true;
+      }
+
+      if (silverTola && silverTola.todayBaseRatePerGram > 0) {
+        goldState.silver = silverTola.todayBaseRatePerGram;
+        goldState.yesterdaySilver = silverTola.yestardayBaseRatePerGram || silverTola.todayBaseRatePerGram;
+      }
+
+      if (fine10g && fine10g.todayBaseRatePerGram > 0) {
+        goldState.fine24k10g = fine10g.todayBaseRatePerGram;
+      }
+
+      if (silver10g && silver10g.todayBaseRatePerGram > 0) {
+        goldState.silver10g = silver10g.todayBaseRatePerGram;
+      }
+
+      // Cache locally
+      localStorage.setItem('sangalo_gold_rates_cache', JSON.stringify({
+        data: goldState,
+        timestamp: Date.now()
+      }));
+
+      updateGoldRatesDisplay();
+      calculateJewelryPrice();
+
+      if (isManual) {
+        showToast(currentLang === 'ne' ? 'नेपाल सुनचाँदी महासंघ दर ताजा भयो।' : 'Bullion rates refreshed from FENEGOSIDA.');
+      }
+    } catch (parseErr) {
+      console.error('Error parsing gold rates:', parseErr);
+    }
+  } else {
+    // If network failed, check localStorage cache
+    loadCachedGoldRates();
+    if (isManual) {
+      showToast(currentLang === 'ne' ? 'इन्टरनेट नभएकाले सुरक्षित दर प्रयोग गरियो।' : 'Network unavailable. Using cached rates.');
+    }
+  }
+
+  goldState.isFetching = false;
+  if (refreshIcon) refreshIcon.classList.remove('animate-spin');
+}
+
+function loadCachedGoldRates() {
+  try {
+    const raw = localStorage.getItem('sangalo_gold_rates_cache');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.data) {
+        Object.assign(goldState, parsed.data);
+        goldState.isLive = false; // from cache
+        updateGoldRatesDisplay();
+        calculateJewelryPrice();
+        return true;
+      }
+    }
+  } catch (e) {
+    console.error('Error loading gold rates cache:', e);
+  }
+  updateGoldRatesDisplay();
+  calculateJewelryPrice();
+  return false;
+}
+
+function initGoldRates() {
+  loadCachedGoldRates();
+  // Fetch live rates silently in background
+  fetchGoldSilverRates(false);
+}
+
+function openGoldSilverModal() {
+  const modal = document.getElementById('goldSilverModal');
+  if (!modal) return;
+  updateGoldRatesDisplay();
+  calculateJewelryPrice();
+  modal.classList.remove('hidden');
+
+  // If last updated is null or older than 3 hours, refresh silently
+  const cache = localStorage.getItem('sangalo_gold_rates_cache');
+  if (!cache || (Date.now() - JSON.parse(cache).timestamp > 3 * 3600 * 1000)) {
+    fetchGoldSilverRates(false);
+  }
+}
+
+function closeGoldSilverModal() {
+  const modal = document.getElementById('goldSilverModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function calculateJewelryPrice() {
+  const metal = document.getElementById('goldCalcMetal')?.value || '24k';
+  const unit = document.getElementById('goldCalcUnit')?.value || 'tola';
+  const weight = parseFloat(document.getElementById('goldCalcWeight')?.value || '0');
+  const jartiPercent = parseFloat(document.getElementById('goldCalcJarti')?.value || '0');
+  const jyala = parseFloat(document.getElementById('goldCalcJyala')?.value || '0');
+
+  let ratePerTola = goldRates.fine24k;
+  if (metal === '22k') ratePerTola = goldRates.tejabi22k;
+  else if (metal === 'silver') ratePerTola = goldRates.silver;
+
+  let weightInTolas = 0;
+  if (unit === 'tola') weightInTolas = weight;
+  else if (unit === 'lal') weightInTolas = weight / 100.0;
+  else if (unit === 'gram') weightInTolas = weight / 11.664;
+
+  const netMetalCost = Math.round(weightInTolas * ratePerTola);
+  const jartiCost = Math.round(netMetalCost * (jartiPercent / 100.0));
+  const finalPrice = Math.round(netMetalCost + jartiCost + jyala);
+
+  const formatNpr = (val) => currentLang === 'ne' 
+    ? 'रू ' + toDevanagariDigits(Number(val).toLocaleString('en-IN'))
+    : 'Rs. ' + Number(val).toLocaleString('en-IN');
+
+  const metalEl = document.getElementById('goldMetalPrice');
+  const jartiEl = document.getElementById('goldJartiCost');
+  const jyalaEl = document.getElementById('goldJyalaCost');
+  const finalEl = document.getElementById('goldFinalPrice');
+  const summaryEl = document.getElementById('goldRateSummary');
+
+  if (metalEl) metalEl.innerText = formatNpr(netMetalCost);
+  if (jartiEl) jartiEl.innerText = formatNpr(jartiCost);
+  if (jyalaEl) jyalaEl.innerText = formatNpr(jyala);
+  if (finalEl) finalEl.innerText = formatNpr(finalPrice);
+  if (summaryEl) {
+    summaryEl.innerText = currentLang === 'ne'
+      ? `२४K: ${toDevanagariDigits(goldRates.fine24k.toLocaleString('en-IN'))}`
+      : `24K: ${goldRates.fine24k.toLocaleString('en-IN')}`;
+  }
 }
 
 
@@ -6606,10 +7501,549 @@ window.tapPetInteractive = interactWithPet;
 window.tapPuku = interactWithPet;
 
 // ---------------------------------------------------------------------
+// 14.5 GITHUB LIVE APP VERSION & UPDATE ENGINE (0-Backend REST API)
+// ---------------------------------------------------------------------
+const CURRENT_APP_VERSION = 'v1.2.0';
+const GITHUB_REPO_LATEST_RELEASE = 'https://api.github.com/repos/dahalsandesh/sangalo/releases/latest';
+
+function compareSemVer(v1, v2) {
+  const p1 = (v1 || '').replace(/^[^\d]*/, '').split('.').map(n => parseInt(n, 10) || 0);
+  const p2 = (v2 || '').replace(/^[^\d]*/, '').split('.').map(n => parseInt(n, 10) || 0);
+  const len = Math.max(p1.length, p2.length);
+  for (let i = 0; i < len; i++) {
+    const a = p1[i] || 0;
+    const b = p2[i] || 0;
+    if (a > b) return 1;
+    if (a < b) return -1;
+  }
+  return 0;
+}
+
+async function checkForAppUpdates(isManual = false) {
+  if (isManual) {
+    showToast(currentLang === 'ne' ? 'अपडेट खोजिँदैछ...' : 'Checking for updates...');
+  }
+  try {
+    const res = await fetch(GITHUB_REPO_LATEST_RELEASE, {
+      headers: { 'Accept': 'application/vnd.github.v3+json' },
+      cache: 'no-cache'
+    });
+    if (!res.ok) {
+      if (isManual) {
+        showToast(currentLang === 'ne' ? 'अपडेट सर्भरमा जडान हुन सकेन' : 'Could not reach update server');
+      }
+      return;
+    }
+    // Only save timestamp on successful HTTP response
+    localStorage.setItem('sangalo_last_update_check', String(Date.now()));
+
+    const data = await res.json();
+    const latestTag = data.tag_name || CURRENT_APP_VERSION;
+    const hasUpdate = compareSemVer(latestTag, CURRENT_APP_VERSION) > 0;
+
+    if (hasUpdate) {
+      let apkUrl = 'https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk';
+      if (data.assets && Array.isArray(data.assets)) {
+        const apkAsset = data.assets.find(a => a.name && a.name.toLowerCase().endsWith('.apk'));
+        if (apkAsset && apkAsset.browser_download_url) {
+          apkUrl = apkAsset.browser_download_url;
+        }
+      }
+      showAppUpdateModal(latestTag, data.name || latestTag, data.body || '', apkUrl);
+    } else {
+      if (isManual) {
+        showToast(currentLang === 'ne' 
+          ? `तपाईंको एप पछिल्लो संस्करण (${CURRENT_APP_VERSION}) मा अद्यावधिक छ।` 
+          : `Sangalo is up to date (${CURRENT_APP_VERSION}).`);
+      }
+    }
+  } catch (err) {
+    console.warn('Update check error:', err);
+    if (isManual) {
+      showToast(currentLang === 'ne' ? 'इन्टरनेट नभएकोले अपडेट जाँच्न सकिएन' : 'Offline: Could not check for updates');
+    }
+  }
+}
+
+function showAppUpdateModal(newVersion, title, bodyMarkdown, apkDownloadUrl) {
+  const modal = document.getElementById('appUpdateModal');
+  if (!modal) return;
+  const verBadge = document.getElementById('updateModalVerBadge');
+  const titleEl = document.getElementById('updateModalTitle');
+  const changelogEl = document.getElementById('updateModalChangelog');
+  const downloadBtn = document.getElementById('updateModalDownloadBtn');
+
+  if (verBadge) verBadge.innerText = `${CURRENT_APP_VERSION} → ${newVersion}`;
+  if (titleEl) titleEl.innerText = title || (currentLang === 'ne' ? 'नयाँ अपडेट उपलब्ध छ!' : 'New Version Available!');
+  if (changelogEl) {
+    const cleanLines = (bodyMarkdown || '')
+      .split('\n')
+      .map(l => l.trim())
+      .filter(l => l.startsWith('-') || l.startsWith('*') || l.startsWith('•'))
+      .map(l => l.replace(/^[-*•]\s*/, '').replace(/\*\*(.*?)\*\*/g, '$1'))
+      .slice(0, 5);
+
+    if (cleanLines.length > 0) {
+      changelogEl.innerHTML = cleanLines.map(l => `• ${escapeHtml(l)}`).join('<br>');
+    } else {
+      changelogEl.innerText = currentLang === 'ne' 
+        ? 'नयाँ सुधार, क्यालेन्डर सटीकता तथा सुविधाहरू सहित नवीनतम संस्करण उपलब्ध छ।' 
+        : 'New improvements, calendar accuracy, and bug fixes are available.';
+    }
+  }
+  if (downloadBtn) {
+    downloadBtn.onclick = () => {
+      openExternalLink(apkDownloadUrl);
+      closeAppUpdateModal();
+    };
+  }
+  modal.classList.remove('hidden');
+
+  // Also post native Android OS notification in the system drawer
+  if (window.AndroidBridge && typeof window.AndroidBridge.notifyAppUpdate === 'function') {
+    try {
+      window.AndroidBridge.notifyAppUpdate(newVersion, title || '', apkDownloadUrl);
+    } catch (e) {
+      console.warn('AndroidBridge notifyAppUpdate error:', e);
+    }
+  }
+}
+
+function closeAppUpdateModal() {
+  const modal = document.getElementById('appUpdateModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+// ---------------------------------------------------------------------
+// 14. DAILY WELLNESS & FOCUS SUITE (POMODORO, WATER & EYE REST)
+// ---------------------------------------------------------------------
+const wellnessState = {
+  activeTab: 'pomodoro',
+  // Pomodoro
+  pomodoroDuration: 25,
+  pomodoroRemaining: 25 * 60,
+  pomodoroRunning: false,
+  pomodoroTimerId: null,
+  pomodoroMode: 'work', // 'work' or 'break'
+  // Water
+  waterGlasses: 0,
+  waterGoal: 8,
+  waterHourlyReminder: false,
+  waterLastLogDate: null,
+  waterReminderIntervalId: null,
+  // 20-20-20 Eye Break
+  eyeRunning: false,
+  eyeRemaining: 20 * 60,
+  eyeTimerId: null
+};
+
+// Gentle Audio Synthesizer (Zero asset bloat, pure Web Audio)
+function playWellnessChime(type = 'bell') {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    
+    if (type === 'bell') {
+      // Tibetan bell / singing bowl pitch
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12); // A5
+    } else if (type === 'water') {
+      // Soft water droplet pitch
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.15);
+    } else {
+      // Eye rest gentle hum
+      osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+    }
+    
+    gain.gain.setValueAtTime(0.18, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 1.2);
+  } catch (e) {
+    // Graceful fallback
+  }
+}
+
+function openWellnessModal(initialTab = 'pomodoro') {
+  const modal = document.getElementById('wellnessModal');
+  if (!modal) return;
+  switchWellnessTab(initialTab);
+  updatePomodoroDisplay();
+  updateWaterDisplay();
+  updateEyeDisplay();
+  modal.classList.remove('hidden');
+}
+
+function closeWellnessModal() {
+  const modal = document.getElementById('wellnessModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function switchWellnessTab(tab) {
+  wellnessState.activeTab = tab;
+  ['pomodoro', 'water', 'eye'].forEach(t => {
+    const btn = document.getElementById(`wellnessTab-${t}`);
+    const panel = document.getElementById(`wellnessPanel-${t}`);
+    if (btn) {
+      if (t === tab) {
+        btn.className = 'py-1.5 rounded-lg bg-white dark:bg-zinc-800 text-emerald-600 dark:text-emerald-400 shadow-2xs transition';
+      } else {
+        btn.className = 'py-1.5 rounded-lg text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 transition';
+      }
+    }
+    if (panel) {
+      if (t === tab) panel.classList.remove('hidden');
+      else panel.classList.add('hidden');
+    }
+  });
+}
+
+// --- POMODORO TIMER ENGINE ---
+function setPomodoroDuration(mins) {
+  if (wellnessState.pomodoroRunning) {
+    clearInterval(wellnessState.pomodoroTimerId);
+    wellnessState.pomodoroRunning = false;
+  }
+  wellnessState.pomodoroDuration = mins;
+  wellnessState.pomodoroRemaining = mins * 60;
+  wellnessState.pomodoroMode = mins <= 5 ? 'break' : 'work';
+  updatePomodoroDisplay();
+  updatePomodoroControls();
+}
+
+function togglePomodoroTimer() {
+  if (wellnessState.pomodoroRunning) {
+    // Pause
+    clearInterval(wellnessState.pomodoroTimerId);
+    wellnessState.pomodoroRunning = false;
+  } else {
+    // Start
+    wellnessState.pomodoroRunning = true;
+    playWellnessChime('bell');
+    wellnessState.pomodoroTimerId = setInterval(() => {
+      if (wellnessState.pomodoroRemaining > 0) {
+        wellnessState.pomodoroRemaining--;
+        updatePomodoroDisplay();
+      } else {
+        // Interval finished
+        clearInterval(wellnessState.pomodoroTimerId);
+        wellnessState.pomodoroRunning = false;
+        playWellnessChime('bell');
+        
+        if (wellnessState.pomodoroMode === 'work') {
+          showToast(currentLang === 'ne' ? '🍅 एकाग्रता सत्र सकियो! ५ मिनेट आराम गर्नुहोस्।' : '🍅 Focus session complete! Take a 5-minute break.');
+          setPomodoroDuration(5);
+        } else {
+          showToast(currentLang === 'ne' ? '🔔 आराम समय सकियो! नयाँ एकाग्रता सत्र सुरु गर्नुहोस्।' : '🔔 Break over! Ready for next focus session.');
+          setPomodoroDuration(25);
+        }
+      }
+    }, 1000);
+  }
+  updatePomodoroControls();
+}
+
+function resetPomodoroTimer() {
+  if (wellnessState.pomodoroRunning) {
+    clearInterval(wellnessState.pomodoroTimerId);
+    wellnessState.pomodoroRunning = false;
+  }
+  wellnessState.pomodoroRemaining = wellnessState.pomodoroDuration * 60;
+  updatePomodoroDisplay();
+  updatePomodoroControls();
+}
+
+function updatePomodoroDisplay() {
+  const m = Math.floor(wellnessState.pomodoroRemaining / 60);
+  const s = wellnessState.pomodoroRemaining % 60;
+  const timeFormatted = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  
+  const dispEl = document.getElementById('pomodoroTimeDisplay');
+  const dotEl = document.getElementById('pomodoroModeDot');
+  const textEl = document.getElementById('pomodoroModeText');
+
+  if (dispEl) {
+    dispEl.innerText = currentLang === 'ne' ? toDevanagariDigits(timeFormatted) : timeFormatted;
+  }
+  if (dotEl) {
+    dotEl.className = wellnessState.pomodoroMode === 'work' 
+      ? 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse' 
+      : 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
+  }
+  if (textEl) {
+    if (wellnessState.pomodoroMode === 'work') {
+      textEl.innerText = currentLang === 'ne' ? `एकाग्रता समय (${toDevanagariDigits(wellnessState.pomodoroDuration)} मिनेट)` : `Focus Time (${wellnessState.pomodoroDuration}m)`;
+    } else {
+      textEl.innerText = currentLang === 'ne' ? `विश्राम समय (${toDevanagariDigits(wellnessState.pomodoroDuration)} मिनेट)` : `Break Time (${wellnessState.pomodoroDuration}m)`;
+    }
+  }
+
+  const miniPomoEl = document.getElementById('miniPomodoroStatus');
+  if (miniPomoEl) {
+    miniPomoEl.innerText = wellnessState.pomodoroRunning
+      ? (currentLang === 'ne' ? `${toDevanagariDigits(timeFormatted)} सक्रिय` : `${timeFormatted} active`)
+      : (currentLang === 'ne' ? `${toDevanagariDigits(wellnessState.pomodoroDuration)} मिनेट` : `${wellnessState.pomodoroDuration} mins`);
+  }
+}
+
+function updatePomodoroControls() {
+  const btn = document.getElementById('pomodoroToggleBtn');
+  const icon = document.getElementById('pomodoroToggleIcon');
+  const text = document.getElementById('pomodoroToggleText');
+  
+  if (btn && text) {
+    if (wellnessState.pomodoroRunning) {
+      btn.className = 'py-2.5 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center space-x-1.5';
+      text.innerText = currentLang === 'ne' ? 'रोक्नुहोस् (Pause)' : 'Pause';
+      if (icon) {
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />';
+      }
+    } else {
+      btn.className = 'py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center space-x-1.5';
+      text.innerText = currentLang === 'ne' ? 'सुरु गर्नुहोस् (Start)' : 'Start';
+      if (icon) {
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />';
+      }
+    }
+  }
+}
+
+// --- WATER HYDRATION ENGINE ---
+function addWaterGlass(delta) {
+  checkDailyWaterReset();
+  wellnessState.waterGlasses = Math.max(0, Math.min(16, wellnessState.waterGlasses + delta));
+  saveWellnessState();
+  updateWaterDisplay();
+  if (delta > 0) {
+    playWellnessChime('water');
+    if (wellnessState.waterGlasses === wellnessState.waterGoal) {
+      showToast(currentLang === 'ne' ? '🎉 बधाई छ! आजको ८ गिलास पानीको लक्ष्य पूरा भयो।' : '🎉 Congratulations! Daily 8-glass water goal achieved.');
+    }
+  }
+}
+
+function updateWaterDisplay() {
+  checkDailyWaterReset();
+  const progressEl = document.getElementById('waterProgressText');
+  const gridEl = document.getElementById('waterGlassesGrid');
+  const chautariSummaryEl = document.getElementById('chautariWaterSummary');
+  const miniWaterEl = document.getElementById('miniWaterStatus');
+  
+  const gCount = wellnessState.waterGlasses;
+  const goal = wellnessState.waterGoal;
+  
+  if (progressEl) {
+    progressEl.innerText = currentLang === 'ne' 
+      ? `${toDevanagariDigits(gCount)} / ${toDevanagariDigits(goal)} गिलास`
+      : `${gCount} / ${goal} glasses`;
+  }
+  
+  if (chautariSummaryEl) {
+    chautariSummaryEl.innerText = currentLang === 'ne'
+      ? `पानी: ${toDevanagariDigits(gCount)}/${toDevanagariDigits(goal)} गिलास`
+      : `Water: ${gCount}/${goal} glasses`;
+  }
+
+  if (miniWaterEl) {
+    miniWaterEl.innerText = currentLang === 'ne'
+      ? `${toDevanagariDigits(gCount)}/${toDevanagariDigits(goal)} गिलास`
+      : `${gCount}/${goal} glasses`;
+  }
+
+  if (gridEl) {
+    gridEl.innerHTML = '';
+    for (let i = 1; i <= goal; i++) {
+      const isFilled = i <= gCount;
+      const glassBtn = document.createElement('button');
+      glassBtn.type = 'button';
+      glassBtn.onclick = () => {
+        wellnessState.waterGlasses = i;
+        saveWellnessState();
+        playWellnessChime('water');
+        updateWaterDisplay();
+      };
+      glassBtn.className = `w-8 h-10 rounded-lg flex flex-col items-center justify-center transition border ${
+        isFilled 
+          ? 'bg-sky-500 text-white border-sky-400 shadow-2xs scale-105' 
+          : 'bg-slate-100 dark:bg-zinc-800/80 text-slate-400 border-slate-200 dark:border-zinc-700/60 hover:border-sky-400'
+      }`;
+      glassBtn.innerHTML = `
+        <span class="text-xs">${isFilled ? '💧' : '🥛'}</span>
+        <span class="text-[9px] font-mono font-bold">${currentLang === 'ne' ? toDevanagariDigits(i) : i}</span>
+      `;
+      gridEl.appendChild(glassBtn);
+    }
+  }
+
+  const toggleEl = document.getElementById('waterHourlyReminderToggle');
+  if (toggleEl) {
+    toggleEl.checked = wellnessState.waterHourlyReminder;
+  }
+}
+
+function checkDailyWaterReset() {
+  const todayStr = new Date().toISOString().split('T')[0];
+  if (wellnessState.waterLastLogDate !== todayStr) {
+    wellnessState.waterGlasses = 0;
+    wellnessState.waterLastLogDate = todayStr;
+    saveWellnessState();
+  }
+}
+
+function toggleWaterReminder(e) {
+  wellnessState.waterHourlyReminder = e.target.checked;
+  saveWellnessState();
+  if (wellnessState.waterHourlyReminder) {
+    showToast(currentLang === 'ne' ? '💧 हरेक घण्टा पानी पिउने सम्झना सुरु भयो।' : '💧 Hourly hydration reminders enabled.');
+    setupWaterInterval();
+  } else {
+    if (wellnessState.waterReminderIntervalId) {
+      clearInterval(wellnessState.waterReminderIntervalId);
+      wellnessState.waterReminderIntervalId = null;
+    }
+  }
+}
+
+function setupWaterInterval() {
+  if (wellnessState.waterReminderIntervalId) clearInterval(wellnessState.waterReminderIntervalId);
+  wellnessState.waterReminderIntervalId = setInterval(() => {
+    if (wellnessState.waterHourlyReminder) {
+      playWellnessChime('water');
+      showToast(currentLang === 'ne' ? '💧 पानी पिउने समय भयो! १ गिलास पानी पिउनुहोस्।' : '💧 Time to drink water! Have a glass of water.');
+    }
+  }, 60 * 60 * 1000);
+}
+
+// --- 20-20-20 EYE REST ENGINE ---
+function toggleEyeBreakTimer() {
+  if (wellnessState.eyeRunning) {
+    // Stop
+    clearInterval(wellnessState.eyeTimerId);
+    wellnessState.eyeRunning = false;
+    wellnessState.eyeRemaining = 20 * 60;
+  } else {
+    // Start
+    wellnessState.eyeRunning = true;
+    showToast(currentLang === 'ne' ? '👁️ २० मिनेटको स्क्रिन आँखा आराम सम्झना सुरु भयो।' : '👁️ 20-20-20 Eye break reminder active.');
+    wellnessState.eyeTimerId = setInterval(() => {
+      if (wellnessState.eyeRemaining > 0) {
+        wellnessState.eyeRemaining--;
+        updateEyeDisplay();
+      } else {
+        // 20 minutes reached
+        playWellnessChime('bell');
+        wellnessState.eyeRemaining = 20 * 60;
+        showToast(currentLang === 'ne' 
+          ? '👁️ आँखा आराम: २० फिट टाढा २० सेकेन्ड हेर्नुहोस्!' 
+          : '👁️ Eye Rest: Look 20 feet away for 20 seconds!');
+        updateEyeDisplay();
+      }
+    }, 1000);
+  }
+  updateEyeDisplay();
+}
+
+function updateEyeDisplay() {
+  const m = Math.floor(wellnessState.eyeRemaining / 60);
+  const s = wellnessState.eyeRemaining % 60;
+  const timeFormatted = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  
+  const dispEl = document.getElementById('eyeTimerDisplay');
+  const btn = document.getElementById('eyeBreakToggleBtn');
+  const text = document.getElementById('eyeBreakToggleText');
+  
+  if (dispEl) {
+    dispEl.innerText = currentLang === 'ne' ? toDevanagariDigits(timeFormatted) : timeFormatted;
+  }
+  if (btn && text) {
+    if (wellnessState.eyeRunning) {
+      btn.className = 'w-full py-2.5 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center space-x-1.5';
+      text.innerText = currentLang === 'ne' ? 'आँखा आराम सम्झना रोक्नुहोस्' : 'Stop Eye Break Reminders';
+    } else {
+      btn.className = 'w-full py-2.5 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center space-x-1.5';
+      text.innerText = currentLang === 'ne' ? 'आँखा आराम सम्झना सुरु गर्नुहोस्' : 'Start 20-20-20 Eye Break';
+    }
+  }
+
+  const miniEyeEl = document.getElementById('miniEyeStatus');
+  if (miniEyeEl) {
+    miniEyeEl.innerText = wellnessState.eyeRunning
+      ? (currentLang === 'ne' ? `${toDevanagariDigits(timeFormatted)} सक्रिय` : `${timeFormatted} active`)
+      : (currentLang === 'ne' ? '२०-२०-२०' : '20-20-20');
+  }
+}
+
+// Persistence
+function saveWellnessState() {
+  try {
+    localStorage.setItem('sangalo_wellness_state', JSON.stringify({
+      waterGlasses: wellnessState.waterGlasses,
+      waterLastLogDate: wellnessState.waterLastLogDate,
+      waterHourlyReminder: wellnessState.waterHourlyReminder
+    }));
+  } catch (e) {}
+}
+
+function loadWellnessState() {
+  try {
+    const raw = localStorage.getItem('sangalo_wellness_state');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed) {
+        wellnessState.waterGlasses = parsed.waterGlasses || 0;
+        wellnessState.waterLastLogDate = parsed.waterLastLogDate || null;
+        wellnessState.waterHourlyReminder = !!parsed.waterHourlyReminder;
+      }
+    }
+    checkDailyWaterReset();
+    if (wellnessState.waterHourlyReminder) {
+      setupWaterInterval();
+    }
+  } catch (e) {}
+}
+
+function initWellnessSuite() {
+  loadWellnessState();
+  updateWaterDisplay();
+  updatePomodoroDisplay();
+  updateEyeDisplay();
+}
+
+window.checkForAppUpdates = checkForAppUpdates;
+window.showAppUpdateModal = showAppUpdateModal;
+window.closeAppUpdateModal = closeAppUpdateModal;
+window.openGoldSilverModal = openGoldSilverModal;
+window.closeGoldSilverModal = closeGoldSilverModal;
+window.calculateJewelryPrice = calculateJewelryPrice;
+window.fetchGoldSilverRates = fetchGoldSilverRates;
+window.setGoldDisplayUnit = setGoldDisplayUnit;
+window.initGoldRates = initGoldRates;
+window.cycleFontSize = cycleFontSize;
+
+window.openWellnessModal = openWellnessModal;
+window.closeWellnessModal = closeWellnessModal;
+window.switchWellnessTab = switchWellnessTab;
+window.setPomodoroDuration = setPomodoroDuration;
+window.togglePomodoroTimer = togglePomodoroTimer;
+window.resetPomodoroTimer = resetPomodoroTimer;
+window.addWaterGlass = addWaterGlass;
+window.toggleWaterReminder = toggleWaterReminder;
+window.toggleEyeBreakTimer = toggleEyeBreakTimer;
+window.initWellnessSuite = initWellnessSuite;
+
+// ---------------------------------------------------------------------
 // 15. INITIALIZATION
 // ---------------------------------------------------------------------
 function initApp() {
   initTheme();
+  initFontSize();
   initCalendarState();
   updateAllTranslations();
   handleHashChange();
@@ -6632,7 +8066,7 @@ function initApp() {
       apkAction.innerHTML = `
         <div class="space-y-2">
           <div class="p-2.5 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700/60 rounded-xl text-xs font-bold text-emerald-900 dark:text-emerald-200 text-center">
-            ✅ तपाईंले अहिले मोबाइल एप (.apk v1.0.0) चलाइरहनुभएको छ
+            ✅ तपाईंले अहिले मोबाइल एप (.apk ${CURRENT_APP_VERSION}) चलाइरहनुभएको छ
           </div>
           <button type="button" onclick="shareSangaloApp()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center space-x-1.5 active:scale-95">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
@@ -6657,10 +8091,27 @@ function initApp() {
   // Initialize NRB Official Forex Rates
   fetchForexRates();
 
+  // Initialize FENEGOSIDA Official Live Gold & Silver Rates
+  initGoldRates();
+
+  // Initialize Daily Wellness & Focus Suite (Pomodoro, Hydration, Eye Rest)
+  initWellnessSuite();
+
   // Check first-time visitor onboarding tour
   if (!localStorage.getItem('sangalo_onboarded_v1')) {
     setTimeout(startOnboardingTour, 600);
   }
+
+  // Check for app updates silently in background (throttled to once every 6h on successful check)
+  setTimeout(() => {
+    if (navigator.onLine) {
+      const lastCheck = parseInt(localStorage.getItem('sangalo_last_update_check') || '0', 10);
+      const now = Date.now();
+      if (now - lastCheck > 6 * 60 * 60 * 1000) {
+        checkForAppUpdates(false);
+      }
+    }
+  }, 4000);
 
   // Register offline Service Worker only on HTTP/HTTPS
   if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {

@@ -74,8 +74,8 @@ cat << 'EOF' > "$BUILD_DIR/AndroidManifest.xml"
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sangalo.family"
-    android:versionCode="4"
-    android:versionName="2.3.0">
+    android:versionCode="6"
+    android:versionName="1.2.0">
 
     <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="34" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -171,6 +171,7 @@ public class MainActivity extends Activity {
 
     public static final String CHANNEL_STICKY_ID = "sangalo_sticky";
     public static final String CHANNEL_ALARM_ID = "sangalo_alarms";
+    public static final String CHANNEL_UPDATE_ID = "sangalo_updates";
 
     private Ringtone currentRingtone = null;
     private Vibrator currentVibrator = null;
@@ -347,6 +348,48 @@ public class MainActivity extends Activity {
                 }
             });
         }
+
+        @JavascriptInterface
+        public void notifyAppUpdate(final String newVersion, final String title, final String apkUrl) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        if (nm == null) return;
+
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+                        if (Build.VERSION.SDK_INT >= 23) {
+                            flags |= PendingIntent.FLAG_IMMUTABLE;
+                        }
+                        PendingIntent pi = PendingIntent.getActivity(MainActivity.this, 1005, intent, flags);
+
+                        Notification.Builder builder;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            builder = new Notification.Builder(MainActivity.this, CHANNEL_UPDATE_ID);
+                        } else {
+                            builder = new Notification.Builder(MainActivity.this);
+                            builder.setPriority(Notification.PRIORITY_HIGH);
+                        }
+
+                        String notifTitle = "🚀 नयाँ अपडेट उपलब्ध छ: " + (newVersion != null ? newVersion : "");
+                        String notifBody = (title != null && !title.isEmpty()) ? title : "नयाँ सुधार तथा पात्रो सटीकता सहित नवीनतम संस्करण उपलब्ध छ। ट्याप गरी डाउनलोड गर्नुहोस्।";
+
+                        builder.setContentTitle(notifTitle)
+                               .setContentText(notifBody)
+                               .setSmallIcon(R.mipmap.ic_launcher)
+                               .setContentIntent(pi)
+                               .setAutoCancel(true);
+
+                        nm.notify(1005, builder.build());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     private synchronized void startAlarmSound() {
@@ -436,6 +479,15 @@ public class MainActivity extends Activity {
                     alarmChannel.enableVibration(true);
                     alarmChannel.setVibrationPattern(new long[]{0, 500, 250, 500, 250, 500});
                     nm.createNotificationChannel(alarmChannel);
+
+                    NotificationChannel updateChannel = new NotificationChannel(
+                            CHANNEL_UPDATE_ID,
+                            "एप अपडेट तथा नयाँ संस्करण (App Updates)",
+                            NotificationManager.IMPORTANCE_HIGH
+                    );
+                    updateChannel.setDescription("सँगालोको नयाँ संस्करण उपलब्ध हुँदा जानकारी");
+                    updateChannel.setShowBadge(true);
+                    nm.createNotificationChannel(updateChannel);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -578,6 +630,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import org.json.JSONObject;
+import android.net.Uri;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CalendarReceiver extends BroadcastReceiver {
     public static final String PREFS_NAME = "SangaloPrefs";
@@ -607,6 +666,9 @@ public class CalendarReceiver extends BroadcastReceiver {
 
         // Schedule next midnight tick
         scheduleMidnightAlarm(context);
+
+        // Check for app updates in background
+        checkAppUpdateInBackground(context);
     }
 
     public static Icon createDateIcon(Context context, int dayNumber) {
@@ -838,6 +900,110 @@ public class CalendarReceiver extends BroadcastReceiver {
             }
             PendingIntent pi = PendingIntent.getBroadcast(context, 2001, intent, flags);
             am.cancel(pi);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void checkAppUpdateInBackground(final Context context) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                    long lastCheck = prefs.getLong("last_update_check_bg", 0);
+                    long now = System.currentTimeMillis();
+                    if (now - lastCheck < 12 * 3600 * 1000) return; // at most once every 12h
+
+                    URL url = new URL("https://api.github.com/repos/dahalsandesh/sangalo/releases/latest");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setConnectTimeout(5000);
+                    conn.setReadTimeout(5000);
+                    conn.setRequestProperty("User-Agent", "SangaloApp");
+                    conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
+                    if (conn.getResponseCode() == 200) {
+                        prefs.edit().putLong("last_update_check_bg", now).apply();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        reader.close();
+                        String json = sb.toString();
+
+                        Pattern p = Pattern.compile("\"tag_name\"\\s*:\\s*\"([^\"]+)\"");
+                        Matcher m = p.matcher(json);
+                        if (m.find()) {
+                            String latestTag = m.group(1);
+                            if (isNewerVersion(latestTag, "1.2.0")) {
+                                postUpdateNotification(context, latestTag, "https://github.com/dahalsandesh/sangalo/releases/latest/download/Sangalo.apk");
+                            }
+                        }
+                    }
+                } catch (Exception ignored) {
+                    // Silently ignore network or offline exceptions in background
+                }
+            }
+        }).start();
+    }
+
+    private static boolean isNewerVersion(String remote, String current) {
+        try {
+            String rClean = remote.replaceAll("[^0-9.]", "");
+            String cClean = current.replaceAll("[^0-9.]", "");
+            String[] rParts = rClean.split("\\.");
+            String[] cParts = cClean.split("\\.");
+            int max = Math.max(rParts.length, cParts.length);
+            for (int i = 0; i < max; i++) {
+                int r = i < rParts.length ? Integer.parseInt(rParts[i]) : 0;
+                int c = i < cParts.length ? Integer.parseInt(cParts[i]) : 0;
+                if (r > c) return true;
+                if (r < c) return false;
+            }
+        } catch (Exception ignored) {}
+        return false;
+    }
+
+    public static void postUpdateNotification(Context context, String newVersion, String apkUrl) {
+        try {
+            NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (nm == null) return;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel(
+                    MainActivity.CHANNEL_UPDATE_ID,
+                    "एप अपडेट (App Updates)",
+                    NotificationManager.IMPORTANCE_HIGH
+                );
+                channel.setDescription("सँगालोको नयाँ संस्करण उपलब्ध हुँदा जानकारी");
+                channel.setShowBadge(true);
+                nm.createNotificationChannel(channel);
+            }
+
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (Build.VERSION.SDK_INT >= 23) {
+                flags |= PendingIntent.FLAG_IMMUTABLE;
+            }
+            PendingIntent pi = PendingIntent.getActivity(context, 1005, intent, flags);
+
+            Notification.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                builder = new Notification.Builder(context, MainActivity.CHANNEL_UPDATE_ID);
+            } else {
+                builder = new Notification.Builder(context);
+                builder.setPriority(Notification.PRIORITY_HIGH);
+            }
+
+            builder.setContentTitle("🚀 सँगालो नयाँ संस्करण उपलब्ध छ (" + newVersion + ")")
+                   .setContentText("नयाँ पात्रो सटीकता र सुविधाहरूका लागि ट्याप गरी अपडेट गर्नुहोस्।")
+                   .setSmallIcon(R.mipmap.ic_launcher)
+                   .setContentIntent(pi)
+                   .setAutoCancel(true);
+
+            nm.notify(1005, builder.build());
         } catch (Exception e) {
             e.printStackTrace();
         }

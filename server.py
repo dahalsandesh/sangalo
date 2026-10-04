@@ -5,6 +5,7 @@ import json
 import socket
 import shutil
 import urllib.parse
+import urllib.request
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from socketserver import ThreadingMixIn
 
@@ -101,6 +102,27 @@ class SangaloHandler(SimpleHTTPRequestHandler):
             }
             self.wfile.write(json.dumps(payload).encode('utf-8'))
             return
+
+        # Gold & Silver Live Bullion API proxy (FENEGOSIDA)
+        if parsed.path == '/api/gold':
+            try:
+                req = urllib.request.Request(
+                    'https://api.fenegosida.org/api/website/v1/Dashboard/today',
+                    headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+                )
+                with urllib.request.urlopen(req, timeout=5) as response:
+                    data = response.read()
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/json')
+                    self.end_headers()
+                    self.wfile.write(data)
+                    return
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+                return
 
         super().do_GET()
 
