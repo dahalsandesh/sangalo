@@ -234,9 +234,11 @@ public class MainActivity extends Activity {
                 @Override
                 public void run() {
                     try {
+                        String todayKey = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
                         android.content.SharedPreferences prefs = getSharedPreferences(CalendarReceiver.PREFS_NAME, Context.MODE_PRIVATE);
                         prefs.edit()
                              .putBoolean(CalendarReceiver.KEY_STICKY_ENABLED, true)
+                             .putString(CalendarReceiver.KEY_LAST_DATE, todayKey)
                              .putString(CalendarReceiver.KEY_LAST_TITLE, title)
                              .putString(CalendarReceiver.KEY_LAST_BODY, body)
                              .putInt(CalendarReceiver.KEY_LAST_DAY, dayNumber)
@@ -580,6 +582,7 @@ import org.json.JSONObject;
 public class CalendarReceiver extends BroadcastReceiver {
     public static final String PREFS_NAME = "SangaloPrefs";
     public static final String KEY_STICKY_ENABLED = "sticky_notif_enabled";
+    public static final String KEY_LAST_DATE = "last_date_key";
     public static final String KEY_LAST_TITLE = "last_title";
     public static final String KEY_LAST_BODY = "last_body";
     public static final String KEY_LAST_DAY = "last_day_number";
@@ -652,30 +655,37 @@ public class CalendarReceiver extends BroadcastReceiver {
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             if (nm == null) return;
 
+            String todayKey = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
+            String lastDateKey = prefs.getString(KEY_LAST_DATE, "");
+            boolean isLiveToday = todayKey.equals(lastDateKey);
+
             String title = prefs.getString(KEY_LAST_TITLE, "सँगालो दैनिक पात्रो");
             String body = prefs.getString(KEY_LAST_BODY, "");
             int dayNumber = prefs.getInt(KEY_LAST_DAY, 0);
 
-            String todayKey = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
-            String scheduleJson = prefs.getString(KEY_SCHEDULE, null);
-            if (scheduleJson != null && scheduleJson.length() > 0) {
-                try {
-                    JSONObject obj = new JSONObject(scheduleJson);
-                    if (obj.has(todayKey)) {
-                        JSONObject dayObj = obj.getJSONObject(todayKey);
-                        title = dayObj.optString("title", title);
-                        body = dayObj.optString("body", body);
-                        if (dayObj.has("day")) {
-                            dayNumber = dayObj.optInt("day", dayNumber);
+            // Only fallback to static schedule if we don't already have live data explicitly pushed for today
+            if (!isLiveToday) {
+                String scheduleJson = prefs.getString(KEY_SCHEDULE, null);
+                if (scheduleJson != null && scheduleJson.length() > 0) {
+                    try {
+                        JSONObject obj = new JSONObject(scheduleJson);
+                        if (obj.has(todayKey)) {
+                            JSONObject dayObj = obj.getJSONObject(todayKey);
+                            title = dayObj.optString("title", title);
+                            body = dayObj.optString("body", body);
+                            if (dayObj.has("day")) {
+                                dayNumber = dayObj.optInt("day", dayNumber);
+                            }
+                            prefs.edit()
+                                 .putString(KEY_LAST_DATE, todayKey)
+                                 .putString(KEY_LAST_TITLE, title)
+                                 .putString(KEY_LAST_BODY, body)
+                                 .putInt(KEY_LAST_DAY, dayNumber)
+                                 .apply();
                         }
-                        prefs.edit()
-                             .putString(KEY_LAST_TITLE, title)
-                             .putString(KEY_LAST_BODY, body)
-                             .putInt(KEY_LAST_DAY, dayNumber)
-                             .apply();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
 
@@ -725,9 +735,12 @@ public class CalendarReceiver extends BroadcastReceiver {
                    .setOngoing(true)
                    .setAutoCancel(false);
 
-            // Only set body text if not empty (clean single line in panel)
+            // Set body text with BigTextStyle so multi-line festival/tithi/weather never truncates
             if (body != null && body.trim().length() > 0) {
                 builder.setContentText(body.trim());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    builder.setStyle(new Notification.BigTextStyle().bigText(body.trim()));
+                }
             }
 
             // Dynamic date number icon (shows e.g. "18" in status bar when shade is closed)

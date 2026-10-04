@@ -776,7 +776,7 @@ function renderForexUI() {
     const unitFormatted = currentLang === 'ne' ? toDevanagariDigits(r.unit) : r.unit;
 
     html += `
-      <tr class="hover:bg-slate-50 dark:hover:bg-[#161d2b] transition">
+      <tr class="hover:bg-slate-50 dark:hover:bg-[#202024] transition">
         <td class="px-3 py-2">
           <div class="font-bold text-slate-900 dark:text-slate-100">${r.iso3}</div>
           <div class="text-[10px] text-slate-500 dark:text-slate-400 font-sans truncate max-w-[110px]">${r.name}</div>
@@ -852,13 +852,13 @@ function switchConverterTab(tab) {
     if (t === tab) {
       if (view) view.classList.remove('hidden');
       if (btn) {
-        btn.classList.add('bg-white', 'dark:bg-[#18202d]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
+        btn.classList.add('bg-white', 'dark:bg-[#121215]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
         btn.classList.remove('text-slate-500', 'dark:text-slate-400');
       }
     } else {
       if (view) view.classList.add('hidden');
       if (btn) {
-        btn.classList.remove('bg-white', 'dark:bg-[#18202d]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
+        btn.classList.remove('bg-white', 'dark:bg-[#121215]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
         btn.classList.add('text-slate-500', 'dark:text-slate-400');
       }
     }
@@ -1011,14 +1011,14 @@ function switchDateConvMode(mode) {
   const btnAdToBs = document.getElementById('tabBtn-conv-adToBs');
 
   if (mode === 'bsToAd') {
-    btnBsToAd?.classList.add('bg-white', 'dark:bg-[#18202d]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
+    btnBsToAd?.classList.add('bg-white', 'dark:bg-[#121215]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
     btnBsToAd?.classList.remove('text-slate-500', 'dark:text-slate-400');
-    btnAdToBs?.classList.remove('bg-white', 'dark:bg-[#18202d]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
+    btnAdToBs?.classList.remove('bg-white', 'dark:bg-[#121215]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
     btnAdToBs?.classList.add('text-slate-500', 'dark:text-slate-400');
   } else {
-    btnAdToBs?.classList.add('bg-white', 'dark:bg-[#18202d]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
+    btnAdToBs?.classList.add('bg-white', 'dark:bg-[#121215]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
     btnAdToBs?.classList.remove('text-slate-500', 'dark:text-slate-400');
-    btnBsToAd?.classList.remove('bg-white', 'dark:bg-[#18202d]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
+    btnBsToAd?.classList.remove('bg-white', 'dark:bg-[#121215]', 'text-emerald-700', 'dark:text-emerald-300', 'shadow-2xs');
     btnBsToAd?.classList.add('text-slate-500', 'dark:text-slate-400');
   }
 
@@ -1059,15 +1059,15 @@ function renderDateConvInputs() {
     container.innerHTML = `
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">साल (Year BS)</label>
-        <select id="convBsYear" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${yOpts}</select>
+        <select id="convBsYear" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${yOpts}</select>
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">महिना (Month)</label>
-        <select id="convBsMonth" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${mOpts}</select>
+        <select id="convBsMonth" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${mOpts}</select>
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">गते (Day)</label>
-        <select id="convBsDay" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${dOpts}</select>
+        <select id="convBsDay" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${dOpts}</select>
       </div>
     `;
   } else {
@@ -1097,15 +1097,15 @@ function renderDateConvInputs() {
     container.innerHTML = `
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">Year (AD)</label>
-        <select id="convAdYear" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${yOpts}</select>
+        <select id="convAdYear" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${yOpts}</select>
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">Month</label>
-        <select id="convAdMonth" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${mOpts}</select>
+        <select id="convAdMonth" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${mOpts}</select>
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">Day</label>
-        <select id="convAdDay" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${dOpts}</select>
+        <select id="convAdDay" onchange="calculateDateConversion()" class="w-full bg-slate-50 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 rounded-xl p-2 text-xs font-bold text-slate-900 dark:text-slate-100">${dOpts}</select>
       </div>
     `;
   }
@@ -1639,6 +1639,9 @@ async function fetchWeatherAndSun() {
   weatherState.abhijitText = p.abhijitText;
   weatherState.tithiText = p.tithiText;
   updateWeatherSunUI();
+  if (state.stickyNotifEnabled) {
+    showStickyCalendarNotification(true);
+  }
 
   // 2. Fetch Live Weather from Open-Meteo
   try {
@@ -1690,6 +1693,9 @@ async function fetchWeatherAndSun() {
         weatherState.rahuKaalText = updatedP.rahuKaalText;
         weatherState.abhijitText = updatedP.abhijitText;
         updateWeatherSunUI();
+        if (state.stickyNotifEnabled) {
+          showStickyCalendarNotification(true);
+        }
       }
     }
   } catch (err) {
@@ -2004,7 +2010,7 @@ function renderFullCalendarGrid() {
 
   // Empty leading cells
   for (let i = 0; i < startCol; i++) {
-    html += `<div class="h-12 rounded-xl bg-slate-50/40 dark:bg-[#111722]/30 border border-transparent"></div>`;
+    html += `<div class="h-12 rounded-xl bg-slate-50/40 dark:bg-zinc-900/10 border border-dashed border-slate-200/40 dark:border-zinc-800/40"></div>`;
   }
 
   // Active day cells
@@ -2024,26 +2030,26 @@ function renderFullCalendarGrid() {
     const dayDisplay = currentLang === 'ne' ? devDay : day;
     const adDayNum = adDate.getDate();
 
-    let borderClass = 'border-slate-200 dark:border-[#283347]';
-    let bgClass = 'bg-white dark:bg-[#18202d]';
-    let textClass = 'text-slate-900 dark:text-slate-100 font-bold';
+    let borderClass = 'border-slate-200/90 dark:border-zinc-800/80';
+    let bgClass = 'bg-white dark:bg-[#121215]';
+    let textClass = 'text-slate-900 dark:text-zinc-200 font-bold';
 
     if (isSaturday) {
       borderClass = 'border-rose-200/80 dark:border-rose-900/40';
-      bgClass = 'bg-rose-50/70 dark:bg-rose-950/25';
+      bgClass = 'bg-rose-50/70 dark:bg-rose-950/20';
       textClass = 'text-rose-600 dark:text-rose-400 font-extrabold';
     }
 
     if (festName) {
-      borderClass = 'border-amber-300/90 dark:border-amber-700/60';
-      bgClass = isSaturday ? 'bg-amber-50/80 dark:bg-amber-950/30' : 'bg-amber-50/75 dark:bg-amber-950/25';
-      textClass = isSaturday ? 'text-rose-600 dark:text-rose-400 font-extrabold' : 'text-amber-900 dark:text-amber-200 font-extrabold';
+      borderClass = 'border-amber-300/90 dark:border-amber-800/50';
+      bgClass = isSaturday ? 'bg-amber-50/80 dark:bg-amber-950/25' : 'bg-amber-50/75 dark:bg-amber-950/20';
+      textClass = isSaturday ? 'text-rose-600 dark:text-rose-400 font-extrabold' : 'text-amber-800 dark:text-amber-300 font-extrabold';
     }
 
     if (isToday) {
-      borderClass = 'border-emerald-500 ring-2 ring-emerald-500/25';
-      bgClass = 'bg-emerald-50/70 dark:bg-emerald-950/40';
-      textClass = 'text-emerald-900 dark:text-emerald-100 font-black';
+      borderClass = 'border-emerald-500 ring-2 ring-emerald-500/25 dark:border-emerald-500/80 dark:ring-emerald-500/30';
+      bgClass = 'bg-emerald-50/70 dark:bg-emerald-950/30';
+      textClass = 'text-emerald-900 dark:text-emerald-200 font-black';
     }
 
     const tInfo = getLunarTithi(adDate);
@@ -2054,16 +2060,16 @@ function renderFullCalendarGrid() {
 
     html += `
       <div onclick="openDateDetails('${dateKey}', ${day}, '${festKey}')" 
-           class="h-12 p-1 rounded-xl border ${borderClass} ${bgClass} cursor-pointer hover:border-emerald-400 flex flex-col justify-between transition-all select-none relative group active:scale-95">
+           class="h-12 p-1 rounded-xl border ${borderClass} ${bgClass} cursor-pointer hover:border-emerald-400 dark:hover:border-zinc-600 flex flex-col justify-between transition-all select-none relative group active:scale-95">
         <div class="flex justify-between items-start leading-none">
           <span class="text-xs ${textClass}">${dayDisplay}</span>
           <div class="flex items-center space-x-0.5 leading-none">
             ${tithiGlyph ? `<span class="text-[9px]" title="${escapeHtml(tInfo.name)}">${tithiGlyph}</span>` : ''}
-            <span class="text-[9px] ${isSaturday ? 'text-rose-400 dark:text-rose-500 font-bold' : 'text-slate-400 dark:text-slate-300 font-mono'}">${adDayNum}</span>
+            <span class="text-[9px] ${isSaturday ? 'text-rose-400 dark:text-rose-500 font-bold' : 'text-slate-400 dark:text-zinc-500 font-mono'}">${adDayNum}</span>
           </div>
         </div>
         <div class="flex items-center space-x-0.5 truncate leading-none">
-          ${festName ? `<span class="inline-block px-1 py-0.5 text-[8px] font-bold bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 rounded truncate max-w-full" title="${escapeHtml(festName)}">${festName.length > 5 ? escapeHtml(festName.substring(0, 4)) + '..' : escapeHtml(festName)}</span>` : ''}
+          ${festName ? `<span class="inline-block px-1 py-0.5 text-[8px] font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-200 border border-amber-200/50 dark:border-amber-800/40 rounded truncate max-w-full" title="${escapeHtml(festName)}">${festName.length > 5 ? escapeHtml(festName.substring(0, 4)) + '..' : escapeHtml(festName)}</span>` : ''}
           ${userEvents.length > 0 ? `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" title="${userEvents.length} सम्झना"></span>` : ''}
         </div>
       </div>
@@ -2287,13 +2293,13 @@ function renderRemindersList() {
       countdownBadge = `<span class="px-2 py-0.5 text-[10px] font-extrabold bg-sky-100 dark:bg-sky-950/90 text-sky-800 dark:text-sky-300 rounded-md shadow-2xs whitespace-nowrap">${currentLang === 'ne' ? 'भोलि' : 'Tomorrow'}</span>`;
     } else {
       const daysDev = currentLang === 'ne' ? toDevanagariDigits(it.diffDays) : it.diffDays;
-      countdownBadge = `<span class="px-2 py-0.5 text-[10px] font-bold bg-slate-100 dark:bg-[#111722] text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-[#334158] rounded-md font-mono whitespace-nowrap">${daysDev} ${currentLang === 'ne' ? 'दिन बाँकी' : 'days left'}</span>`;
+      countdownBadge = `<span class="px-2 py-0.5 text-[10px] font-bold bg-slate-100 dark:bg-[#18181b] text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-zinc-800 rounded-md font-mono whitespace-nowrap">${daysDev} ${currentLang === 'ne' ? 'दिन बाँकी' : 'days left'}</span>`;
     }
 
     if (it.type === 'festival') {
       return `
         <div onclick="openDateDetails('${it.dateKey}', ${it.day}, '${it.month}-${it.day}')" 
-             class="p-2.5 bg-white dark:bg-[#18202d] border border-amber-200/80 dark:border-amber-900/40 rounded-xl flex items-center justify-between shadow-2xs cursor-pointer hover:border-amber-400 transition active:scale-95">
+             class="p-2.5 bg-white dark:bg-[#121215] border border-amber-200/80 dark:border-amber-900/40 rounded-xl flex items-center justify-between shadow-2xs cursor-pointer hover:border-amber-400 transition active:scale-95">
           <div class="flex-1 min-w-0 pr-2">
             <div class="flex items-center space-x-1.5 truncate">
               <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 rounded-md flex-shrink-0">🎉 चाडपर्व</span>
@@ -2309,7 +2315,7 @@ function renderRemindersList() {
       `;
     } else {
       return `
-        <div class="p-2.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-xl flex items-center justify-between shadow-2xs">
+        <div class="p-2.5 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between shadow-2xs">
           <div class="flex-1 min-w-0 pr-2">
             <div class="flex items-center space-x-1.5 truncate">
               <span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 rounded-md flex-shrink-0">📌 सम्झना</span>
@@ -3886,7 +3892,7 @@ function renderQuickAddTray() {
     const label = currentLang === 'ne' ? item.name : (item.enName || item.name);
     return `
       <button type="button" onclick="quickAddShopping('${escapeHtml(label)}', '${escapeHtml(item.cat || 'किराना')}')" 
-              class="px-2.5 py-1 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] hover:border-emerald-500 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 transition shadow-2xs active:scale-95">
+              class="px-2.5 py-1 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 hover:border-emerald-500 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 transition shadow-2xs active:scale-95">
         + ${escapeHtml(label)}
       </button>
     `;
@@ -3936,7 +3942,7 @@ function renderQuickAddModalChips() {
   chipsContainer.innerHTML = items.map(it => {
     const label = currentLang === 'ne' ? it.name : (it.enName || it.name);
     return `
-      <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-slate-100 dark:bg-[#111722] border border-slate-200 dark:border-[#334158] rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200">
+      <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-slate-100 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200">
         <span>${escapeHtml(label)}</span>
         <button type="button" onclick="deleteQuickAddItem('${it.id}')" class="text-slate-400 hover:text-rose-500 font-black p-0.5 ml-0.5 transition" title="Delete">✕</button>
       </div>
@@ -4052,9 +4058,9 @@ function renderShopping() {
     html += `<div class="space-y-2">`;
     pending.forEach(item => {
       html += `
-        <div class="p-3 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl flex items-center justify-between gap-2 shadow-2xs transition">
+        <div class="p-3 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl flex items-center justify-between gap-2 shadow-2xs transition">
           <div class="flex items-center space-x-3 min-w-0">
-            <button onclick="toggleShoppingItem(${item.id})" class="w-6 h-6 flex-shrink-0 rounded-lg border-2 border-slate-300 dark:border-[#334158] hover:border-emerald-500 flex items-center justify-center transition">
+            <button onclick="toggleShoppingItem(${item.id})" class="w-6 h-6 flex-shrink-0 rounded-lg border-2 border-slate-300 dark:border-zinc-800 hover:border-emerald-500 flex items-center justify-center transition">
             </button>
             <div class="min-w-0">
               <span class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate block">${escapeHtml(item.name)}</span>
@@ -4083,7 +4089,7 @@ function renderShopping() {
     `;
     completed.forEach(item => {
       html += `
-        <div class="p-2.5 bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-[#283347] rounded-xl flex items-center justify-between gap-2">
+        <div class="p-2.5 bg-slate-50 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between gap-2">
           <div class="flex items-center space-x-2.5 min-w-0">
             <button onclick="toggleShoppingItem(${item.id})" class="w-5 h-5 rounded-md bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">
               ✓
@@ -4254,7 +4260,7 @@ function renderBudget() {
     const displayAmt = currentLang === 'ne' ? `रू ${toDevanagariDigits(amtFormatted)}` : `Rs. ${amtFormatted}`;
 
     return `
-      <div class="p-3.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl flex items-center justify-between shadow-2xs">
+      <div class="p-3.5 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl flex items-center justify-between shadow-2xs">
         <div class="space-y-0.5">
           <div class="flex items-center space-x-2">
             <span class="text-xs font-bold text-slate-900 dark:text-slate-100">${escapeHtml(e.category)}</span>
@@ -4448,7 +4454,7 @@ function renderBorrowLend() {
     const opacityClass = item.settled ? 'opacity-50' : '';
 
     return `
-      <div class="p-3.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-xl space-y-2 shadow-2xs ${opacityClass}">
+      <div class="p-3.5 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-xl space-y-2 shadow-2xs ${opacityClass}">
         <div class="flex items-start justify-between">
           <div class="space-y-0.5">
             <div class="flex items-center space-x-2">
@@ -4462,7 +4468,7 @@ function renderBorrowLend() {
             <span class="text-sm font-extrabold ${isLent ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">${amtDisplay}</span>
           </div>
         </div>
-        <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-[#283347] text-[11px]">
+        <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-zinc-800 text-[11px]">
           <div>
             ${item.settled ? `
               <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center space-x-1">
@@ -4470,7 +4476,7 @@ function renderBorrowLend() {
                 <span>${currentLang === 'ne' ? 'फर्छ्यौट भइसक्यो (Settled)' : 'Settled'}</span>
               </span>
             ` : `
-              <button onclick="toggleSettleBorrow(${item.id})" class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#111722] hover:bg-emerald-100 text-slate-700 dark:text-slate-200 border border-transparent dark:border-[#283347] font-semibold transition">
+              <button onclick="toggleSettleBorrow(${item.id})" class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#18181b] hover:bg-emerald-100 text-slate-700 dark:text-slate-200 border border-transparent dark:border-zinc-800 font-semibold transition">
                 ${currentLang === 'ne' ? 'फर्छ्यौट भयो (Mark Settled)' : 'Mark Settled'}
               </button>
             `}
@@ -4604,12 +4610,12 @@ function renderEmergencyContacts() {
 
   const contacts = state.emergencyContacts || [];
   container.innerHTML = contacts.map(c => `
-    <div class="p-3 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-xl flex items-center justify-between shadow-xs">
+    <div class="p-3 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between shadow-xs">
       <div>
         <div class="text-xs font-bold text-slate-900 dark:text-slate-100">${escapeHtml(c.name)}</div>
         <div class="text-[10px] text-slate-500 dark:text-slate-300 font-medium">${escapeHtml(c.relation || '')} • <a href="tel:${escapeHtml(c.phone)}" class="text-emerald-600 dark:text-emerald-400 font-mono font-bold hover:underline">${escapeHtml(c.phone)}</a></div>
       </div>
-      <a href="tel:${escapeHtml(c.phone)}" class="p-2 bg-emerald-50 dark:bg-[#111722] border border-transparent dark:border-[#283347] text-emerald-600 dark:text-emerald-400 rounded-xl hover:bg-emerald-100 transition">
+      <a href="tel:${escapeHtml(c.phone)}" class="p-2 bg-emerald-50 dark:bg-[#18181b] border border-transparent dark:border-zinc-800 text-emerald-600 dark:text-emerald-400 rounded-xl hover:bg-emerald-100 transition">
         📞
       </a>
     </div>
@@ -4685,9 +4691,9 @@ function renderMedicineRoutine() {
       const timeDisplay = m.time || slot.defaultTime;
 
       html += `
-        <div class="p-3 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-xl flex items-center justify-between gap-2 shadow-2xs ${isTaken ? 'bg-emerald-50/50 dark:bg-emerald-950/30' : ''}">
+        <div class="p-3 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between gap-2 shadow-2xs ${isTaken ? 'bg-emerald-50/50 dark:bg-emerald-950/30' : ''}">
           <div class="flex items-center space-x-3 min-w-0">
-            <button onclick="toggleMedicineTaken(${m.id})" class="w-7 h-7 flex-shrink-0 rounded-lg flex items-center justify-center border-2 transition ${isTaken ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 dark:border-[#334158] bg-slate-50 dark:bg-[#111722] text-transparent hover:border-emerald-500'}">
+            <button onclick="toggleMedicineTaken(${m.id})" class="w-7 h-7 flex-shrink-0 rounded-lg flex items-center justify-center border-2 transition ${isTaken ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 dark:border-zinc-800 bg-slate-50 dark:bg-[#18181b] text-transparent hover:border-emerald-500'}">
               <span class="text-sm font-bold">✓</span>
             </button>
             <div class="min-w-0">
@@ -4696,7 +4702,7 @@ function renderMedicineRoutine() {
                 <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${foodClass}">${foodLabel}</span>
               </div>
               <div class="text-[11px] text-slate-500 dark:text-slate-300 font-medium flex items-center flex-wrap gap-1.5 mt-0.5">
-                <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#111722] text-slate-700 dark:text-slate-300 font-bold border border-slate-200 dark:border-[#283347]">⏰ ${escapeHtml(timeDisplay)}</span>
+                <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#18181b] text-slate-700 dark:text-slate-300 font-bold border border-slate-200 dark:border-zinc-800">⏰ ${escapeHtml(timeDisplay)}</span>
                 ${m.dosage ? `<span>${escapeHtml(m.dosage)}</span> • ` : ''}
                 <span class="${isTaken ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-400'}">${isTaken ? (currentLang === 'ne' ? 'आज खाइसकियो' : 'Taken today') : (currentLang === 'ne' ? 'खान बाँकी' : 'Pending')}</span>
               </div>
@@ -4949,14 +4955,14 @@ function renderVehicleList() {
       : (v.type === 'car' ? (currentLang === 'ne' ? 'कार' : 'Car') : (currentLang === 'ne' ? 'बाइक' : 'Bike'));
 
     return `
-      <div class="p-3.5 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-2xl space-y-2.5 shadow-2xs">
+      <div class="p-3.5 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-2xl space-y-2.5 shadow-2xs">
         <div class="flex items-start justify-between">
           <div class="flex items-start space-x-2.5">
             <span class="text-2xl">${icon}</span>
             <div>
               <div class="flex items-center space-x-1.5">
                 <h4 class="text-sm font-extrabold text-slate-900 dark:text-slate-100">${escapeHtml(v.name)}</h4>
-                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-100 dark:bg-[#111722] text-slate-600 dark:text-slate-300 border border-transparent dark:border-[#283347]">${typeLabel}</span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-100 dark:bg-[#18181b] text-slate-600 dark:text-slate-300 border border-transparent dark:border-zinc-800">${typeLabel}</span>
               </div>
               <div class="mt-0.5">
                 <span class="px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-mono font-extrabold inline-block">
@@ -4966,23 +4972,23 @@ function renderVehicleList() {
             </div>
           </div>
           <div class="flex items-center space-x-1">
-            <button onclick="openVehicleModal(${v.id})" class="p-1.5 rounded-lg bg-slate-100 dark:bg-[#111722] text-slate-600 dark:text-slate-300 border border-transparent dark:border-[#283347] hover:bg-slate-200 text-xs font-semibold" title="Edit">
+            <button onclick="openVehicleModal(${v.id})" class="p-1.5 rounded-lg bg-slate-100 dark:bg-[#18181b] text-slate-600 dark:text-slate-300 border border-transparent dark:border-zinc-800 hover:bg-slate-200 text-xs font-semibold" title="Edit">
               ✏️
             </button>
-            <button onclick="deleteVehicle(${v.id})" class="p-1.5 rounded-lg bg-slate-100 dark:bg-[#111722] text-slate-600 dark:text-slate-300 border border-transparent dark:border-[#283347] hover:text-rose-500 text-xs font-semibold" title="Delete">
+            <button onclick="deleteVehicle(${v.id})" class="p-1.5 rounded-lg bg-slate-100 dark:bg-[#18181b] text-slate-600 dark:text-slate-300 border border-transparent dark:border-zinc-800 hover:text-rose-500 text-xs font-semibold" title="Delete">
               🗑️
             </button>
           </div>
         </div>
 
         ${v.notes ? `
-          <div class="text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-[#111722] p-2 rounded-xl border border-slate-100 dark:border-[#283347]">
+          <div class="text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-[#18181b] p-2 rounded-xl border border-slate-100 dark:border-zinc-800">
             🔧 <span class="font-medium">${escapeHtml(v.notes)}</span>
           </div>
         ` : ''}
 
         <div class="flex items-center justify-between pt-1">
-          <button onclick="openVehicleDetailModal(${v.id})" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#111722] hover:bg-slate-200 dark:hover:bg-[#151b26] text-slate-700 dark:text-slate-300 border border-transparent dark:border-[#283347] text-[11px] font-bold flex items-center space-x-1 transition">
+          <button onclick="openVehicleDetailModal(${v.id})" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#18181b] hover:bg-slate-200 dark:hover:bg-[#202024] text-slate-700 dark:text-slate-300 border border-transparent dark:border-zinc-800 text-[11px] font-bold flex items-center space-x-1 transition">
             <span>⚙️</span>
             <span>${currentLang === 'ne' ? 'प्राविधिक विवरण (Specs)' : 'Technical Specs'}</span>
           </button>
@@ -5156,7 +5162,7 @@ function renderHomeServices() {
   }
 
   container.innerHTML = services.map(s => `
-    <div class="p-3 bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] rounded-xl flex items-center justify-between shadow-2xs">
+    <div class="p-3 bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 rounded-xl flex items-center justify-between shadow-2xs">
       <div>
         <div class="text-xs font-bold text-slate-900 dark:text-slate-100">${escapeHtml(s.role)}: ${escapeHtml(s.name)}</div>
         <div class="text-[10px] text-slate-500 dark:text-slate-300 font-mono font-bold mt-0.5">
@@ -5164,13 +5170,13 @@ function renderHomeServices() {
         </div>
       </div>
       <div class="flex items-center space-x-1.5">
-        <a href="tel:${escapeHtml(s.phone)}" class="p-2 bg-emerald-50 dark:bg-[#111722] text-emerald-600 dark:text-emerald-400 border border-transparent dark:border-[#283347] rounded-xl hover:bg-emerald-100 transition" title="Call">
+        <a href="tel:${escapeHtml(s.phone)}" class="p-2 bg-emerald-50 dark:bg-[#18181b] text-emerald-600 dark:text-emerald-400 border border-transparent dark:border-zinc-800 rounded-xl hover:bg-emerald-100 transition" title="Call">
           📞
         </a>
-        <button onclick="editHomeService(${s.id})" class="p-2 bg-slate-100 dark:bg-[#111722] text-slate-600 dark:text-slate-300 border border-transparent dark:border-[#283347] rounded-xl hover:bg-slate-200 transition" title="Edit">
+        <button onclick="editHomeService(${s.id})" class="p-2 bg-slate-100 dark:bg-[#18181b] text-slate-600 dark:text-slate-300 border border-transparent dark:border-zinc-800 rounded-xl hover:bg-slate-200 transition" title="Edit">
           ✏️
         </button>
-        <button onclick="deleteHomeService(${s.id})" class="p-2 bg-slate-100 dark:bg-[#111722] text-slate-600 dark:text-slate-300 border border-transparent dark:border-[#283347] hover:text-rose-500 rounded-xl hover:bg-slate-200 transition" title="Delete">
+        <button onclick="deleteHomeService(${s.id})" class="p-2 bg-slate-100 dark:bg-[#18181b] text-slate-600 dark:text-slate-300 border border-transparent dark:border-zinc-800 hover:text-rose-500 rounded-xl hover:bg-slate-200 transition" title="Delete">
           🗑️
         </button>
       </div>
@@ -5325,7 +5331,7 @@ function toggleStickyNotification(e) {
   }
 }
 
-function showStickyCalendarNotification() {
+function showStickyCalendarNotification(isQuiet = false) {
   const bs = getBikramSambatDate();
   const festName = getFestival(bs.year, bs.month, bs.day);
   const tInfo = getLunarTithi(new Date());
@@ -5341,7 +5347,7 @@ function showStickyCalendarNotification() {
   // Format rich body with festival, Tithi, temperature & sunrise/sunset
   let body = '';
   if (festName) {
-    body = `🌸 ${festName} • ${tInfo.badge} • ${tempStr} • ${sunStr}`;
+    body = `🌸 ${festName} • ${tInfo.badge || tInfo.name} • ${tempStr} • ${sunStr}`;
   } else if (tInfo.isEkadashi || tInfo.isPurnima || tInfo.isAunsi) {
     body = `${tInfo.badge} • ${tempStr} • ${sunStr}`;
   } else {
@@ -5358,18 +5364,20 @@ function showStickyCalendarNotification() {
         const curBs = getBikramSambatDate(d);
         const fName = getFestival(curBs.year, curBs.month, curBs.day);
         const curTithi = getLunarTithi(d);
+        const curPanchanga = calculateOfflinePanchanga(d);
         const y = d.getFullYear();
         const m = String(d.getMonth() + 1).padStart(2, '0');
         const dayNum = String(d.getDate()).padStart(2, '0');
         const key = `${y}-${m}-${dayNum}`;
 
+        const curSunStr = `🌅 ${toDevanagariDigits(curPanchanga.sunrise || '०६:०१')}  🌇 ${toDevanagariDigits(curPanchanga.sunset || '१७:४५')}`;
         let bText = '';
         if (fName) {
-          bText = `🌸 ${fName} • ${curTithi.badge}`;
+          bText = `🌸 ${fName} • ${curTithi.badge || curTithi.name} • ${curSunStr}`;
         } else if (curTithi.isEkadashi || curTithi.isPurnima || curTithi.isAunsi) {
-          bText = `${curTithi.badge}`;
+          bText = `${curTithi.badge} • ${curSunStr}`;
         } else {
-          bText = `${curTithi.name}`;
+          bText = `${curTithi.name} • ${curSunStr}`;
         }
 
         schedule[key] = {
@@ -5386,7 +5394,9 @@ function showStickyCalendarNotification() {
 
   if (isAndroidNativeApp() && typeof window.AndroidBridge.showStickyNotification === 'function') {
     window.AndroidBridge.showStickyNotification(title, body, bs.day);
-    showToast(currentLang === 'ne' ? 'आजको मिति बारमा राखियो 📌' : 'Today\'s date pinned in status bar 📌');
+    if (!isQuiet) {
+      showToast(currentLang === 'ne' ? 'आजको मिति बारमा राखियो 📌' : 'Today\'s date pinned in status bar 📌');
+    }
     return;
   }
 
@@ -5412,7 +5422,9 @@ function showStickyCalendarNotification() {
         silent: true
       });
     }
-    showToast(currentLang === 'ne' ? 'आजको मिति नोटिफिकेसन बारमा राखियो 📌' : 'Today\'s date pinned in notifications 📌');
+    if (!isQuiet) {
+      showToast(currentLang === 'ne' ? 'आजको मिति नोटिफिकेसन बारमा राखियो 📌' : 'Today\'s date pinned in notifications 📌');
+    }
   } catch (err) {}
 }
 
@@ -5945,7 +5957,7 @@ async function renderVaultDocs() {
     if (cat === currentVaultFilter) {
       btn.className = 'px-2.5 py-1 rounded-lg font-bold bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 whitespace-nowrap transition';
     } else {
-      btn.className = 'px-2.5 py-1 rounded-lg font-medium bg-slate-100 dark:bg-[#111722] text-slate-600 dark:text-slate-300 border border-transparent dark:border-[#283347] whitespace-nowrap hover:bg-slate-200 transition';
+      btn.className = 'px-2.5 py-1 rounded-lg font-medium bg-slate-100 dark:bg-[#18181b] text-slate-600 dark:text-slate-300 border border-transparent dark:border-zinc-800 whitespace-nowrap hover:bg-slate-200 transition';
     }
   });
 
@@ -5972,16 +5984,16 @@ async function renderVaultDocs() {
     license: { ne: 'लाइसेन्स', en: 'License', color: 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300' },
     health: { ne: 'स्वास्थ्य', en: 'Health', color: 'bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300' },
     receipt: { ne: 'रसिद', en: 'Receipt', color: 'bg-cyan-50 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300' },
-    other: { ne: 'अन्य', en: 'Other', color: 'bg-slate-100 dark:bg-[#111722] text-slate-700 dark:text-slate-300' }
+    other: { ne: 'अन्य', en: 'Other', color: 'bg-slate-100 dark:bg-[#18181b] text-slate-700 dark:text-slate-300' }
   };
 
   grid.innerHTML = filteredDocs.map(doc => {
     const catInfo = categoryNames[doc.category] || categoryNames.other;
     const catLabel = currentLang === 'ne' ? catInfo.ne : catInfo.en;
     return `
-      <div class="group relative bg-white dark:bg-[#18202d] border border-slate-200 dark:border-[#283347] hover:border-emerald-500/50 rounded-xl overflow-hidden shadow-2xs transition flex flex-col justify-between">
+      <div class="group relative bg-white dark:bg-[#121215] border border-slate-200 dark:border-zinc-800 hover:border-emerald-500/50 rounded-xl overflow-hidden shadow-2xs transition flex flex-col justify-between">
         <div onclick="viewFullDocPhoto('${doc.id}')" class="cursor-pointer">
-          <div class="h-28 bg-slate-100 dark:bg-[#111722] overflow-hidden relative flex items-center justify-center">
+          <div class="h-28 bg-slate-100 dark:bg-[#18181b] overflow-hidden relative flex items-center justify-center">
             <img src="${doc.imageData}" class="w-full h-full object-cover group-hover:scale-105 transition duration-200" alt="${escapeHtml(doc.title)}">
             <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 text-[9px] font-bold rounded shadow-2xs ${catInfo.color}">
               ${catLabel}
@@ -5993,7 +6005,7 @@ async function renderVaultDocs() {
             ${doc.expiryDate ? `<p class="text-[9px] text-amber-600 dark:text-amber-400 font-semibold truncate">📅 ${escapeHtml(doc.expiryDate)}</p>` : ''}
           </div>
         </div>
-        <div class="px-2 pb-2 pt-1 border-t border-slate-100 dark:border-[#283347] flex items-center justify-between">
+        <div class="px-2 pb-2 pt-1 border-t border-slate-100 dark:border-zinc-800 flex items-center justify-between">
           <button onclick="viewFullDocPhoto('${doc.id}')" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">
             ${currentLang === 'ne' ? 'हेर्नुहोस्' : 'View'}
           </button>
@@ -6336,7 +6348,7 @@ function renderUpcomingHolidays() {
     }
 
     html += `
-      <div onclick="jumpToCalendarFestival(${h.year}, ${h.month}, ${h.dayNum})" class="p-2 bg-slate-50 dark:bg-[#111722] hover:bg-slate-100 dark:hover:bg-[#161d2b] border border-slate-200 dark:border-[#283347] rounded-xl flex flex-col justify-between cursor-pointer transition select-none group">
+      <div onclick="jumpToCalendarFestival(${h.year}, ${h.month}, ${h.dayNum})" class="p-2 bg-slate-50 dark:bg-[#18181b] hover:bg-slate-100 dark:hover:bg-[#202024] border border-slate-200 dark:border-zinc-800 rounded-xl flex flex-col justify-between cursor-pointer transition select-none group">
         <div class="flex justify-between items-start gap-1 mb-1">
           <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 font-mono">${h.dateText}</span>
           ${countdownBadge}
@@ -6633,7 +6645,7 @@ function initApp() {
 
   // Restore Sticky Notification if enabled (on Android Native Bridge or HTTP/HTTPS)
   if (state.stickyNotifEnabled && (isAndroidNativeApp() || window.location.protocol.startsWith('http'))) {
-    showStickyCalendarNotification();
+    showStickyCalendarNotification(true);
   }
 
   // Initialize Automated Reminders & Medicine Alarms
