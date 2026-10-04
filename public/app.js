@@ -4431,10 +4431,11 @@ function showStickyCalendarNotification() {
   const bs = getBikramSambatDate();
   const festName = getFestival(bs.year, bs.month, bs.day);
 
-  const title = `📅 ${bs.devanagariGateFormatted || bs.devanagariFormatted}`;
-  const body = festName
-    ? `🌸 ${festName} • ई.सं. (AD): ${bs.adFormatted}`
-    : `ई.सं. (AD): ${bs.adFormatted}, ${bs.adWeekdayEn}`;
+  // Clean, high-signal single-line title (No misleading July 17 calendar emoji!)
+  const title = bs.devanagariGateFormatted || bs.devanagariFormatted;
+
+  // Clean festival note only if present; otherwise empty string for clean single-line notification
+  const body = festName ? `🌸 ${festName}` : '';
 
   // Sync 60-day calendar schedule to Android SharedPreferences for automatic midnight updates
   if (isAndroidNativeApp() && typeof window.AndroidBridge.syncCalendarSchedule === 'function') {
@@ -4450,8 +4451,9 @@ function showStickyCalendarNotification() {
         const dayNum = String(d.getDate()).padStart(2, '0');
         const key = `${y}-${m}-${dayNum}`;
         schedule[key] = {
-          title: `📅 ${curBs.devanagariGateFormatted || curBs.devanagariFormatted}`,
-          body: fName ? `🌸 ${fName} • ई.सं. (AD): ${curBs.adFormatted}` : `ई.सं. (AD): ${curBs.adFormatted}, ${curBs.adWeekdayEn}`
+          title: curBs.devanagariGateFormatted || curBs.devanagariFormatted,
+          body: fName ? `🌸 ${fName}` : '',
+          day: curBs.day
         };
       }
       window.AndroidBridge.syncCalendarSchedule(JSON.stringify(schedule));
@@ -4461,8 +4463,8 @@ function showStickyCalendarNotification() {
   }
 
   if (isAndroidNativeApp() && typeof window.AndroidBridge.showStickyNotification === 'function') {
-    window.AndroidBridge.showStickyNotification(title, body);
-    showToast(currentLang === 'ne' ? 'आजको मिति नोटिफिकेसन बारमा राखियो 📌' : 'Today\'s date pinned in notifications 📌');
+    window.AndroidBridge.showStickyNotification(title, body, bs.day);
+    showToast(currentLang === 'ne' ? 'आजको मिति बारमा राखियो 📌' : 'Today\'s date pinned in status bar 📌');
     return;
   }
 
@@ -5468,6 +5470,15 @@ function initApp() {
     navigator.serviceWorker.register('sw.js').then(reg => {
       reg.update().catch(() => {});
     }).catch(() => {});
+  }
+
+  // Smooth entrance transition - dismiss splash screen
+  const splash = document.getElementById('appSplashScreen');
+  if (splash) {
+    setTimeout(() => {
+      splash.style.opacity = '0';
+      setTimeout(() => splash.remove(), 350);
+    }, 250);
   }
 }
 

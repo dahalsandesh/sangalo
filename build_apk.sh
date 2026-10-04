@@ -60,11 +60,14 @@ fi
 # 3. Prepare workspace
 echo "[3/7] Setting up build workspace..."
 rm -rf "$BUILD_DIR"
-mkdir -p "$BUILD_DIR"/{gen,bin,res/values,res/mipmap-hdpi,src/com/sangalo/family,assets}
+mkdir -p "$BUILD_DIR"/{gen,bin,res/values,res/mipmap-mdpi,res/mipmap-hdpi,res/mipmap-xhdpi,res/mipmap-xxhdpi,src/com/sangalo/family,assets}
 
 # Copy web assets
 cp -r "$DIR/public"/* "$BUILD_DIR/assets/"
-python3 "$DIR/generate_icon.py" "$BUILD_DIR/res/mipmap-hdpi/ic_launcher.png"
+python3 "$DIR/generate_icon.py" "$BUILD_DIR/res/mipmap-mdpi/ic_launcher.png" 48
+python3 "$DIR/generate_icon.py" "$BUILD_DIR/res/mipmap-hdpi/ic_launcher.png" 72
+python3 "$DIR/generate_icon.py" "$BUILD_DIR/res/mipmap-xhdpi/ic_launcher.png" 96
+python3 "$DIR/generate_icon.py" "$BUILD_DIR/res/mipmap-xxhdpi/ic_launcher.png" 144
 
 # 4. Create Android Manifest and Resources
 cat << 'EOF' > "$BUILD_DIR/AndroidManifest.xml"
@@ -222,6 +225,11 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public void showStickyNotification(final String title, final String body) {
+            showStickyNotification(title, body, 0);
+        }
+
+        @JavascriptInterface
+        public void showStickyNotification(final String title, final String body, final int dayNumber) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -231,6 +239,7 @@ public class MainActivity extends Activity {
                              .putBoolean(CalendarReceiver.KEY_STICKY_ENABLED, true)
                              .putString(CalendarReceiver.KEY_LAST_TITLE, title)
                              .putString(CalendarReceiver.KEY_LAST_BODY, body)
+                             .putInt(CalendarReceiver.KEY_LAST_DAY, dayNumber)
                              .apply();
 
                         CalendarReceiver.postDailyNotification(MainActivity.this);
@@ -555,6 +564,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.drawable.Icon;
 import android.os.Build;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -567,6 +582,7 @@ public class CalendarReceiver extends BroadcastReceiver {
     public static final String KEY_STICKY_ENABLED = "sticky_notif_enabled";
     public static final String KEY_LAST_TITLE = "last_title";
     public static final String KEY_LAST_BODY = "last_body";
+    public static final String KEY_LAST_DAY = "last_day_number";
     public static final String KEY_SCHEDULE = "calendar_schedule";
 
     public static final String ACTION_DISMISSED = "com.sangalo.family.ACTION_NOTIFICATION_DISMISSED";
@@ -583,11 +599,39 @@ public class CalendarReceiver extends BroadcastReceiver {
 
         if (!enabled) return;
 
-        // Repost or update notification
+        // Repost or update notification with today's date tag
         postDailyNotification(context);
 
         // Schedule next midnight tick
         scheduleMidnightAlarm(context);
+    }
+
+    public static Icon createDateIcon(Context context, int dayNumber) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                int size = 96;
+                Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+
+                Paint paint = new Paint();
+                paint.setAntiAlias(true);
+                paint.setColor(Color.WHITE);
+                paint.setTextAlign(Paint.Align.CENTER);
+                paint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+
+                String text = String.valueOf(dayNumber);
+                paint.setTextSize(text.length() > 2 ? 46f : 60f);
+
+                Paint.FontMetrics fm = paint.getFontMetrics();
+                float y = (size / 2f) - ((fm.descent + fm.ascent) / 2f);
+                canvas.drawText(text, size / 2f, y, paint);
+
+                return Icon.createWithBitmap(bitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     public static void postDailyNotification(Context context) {
@@ -601,6 +645,7 @@ public class CalendarReceiver extends BroadcastReceiver {
 
             String title = prefs.getString(KEY_LAST_TITLE, "सँगालो दैनिक पात्रो");
             String body = prefs.getString(KEY_LAST_BODY, "");
+            int dayNumber = prefs.getInt(KEY_LAST_DAY, 0);
 
             String todayKey = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
             String scheduleJson = prefs.getString(KEY_SCHEDULE, null);
@@ -611,14 +656,22 @@ public class CalendarReceiver extends BroadcastReceiver {
                         JSONObject dayObj = obj.getJSONObject(todayKey);
                         title = dayObj.optString("title", title);
                         body = dayObj.optString("body", body);
+                        if (dayObj.has("day")) {
+                            dayNumber = dayObj.optInt("day", dayNumber);
+                        }
                         prefs.edit()
                              .putString(KEY_LAST_TITLE, title)
                              .putString(KEY_LAST_BODY, body)
+                             .putInt(KEY_LAST_DAY, dayNumber)
                              .apply();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+
+            if (dayNumber <= 0 && title != null) {
+                dayNumber = extractDayNumber(title);
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -658,12 +711,28 @@ public class CalendarReceiver extends BroadcastReceiver {
             }
 
             builder.setContentTitle(title)
-                   .setContentText(body)
-                   .setSmallIcon(R.mipmap.ic_launcher)
                    .setContentIntent(tapPi)
                    .setDeleteIntent(deletePi)
                    .setOngoing(true)
                    .setAutoCancel(false);
+
+            // Only set body text if not empty (clean single line in panel)
+            if (body != null && body.trim().length() > 0) {
+                builder.setContentText(body.trim());
+            }
+
+            // Dynamic date number icon (shows e.g. "18" in status bar when shade is closed)
+            boolean iconSet = false;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && dayNumber > 0) {
+                Icon dateIcon = createDateIcon(context, dayNumber);
+                if (dateIcon != null) {
+                    builder.setSmallIcon(dateIcon);
+                    iconSet = true;
+                }
+            }
+            if (!iconSet) {
+                builder.setSmallIcon(R.mipmap.ic_launcher);
+            }
 
             Notification notif = builder.build();
             notif.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
@@ -671,6 +740,35 @@ public class CalendarReceiver extends BroadcastReceiver {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static int extractDayNumber(String title) {
+        if (title == null) return 0;
+        try {
+            StringBuilder sb = new StringBuilder();
+            boolean inside = false;
+            for (char c : title.toCharArray()) {
+                if (c >= '\u0966' && c <= '\u096F') {
+                    sb.append((char)('0' + (c - '\u0966')));
+                    inside = true;
+                } else if (Character.isDigit(c)) {
+                    sb.append(c);
+                    inside = true;
+                } else if (inside) {
+                    if (sb.length() > 0) {
+                        int val = Integer.parseInt(sb.toString());
+                        if (val >= 1 && val <= 32) return val;
+                        sb.setLength(0);
+                        inside = false;
+                    }
+                }
+            }
+            if (sb.length() > 0) {
+                int val = Integer.parseInt(sb.toString());
+                if (val >= 1 && val <= 32) return val;
+            }
+        } catch (Exception e) {}
+        return 0;
     }
 
     public static void scheduleMidnightAlarm(Context context) {
